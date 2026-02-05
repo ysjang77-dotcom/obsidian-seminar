@@ -1,0 +1,5 @@
+# Claude Code local settings
+.claude/
+
+# Separate git repository
+retirement-seminar-self-study/
