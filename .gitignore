@@ -3,3 +3,17 @@
 
 # Separate git repository
 retirement-seminar-self-study/
+
+# Obsidian Vault (MyVault)
+# - workspace*.json: 개인 UI 레이아웃/열어둔 파일 상태(공유/버전관리 비권장)
+# - cache/: 캐시 파일
+# - .trash/: 삭제한 노트 보관함
+MyVault/.obsidian/workspace.json
+MyVault/.obsidian/workspace-mobile.json
+MyVault/.obsidian/cache/
+MyVault/.trash/
+
+# OS / Editor noise
+Thumbs.db
+Desktop.ini
+.DS_Store
