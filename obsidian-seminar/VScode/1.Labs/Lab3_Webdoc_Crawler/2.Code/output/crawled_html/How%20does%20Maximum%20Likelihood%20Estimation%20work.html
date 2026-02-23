@@ -1,0 +1,315 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="how-does-maximum-likelihood-estimation-work">
+<h1>How does Maximum Likelihood Estimation work<a class="headerlink" href="#how-does-maximum-likelihood-estimation-work" title="Link to this heading"></a></h1>
+<p>Maximum Likelihood Estimation (MLE) is a method of estimating the parameters of a model using a set of data.
+While MLE can be applied to many different types of models, this article will explain how MLE is used to fit the parameters of a probability distribution for a given set of failure and right censored data.</p>
+<p>MLE works by calculating the probability of occurrence for each data point (we call this the likelihood) for a model with a given set of parameters.
+These probabilities are summed for all the data points.
+We then use an optimizer to change the parameters of the model in order to maximise the sum of the probabilities.
+This is easiest to understand with an example which is provided below.</p>
+<p>There are two major challenges with MLE. These are the need to use an optimizer (making hand calculations almost impossible for distributions with more than one parameter), and the need for a relatively accurate initial guess for the optimizer.
+The initial guess for MLE is typically provided using <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html">Least Squares Estimation</a>.
+A variety of <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">optimizers</a> are suitable for MLE, though some may perform better than others so trying a few is sometimes the best approach.</p>
+<p>There are several advantages of MLE which make it the standard method for fitting probability distributions in most software.
+These are that MLE does not need the equation to be linearizable (which is needed in Least Squares Estimation) so any equation can be modeled.
+The other advantage of MLE is that unlike Least Squares Estimation which uses the plotting positions and does not directly use the right censored data, MLE uses the failure data and right censored data directly, making it more suitable for heavily censored datasets.</p>
+<section id="the-mle-algorithm">
+<h2>The MLE algorithm<a class="headerlink" href="#the-mle-algorithm" title="Link to this heading"></a></h2>
+<p>The MLE algorithm is as follows:</p>
+<ol class="arabic simple">
+<li><p>Obtain an initial guess for the model parameters (typically done using least squares estimation).</p></li>
+<li><p>Calculate the probability of occurrence of each data point (f(t) for failures, R(t) for right censored, F(t) for left censored).</p></li>
+<li><p>Multiply the probabilities (or sum their logarithms which is much more computationally efficient).</p></li>
+<li><p>Use an optimizer to change the model parameters and repeat steps 2 and 3 until the total probability is maximized.</p></li>
+</ol>
+<p>As mentioned in step 2, different types of data need to be handled differently:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type of observation</p></th>
+<th class="head"><p>Likelihood function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Failure data</p></td>
+<td><p><span class="math notranslate nohighlight">\(L_i(\theta|t_i)=f(t_i|\theta)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Right censored data</p></td>
+<td><p><span class="math notranslate nohighlight">\(L_i(\theta|t_i)=R(t_i|\theta)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Left censored data</p></td>
+<td><p><span class="math notranslate nohighlight">\(L_i(\theta|t_i)=F(t_i|\theta)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Interval censored data</p></td>
+<td><p><span class="math notranslate nohighlight">\(L_i(\theta|t_i)=F(t_i^{RI}|\theta) - F(t_i^{LI}|\theta)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>In words, the first equation above means “the likelihood of the parameters (<span class="math notranslate nohighlight">\(\theta\)</span>) given the data (<span class="math notranslate nohighlight">\(t_i\)</span>) is equal to the probability of failure (<span class="math notranslate nohighlight">\(f(t)\)</span>) evaluated at each time <span class="math notranslate nohighlight">\(t_i\)</span> with that given set of parameters (<span class="math notranslate nohighlight">\(\theta\)</span>)”.
+The equations for the PDF (<span class="math notranslate nohighlight">\(f(t)\)</span>), CDF (<span class="math notranslate nohighlight">\(F(t)\)</span>), and SF (<span class="math notranslate nohighlight">\(R(t)\)</span>) for each distribution is provided <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20supported%20distributions.html">here</a>.</p>
+<p>Once we have the likelihood (<span class="math notranslate nohighlight">\(L_i\)</span> ) for each data point, we need to combine them. This is done by multiplying them together (think of this as an AND condition).
+If we just had failures and right censored data then the equation would be:</p>
+<p><span class="math notranslate nohighlight">\(L(\theta|D) = \prod_{i=1}^{n} f_i(t_i^{\textrm{failures}}|\theta) \times R_i(t_i^{\textrm{right censored}}|\theta)\)</span></p>
+<p>In words this means that “the likelihood of the parameters of the model (<span class="math notranslate nohighlight">\(\theta\)</span>) given the data (D) is equal to the product of the values of the PDF (<span class="math notranslate nohighlight">\(f(t)\)</span>) with the given set of parameters (<span class="math notranslate nohighlight">\(\theta\)</span>) evaluated at each failure (<span class="math notranslate nohighlight">\(t_i^{\textrm{failures}}\)</span>), multiplied by the product of the values of the SF (<span class="math notranslate nohighlight">\(R(t)\)</span>) with the given set of parameters (<span class="math notranslate nohighlight">\(\theta\)</span>) evaluated at each right censored value (<span class="math notranslate nohighlight">\(t_i^{\textrm{right censored}}\)</span>)”.</p>
+<p>Since probabilities are between 0 and 1, multiplying many of these results in a very small number.
+A loss precision occurs because computers can only store so many decimals. Multiplication is also slower than addition for computers.
+To overcome this problem, we can use a logarithm rule to add the log-likelihoods rather than multiply the likelihoods.
+We just need to take the log of the likelihood function (the PDF for failure data and the SF for right censored data), evaluate the probability, and sum the values.
+The parameters that will maximize the log-likelihood function are the same parameters that will maximize the likelihood function.</p>
+</section>
+<section id="an-example-using-the-exponential-distribution">
+<h2>An example using the Exponential Distribution<a class="headerlink" href="#an-example-using-the-exponential-distribution" title="Link to this heading"></a></h2>
+<p>Let’s say we have some failure times: t = [27, 64, 3, 18, 8]</p>
+<p>We need an initial estimate for time model parameter (<span class="math notranslate nohighlight">\(\lambda\)</span>) which we would typically get using Least Squares Estimation. For this example, lets start with 0.1 as our first guess for <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
+<p>For each of these values, we need to calculate the value of the PDF (with the given value of <span class="math notranslate nohighlight">\(\lambda\)</span>).</p>
+<p>Exponential PDF:     <span class="math notranslate nohighlight">\(f(t) = \lambda {\rm e}^{-\lambda t}\)</span></p>
+<p>Exponential Log-PDF: <span class="math notranslate nohighlight">\(ln(f(t)) = ln(\lambda)-\lambda t\)</span></p>
+<p>Now we substitute in <span class="math notranslate nohighlight">\(\lambda=0.1\)</span> and <span class="math notranslate nohighlight">\(t = [27, 64, 3, 18, 8]\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+&amp; L(\lambda=0.1|t=[27, 64, 3, 18, 8]) = \\
+&amp; \qquad (ln(0.1)-0.1 \times 27) + (ln(0.1)-0.1 \times 64) + (ln(0.1)-0.1 \times 3)\\
+&amp; \qquad + (ln(0.1)-0.1 \times 18) + (ln(0.1)-0.1 \times 8)\\
+&amp; = -23.512925
+\end{align}\end{split}\]</div>
+<p>Here’s where the optimization part comes in. We need to vary <span class="math notranslate nohighlight">\(\lambda\)</span> until we maximize the log-likelihood.
+The following graph shows how the log-likelihood varies as <span class="math notranslate nohighlight">\(\lambda\)</span> varies.</p>
+<img alt="_images/LL_range.png" src="_images/LL_range.png"/>
+<p>This was produced using the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">27</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+
+<span class="n">lambda_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">LL</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="n">lambda_array</span><span class="p">:</span>
+    <span class="n">loglik</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="o">-</span><span class="n">L</span><span class="o">*</span><span class="n">data</span>
+    <span class="n">LL</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loglik</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lambda_array</span><span class="p">,</span> <span class="n">LL</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'$\lambda$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Log-likelihood'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Log likelihood over a range of $\lambda$ values'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The optimization process can be done in Python (using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">scipy.optimize.minimize</a>) or in Excel (using <a class="reference external" href="https://www.wikihow.com/Use-Solver-in-Microsoft-Excel">Solver</a>), or a variety of other software packages.
+Optimization becomes a bit more complicated when there are two or more parameters that need to be optimized simultaneously (such as in a Weibull Distribution).</p>
+<p>So, using the above method, we see that the maximum for the log-likelihood occurred when <span class="math notranslate nohighlight">\(\lambda\)</span> was around 0.041 at a log-likelihood of -20.89.
+We can check the value using <cite>reliability</cite> as shown below which achieves an answer of <span class="math notranslate nohighlight">\(\lambda = 0.0416667\)</span> at a log-likelihood of -20.8903:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Exponential_1P</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">27</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="n">Fit_Exponential_1P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Exponential_1P (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 5/0 (0% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">   Lambda       0.0416667       0.0186339 0.0173428  0.100105</span>
+<span class="sd"> 1/Lambda              24         10.7331   9.98947   57.6607</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -20.8903</span>
+<span class="sd">           AICc  45.1139</span>
+<span class="sd">            BIC    43.39</span>
+<span class="sd">             AD  2.43793</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="another-example-using-the-exponential-distribution-with-censored-data">
+<h2>Another example using the Exponential Distribution with censored data<a class="headerlink" href="#another-example-using-the-exponential-distribution-with-censored-data" title="Link to this heading"></a></h2>
+<p>Lets use a new dataset that includes both failures and right censored values.</p>
+<p>failures = [17, 5, 12] and right_censored = [20, 25]</p>
+<p>Once again, we need an initial estimate for the model parameters, and for that we would typically use Least Squares Estimation.
+For the purposes of this example, we will again use an initial guess of <span class="math notranslate nohighlight">\(\lambda = 0.1\)</span>.</p>
+<p>For each of the failures, we need to calculate the value of the PDF, and for each of the right censored values, we need to calculate the value of the SF (with the given value of <span class="math notranslate nohighlight">\(\lambda\)</span>).</p>
+<p>Exponential PDF:     <span class="math notranslate nohighlight">\(f(t) = \lambda {\rm e}^{-\lambda t}\)</span></p>
+<p>Exponential Log-PDF: <span class="math notranslate nohighlight">\(ln(f(t)) = ln(\lambda)-\lambda t\)</span></p>
+<p>Exponential SF:     <span class="math notranslate nohighlight">\(R(t) = {\rm e}^{-\lambda t}\)</span></p>
+<p>Exponential Log-SF: <span class="math notranslate nohighlight">\(ln(R(t)) = -\lambda t\)</span></p>
+<p>Now we substitute in <span class="math notranslate nohighlight">\(\lambda=0.1\)</span>, <span class="math notranslate nohighlight">\(t_{\textrm{failures}} = [17, 5, 12]\)</span>, and <span class="math notranslate nohighlight">\(t_{\textrm{right censored}} = [20, 25]\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+&amp; L(\lambda=0.1|t_{\textrm{failures}}=[17,5,12] {\textrm{ and }}t_{\textrm{right censored}}=[20, 25]) = \\
+&amp; \qquad (ln(0.1)-0.1 \times 17) + (ln(0.1)-0.1 \times 5) + (ln(0.1)-0.1 \times 12)\\
+&amp; \qquad + (-0.1 \times 20) + (-0.1 \times 25)\\
+&amp; = -14.8077528
+\end{align}\end{split}\]</div>
+<p>Note that the last two terms are the right censored values. Their contribution to the log-likelihood is added in the same way that the contribution from each of the failures is added, except that right censored values use the the log-SF.</p>
+<p>As with the previous example, we again need to use optimization to vary <span class="math notranslate nohighlight">\(\lambda\)</span> until we maximize the log-likelihood.
+The following graph shows how the log-likelihood varies as <span class="math notranslate nohighlight">\(\lambda\)</span> varies.</p>
+<img alt="_images/LL_range2.png" src="_images/LL_range2.png"/>
+<p>This was produced using the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">17</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+
+<span class="n">lambda_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">LL</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="n">lambda_array</span><span class="p">:</span>
+    <span class="n">loglik_failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="o">-</span><span class="n">L</span><span class="o">*</span><span class="n">failures</span>
+    <span class="n">loglik_right_censored</span> <span class="o">=</span>  <span class="o">-</span><span class="n">L</span><span class="o">*</span><span class="n">right_censored</span>
+    <span class="n">LL</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loglik_failures</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">loglik_right_censored</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lambda_array</span><span class="p">,</span> <span class="n">LL</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'$\lambda$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Log-likelihood'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Log likelihood over a range of $\lambda$ values'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>So, using the above method, we see that the maximum for the log-likelihood occurred when <span class="math notranslate nohighlight">\(\lambda\)</span> was around 0.038 at a log-likelihood of -12.81.
+We can check the value using <cite>reliability</cite> as shown below which achieves an answer of <span class="math notranslate nohighlight">\(\lambda = 0.0379747\)</span> at a log-likelihood of -12.8125:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Exponential_1P</span>
+
+<span class="n">failures</span> <span class="o">=</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">]</span>
+<span class="n">Fit_Exponential_1P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Exponential_1P (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 3/2 (40% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">   Lambda       0.0379747       0.0219247 0.0122476  0.117743</span>
+<span class="sd"> 1/Lambda         26.3333         15.2036   8.49306   81.6483</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -12.8125</span>
+<span class="sd">           AICc  28.9583</span>
+<span class="sd">            BIC  27.2345</span>
+<span class="sd">             AD  19.3533</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="an-example-using-the-weibull-distribution">
+<h2>An example using the Weibull Distribution<a class="headerlink" href="#an-example-using-the-weibull-distribution" title="Link to this heading"></a></h2>
+<p>Because it requires optimization, MLE is only practical using software if there is more than one parameter in the distribution.
+The rest of the process is the same, but instead of the likelihood plot (the curves shown above) being a line, for 2 parameters it would be a surface, as shown in the example below.</p>
+<p>We’ll use the same dataset as in the previous example with failures = [17,5,12] and right_censored = [20, 25].</p>
+<p>We also need an estimate for the parameters of the Weibull Distribution. We will use <span class="math notranslate nohighlight">\(\alpha=15\)</span> and <span class="math notranslate nohighlight">\(\beta=2\)</span></p>
+<p>For each of the failures, we need to calculate the value of the PDF, and for each of the right censored values, we need to calculate the value of the SF (with the given value of <span class="math notranslate nohighlight">\(\lambda\)</span>).</p>
+<p>Weibull PDF:     <span class="math notranslate nohighlight">\(f(t) = \frac{\beta}{\alpha}\left(\frac{t}{\alpha}\right)^{(\beta-1)}{\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p>Weibull Log-PDF: <span class="math notranslate nohighlight">\(ln(f(t)) = ln\left(\frac{\beta}{\alpha}\right)+(\beta-1).ln\left(\frac{t}{\alpha}\right)-(\frac{t}{\alpha })^ \beta\)</span></p>
+<p>Weibull SF:     <span class="math notranslate nohighlight">\(R(t) = {\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p>Weibull Log-SF: <span class="math notranslate nohighlight">\(ln(R(t)) = -(\frac{t}{\alpha })^ \beta\)</span></p>
+<p>Now we substitute in <span class="math notranslate nohighlight">\(\alpha=15\)</span>, <span class="math notranslate nohighlight">\(\beta=2\)</span>, <span class="math notranslate nohighlight">\(t_{\textrm{failures}} = [17, 5, 12]\)</span>, and <span class="math notranslate nohighlight">\(t_{\textrm{right censored}} = [20, 25]\)</span> to the log-PDF and log-SF.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+&amp; L(\alpha=15,\beta=2|t_{\textrm{failures}}=[17,5,12] {\textrm{ and }}t_{\textrm{right censored}}=[20, 25]) = \\
+&amp; \qquad ln\left(\frac{2}{15}\right)+(2-1).ln\left(\frac{17}{15}\right)-\left(\frac{17}{15}\right)^2\\
+&amp; \qquad + ln\left(\frac{2}{15}\right)+(2-1).ln\left(\frac{5}{15}\right)-\left(\frac{5}{15}\right)^2\\
+&amp; \qquad + ln\left(\frac{2}{15}\right)+(2-1).ln\left(\frac{12}{15}\right)-\left(\frac{12}{15}\right)^2\\
+&amp; \qquad + \left(-\left(\frac{20}{15}\right)^2\right)\\
+&amp; \qquad + \left(-\left(\frac{25}{15}\right)^2\right)\\
+&amp; = -13.8324
+\end{align}\end{split}\]</div>
+<p>As with the previous example, we again need to use optimization to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> until we maximize the log-likelihood.
+The following 3D surface plot shows how the log-likelihood varies as <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are varied. The maximum log-likelihood is shown as a scatter point on the plot.</p>
+<img alt="_images/LL_range3.png" src="_images/LL_range3.png"/>
+<p>This was produced using the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="n">failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">17</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+
+<span class="n">points</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">alpha_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+<span class="n">beta_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">points</span><span class="p">)</span>
+
+<span class="n">A</span><span class="p">,</span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">alpha_array</span><span class="p">,</span> <span class="n">beta_array</span><span class="p">)</span>
+
+<span class="n">LL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha_array</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_array</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alpha_array</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">beta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">beta_array</span><span class="p">):</span>
+        <span class="n">loglik_failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">beta</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">beta</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">failures</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="n">failures</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span><span class="o">**</span><span class="n">beta</span>
+        <span class="n">loglik_right_censored</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">right_censored</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span><span class="o">**</span><span class="n">beta</span>
+        <span class="n">LL</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">loglik_failures</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">+</span><span class="n">loglik_right_censored</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="n">LL_max</span> <span class="o">=</span> <span class="n">LL</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">LL</span><span class="o">==</span><span class="n">LL_max</span><span class="p">)</span>
+<span class="n">alpha_fit</span> <span class="o">=</span> <span class="n">alpha_array</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">beta_fit</span> <span class="o">=</span> <span class="n">beta_array</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">'3d'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">LL</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span><span class="n">cmap</span><span class="o">=</span><span class="s2">"coolwarm"</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">antialiased</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\alpha$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\beta$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">'Log-likelihood'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">alpha_fit</span><span class="p">],[</span><span class="n">beta_fit</span><span class="p">],[</span><span class="n">LL_max</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s1">'k'</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">text_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\alpha=$'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">alpha_fit</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">+</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">+</span><span class="sa">r</span><span class="s1">'$\beta=$'</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">beta_fit</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">+</span><span class="s1">'</span><span class="se">\n</span><span class="s1">LL='</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">LL_max</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">alpha_fit</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">beta_fit</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">LL_max</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">text_string</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">computed_zorder</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Log-likelihood over a range of $\alpha$ and $\beta$ values'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>So, using the above method, we see that the maximum for the log-likelihood (shown by the scatter point) occurred when <span class="math notranslate nohighlight">\(\alpha\)</span> was around 22.96 and <span class="math notranslate nohighlight">\(\beta\)</span> was around 1.56 at a log-likelihood of -12.48.
+Once again, we can check the value using <cite>reliability</cite> as shown below which achieves an answer of <span class="math notranslate nohighlight">\(\alpha = 23.0653\)</span> and <span class="math notranslate nohighlight">\(\beta = 1.57474\)</span> at a log-likelihood of -12.4823.
+The trickiest part about MLE is the optimization step, which is discussed briefly in the next section.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="n">failures</span> <span class="o">=</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">]</span>
+<span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_2P (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 3/2 (40% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         23.0653         8.76119   10.9556   48.5604</span>
+<span class="sd">     Beta         1.57474        0.805575  0.577786    4.2919</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -12.4823</span>
+<span class="sd">           AICc  34.9647</span>
+<span class="sd">            BIC  28.1836</span>
+<span class="sd">             AD  19.2756</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="how-does-the-optimization-routine-work-in-python">
+<h2>How does the optimization routine work in Python<a class="headerlink" href="#how-does-the-optimization-routine-work-in-python" title="Link to this heading"></a></h2>
+<p>Optimization is a complex field of study, but thankfully there are several software packages where optimizers are built into (relatively) easy-to-use tools.
+Excel’s <a class="reference external" href="https://www.educba.com/excel-solver-tool/">Solver</a> is a perfect example of an easy to use optimizer, and it is capable of changing multiple cells so it can be used to fit the Weibull Distribution.
+In this section, we will look at how optimization can be done in Python using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">scipy.optimize.minimize</a>.</p>
+<p>Scipy requires four primary inputs:</p>
+<ul class="simple">
+<li><p>An objective function that should be minimized</p></li>
+<li><p>An initial guess</p></li>
+<li><p>The optimization routine to use</p></li>
+<li><p>Bounds on the solution</p></li>
+</ul>
+<p>The objective function is the log-likelihood function as we used in the previous examples.
+For the initial guess, we use <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html">least squares estimation</a>.
+The optimization routine is a string that tells scipy which optimizer to use. There are several options, but <cite>reliability</cite> only uses four bounded <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">optimizers</a>, which are ‘TNC’, ‘L-BFGS-B’, ‘powell’, and ‘nelder-mead’.
+The bounds on the solution are things like specifying <span class="math notranslate nohighlight">\(\alpha&gt;0\)</span> and <span class="math notranslate nohighlight">\(\beta&gt;0\)</span>. Bounds are not essential, but they do help a lot with stability (preventing the optimizer from failing).</p>
+<p>Another important point to highlight is that when using an optimizer for the log-likelihood function in Python, it is more computationally efficient to find the point of minimum slope (which is the same as the peak of the log-likelihood function).
+The slope is evaluated using the gradient (<span class="math notranslate nohighlight">\(\nabla\)</span>), which is done using the Python library <a class="reference external" href="https://github.com/HIPS/autograd/blob/master/docs/tutorial.md">autograd</a> using the <a class="reference external" href="https://github.com/HIPS/autograd/blob/master/autograd/differential_operators.py#L132">value_and_grad</a> function.
+This process is quite mathematically complicated, but <cite>reliability</cite> does all of this internally and as a user you do not need to worry too much about how the optimizer works.
+The most important thing to understand is that as part of MLE, an optimizer is trying to maximize the log-likelihood by varying the parameters of the model.
+Sometimes the optimizer will be unsuccessful or will give a poor solution. In such cases, you should try another optimizer, or ask <cite>reliability</cite> to try all optimizers by specifying optimizer=’best’.</p>
+</section>
+</section>
+</div>
+</div>

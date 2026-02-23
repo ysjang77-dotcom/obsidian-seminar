@@ -1,0 +1,55 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="chi2test">
+<h1>chi2test<a class="headerlink" href="#chi2test" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.chi2test">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">chi2test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">significance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.chi2test" title="Link to this definition"></a></dt>
+<dd><p>Performs the Chi-squared test for goodness of fit to determine whether we
+can accept or reject the hypothesis that the data is from the specified
+distribution at the specified level of significance.</p>
+<p>This method is not a means of comparing distributions (which can be done
+with AICc, BIC, and AD), but instead allows us to accept or reject a
+hypothesis that data come from a distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>object</em>) – A distribution object created using the reliability.Distributions
+module.</p></li>
+<li><p><strong>data</strong> (<em>array, list</em>) – The data that are hypothesised to come from the distribution.</p></li>
+<li><p><strong>significance</strong> (<em>float, optional</em>) – This is the complement of confidence. 0.05 significance is the same as
+95% confidence. Must be between 0 and 0.5. Default = 0.05.</p></li>
+<li><p><strong>bins</strong> (<em>array, list, string, optional</em>) – An array or list of the bin edges from which to group the data OR a
+string for the bin edge method from numpy. String options are ‘auto’,
+‘fd’, ‘doane’, ‘scott’, ‘stone’, ‘rice’, ‘sturges’, or ‘sqrt’. Default =
+‘auto’. For more information on these methods, see the numpy
+documentation:
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html">https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html</a></p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed. Default = True</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True a plot of the distribution and histogram will be generated.
+Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>chisquared_statistic</strong> (<em>float</em>) – The chi-squared statistic.</p></li>
+<li><p><strong>chisquared_critical_value</strong> (<em>float</em>) – The chi-squared critical value.</p></li>
+<li><p><strong>hypothesis</strong> (<em>string</em>) – ‘ACCEPT’ or ‘REJECT’. If chisquared_statistic &lt;
+chisquared_critical_value then we can accept the hypothesis that the
+data is from the specified distribution</p></li>
+<li><p><strong>bin_edges</strong> (<em>array</em>) – The bin edges used. If bins is a list or array then bin_edges = bins. If
+bins is a string then you can find the bin_edges that were calculated
+using this output.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The result is sensitive to the bins. For this reason, it is recommended to
+leave bins as the default value.</p>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,102 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fit-beta-2p">
+<h1>Fit_Beta_2P<a class="headerlink" href="#fit-beta-2p" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Beta_2P">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Fitters.</span></span><span class="sig-name descname"><span class="pre">Fit_Beta_2P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MLE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Beta_2P" title="Link to this definition"></a></dt>
+<dd><p>Fits a two parameter Beta distribution (alpha,beta) to the data provided.
+All data must be in the range 0 &lt; x &lt; 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data. Must have at least 2 elements.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data. Optional input. Default = None.</p></li>
+<li><p><strong>show_probability_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Prints a dataframe of the point estimate, standard error, Lower CI and
+Upper CI for each parameter. True or False. Default = True</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – The method used to fit the distribution. Must be either ‘MLE’ (maximum
+likelihood estimation), ‘LS’ (least squares estimation), ‘RRX’ (Rank
+regression on X), or ‘RRY’ (Rank regression on Y). LS will perform both
+RRX and RRY and return the better one. Default is ‘MLE’.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – The optimization algorithm used to find the solution. Must be either
+‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, or ‘powell’. Specifying the optimizer
+will result in that optimizer being used. To use all of these specify
+‘best’ and the best result will be returned. The default behaviour is to
+try each optimizer in order (‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, and
+‘powell’) and stop once one of the optimizers finds a solution. If the
+optimizer fails, the initial guess will be returned.
+For more detail see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – confidence interval for estimating confidence limits on parameters. Must
+be between 0 and 1. Default is 0.95 for 95% CI.</p></li>
+<li><p><strong>quantiles</strong> (<em>bool, str, list, array, None, optional</em>) – quantiles (y-values) to produce a table of quantiles failed with
+point estimates. Default is None which results in no output. To use
+default array [0.01, 0.05, 0.1,…, 0.95, 0.99] set quantiles as either
+‘auto’, True, ‘default’, ‘on’. If an array or list is specified then it
+will be used instead of the default array. Any array or list specified
+must contain values between 0 and 1.</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is True. This
+functionality makes plotting faster when there are very large numbers of
+points. It only affects the scatterplot not the calculations.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib for the
+probability plot (e.g. color, label, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – the fitted Beta_2P alpha parameter</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – the fitted Beta_2P beta parameter</p></li>
+<li><p><strong>alpha_SE</strong> (<em>float</em>) – the standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>beta_SE</strong> (<em>float</em>) – the standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>Cov_alpha_beta</strong> (<em>float</em>) – the covariance between the parameters</p></li>
+<li><p><strong>alpha_upper</strong> (<em>float</em>) – the upper CI estimate of the parameter</p></li>
+<li><p><strong>alpha_lower</strong> (<em>float</em>) – the lower CI estimate of the parameter</p></li>
+<li><p><strong>beta_upper</strong> (<em>float</em>) – the upper CI estimate of the parameter</p></li>
+<li><p><strong>beta_lower</strong> (<em>float</em>) – the lower CI estimate of the parameter</p></li>
+<li><p><strong>loglik</strong> (<em>float</em>) – Log Likelihood (as used in Minitab and Reliasoft)</p></li>
+<li><p><strong>loglik2</strong> (<em>float</em>) – LogLikelihood*-2 (as used in JMP Pro)</p></li>
+<li><p><strong>AICc</strong> (<em>float</em>) – Akaike Information Criterion</p></li>
+<li><p><strong>BIC</strong> (<em>float</em>) – Bayesian Information Criterion</p></li>
+<li><p><strong>AD</strong> (<em>float</em>) – the Anderson Darling (corrected) statistic (as reported by Minitab)</p></li>
+<li><p><strong>distribution</strong> (<em>object</em>) – a Beta_Distribution object with the parameters of the fitted
+distribution</p></li>
+<li><p><strong>results</strong> (<em>dataframe</em>) – a pandas dataframe of the results (point estimate, standard error,
+lower CI and upper CI for each parameter)</p></li>
+<li><p><strong>goodness_of_fit</strong> (<em>dataframe</em>) – a pandas dataframe of the goodness of fit values (Log-likelihood, AICc,
+BIC, AD).</p></li>
+<li><p><strong>quantiles</strong> (<em>dataframe</em>) – a pandas dataframe of the quantiles with bounds on time. This is only
+produced if quantiles is not None. Since quantiles defaults to None,
+this output is not normally produced.</p></li>
+<li><p><strong>probability_plot</strong> (<em>object</em>) – the axes handle for the probability plot. This is only returned if
+show_probability_plot = True</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the fitting process encounters a problem a warning will be printed. This
+may be caused by the chosen distribution being a very poor fit to the data
+or the data being heavily censored. If a warning is printed, consider trying
+a different optimizer.</p>
+<p>Confidence intervals on the plots are not provided.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Beta_2P.LL">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_rc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Beta_2P.LL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Beta_2P.logR">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Beta_2P.logR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Beta_2P.logf">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Beta_2P.logf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

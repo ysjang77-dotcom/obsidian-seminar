@@ -1,0 +1,765 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Agent 개발환경 설치가이드(KIMM)</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="ai-agent-실습을-위한-개발환경-설치-가이드">AI-Agent 실습을 위한 개발환경 설치 가이드</h1>
+<p>AI-Agent 개발의 첫걸음을 떼는 여러분을 환영합니다! 이 가이드는 코딩 경험이 없는 입문자도 Windows, macOS, Ubuntu 환경에서 실습에 필요한 모든 도구를 설치하고, 간단한 실행 검증까지 한 번에 마칠 수 있도록 돕기 위해 만들어졌습니다.</p>
+<h2 id="전체-설치-과정-한눈에-보기">전체 설치 과정 한눈에 보기</h2>
+<p>이 가이드는 아래와 같은 순서로 개발 환경을 구축합니다. 전체적인 그림을 먼저 이해하면 각 단계를 진행하는 데 도움이 됩니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-iiMhxxjP66qha9hf" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="659.75" style="max-width: 775.890625px;" viewBox="0 0 775.890625 659.75"><style>#mermaid-svg-iiMhxxjP66qha9hf{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-iiMhxxjP66qha9hf .error-icon{fill:#552222;}#mermaid-svg-iiMhxxjP66qha9hf .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-iiMhxxjP66qha9hf .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-iiMhxxjP66qha9hf .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-iiMhxxjP66qha9hf .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-iiMhxxjP66qha9hf .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-iiMhxxjP66qha9hf .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-iiMhxxjP66qha9hf .marker{fill:#666;stroke:#666;}#mermaid-svg-iiMhxxjP66qha9hf .marker.cross{stroke:#666;}#mermaid-svg-iiMhxxjP66qha9hf svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-iiMhxxjP66qha9hf .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-iiMhxxjP66qha9hf .cluster-label text{fill:#333;}#mermaid-svg-iiMhxxjP66qha9hf .cluster-label span{color:#333;}#mermaid-svg-iiMhxxjP66qha9hf .label text,#mermaid-svg-iiMhxxjP66qha9hf span{fill:#000000;color:#000000;}#mermaid-svg-iiMhxxjP66qha9hf .node rect,#mermaid-svg-iiMhxxjP66qha9hf .node circle,#mermaid-svg-iiMhxxjP66qha9hf .node ellipse,#mermaid-svg-iiMhxxjP66qha9hf .node polygon,#mermaid-svg-iiMhxxjP66qha9hf .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-iiMhxxjP66qha9hf .node .label{text-align:center;}#mermaid-svg-iiMhxxjP66qha9hf .node.clickable{cursor:pointer;}#mermaid-svg-iiMhxxjP66qha9hf .arrowheadPath{fill:#333333;}#mermaid-svg-iiMhxxjP66qha9hf .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-iiMhxxjP66qha9hf .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-iiMhxxjP66qha9hf .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-iiMhxxjP66qha9hf .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-iiMhxxjP66qha9hf .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-iiMhxxjP66qha9hf .cluster text{fill:#333;}#mermaid-svg-iiMhxxjP66qha9hf .cluster span{color:#333;}#mermaid-svg-iiMhxxjP66qha9hf div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-iiMhxxjP66qha9hf:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-iiMhxxjP66qha9hf flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph3-180" transform="translate(390.0911502838135,590.03125)" style="opacity: 1;"><rect width="585.0989570617676" height="123.4375" x="-292.5494785308838" y="-61.71875"></rect><g class="label" transform="translate(0, -47.71875)" id="mermaid-svg-iiMhxxjP66qha9hfText"><g transform="translate(-59.645835876464844,-13.359375)"><foreignObject width="119.29167175292969" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Step 4: 최종 확인</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph2-181" transform="translate(387.94531440734863,416.59375)" style="opacity: 1;"><rect width="759.8906288146973" height="123.4375" x="-379.94531440734863" y="-61.71875"></rect><g class="label" transform="translate(0, -47.71875)" id="mermaid-svg-iiMhxxjP66qha9hfText"><g transform="translate(-104.96875,-13.359375)"><foreignObject width="209.9375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Step 3: 라이브러리 및 CLI 설치</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph1-182" transform="translate(402.3697967529297,243.15625)" style="opacity: 1;"><rect width="618.3333358764648" height="123.4375" x="-309.1666679382324" y="-61.71875"></rect><g class="label" transform="translate(0, -47.71875)" id="mermaid-svg-iiMhxxjP66qha9hfText"><g transform="translate(-76.77604675292969,-13.359375)"><foreignObject width="153.55209350585938" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Step 2: 핵심 도구 설치</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-183" transform="translate(385.0911502838135,69.71875)" style="opacity: 1;"><rect width="473.9427070617676" height="123.4375" x="-236.9713535308838" y="-61.71875"></rect><g class="label" transform="translate(0, -47.71875)" id="mermaid-svg-iiMhxxjP66qha9hfText"><g transform="translate(-76.77604675292969,-13.359375)"><foreignObject width="153.55209350585938" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Step 1: 개발 환경 준비</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" id="L-A-B" style="opacity: 1;"><path class="path" d="M314.10937881469727,92.49807335649457L188.1197967529297,131.4375L188.1197967529297,156.4375L188.1197967529297,181.4375L188.1197967529297,206.4375" marker-end="url(https://stackedit.io/app#arrowhead22)" style="fill:none"></path><defs><marker id="arrowhead22" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-A LE-C" id="L-A-C" style="opacity: 1;"><path class="path" d="M387.81250381469727,106.4375L387.81250381469727,131.4375L387.81250381469727,156.4375L387.81250381469727,181.4375L387.81250381469727,206.4375" marker-end="url(https://stackedit.io/app#arrowhead23)" style="fill:none"></path><defs><marker id="arrowhead23" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-A LE-D" id="L-A-D" style="opacity: 1;"><path class="path" d="M461.51562881469727,90.9503240774504L602.0625038146973,131.4375L602.0625038146973,156.4375L602.0625038146973,181.4375L602.0625038146973,219.796875" marker-end="url(https://stackedit.io/app#arrowhead24)" style="fill:none"></path><defs><marker id="arrowhead24" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-E" id="L-B-E" style="opacity: 1;"><path class="path" d="M188.1197967529297,279.875L188.1197967529297,304.875L188.1197967529297,329.875L188.1197967529297,354.875L188.1197967529297,379.875" marker-end="url(https://stackedit.io/app#arrowhead25)" style="fill:none"></path><defs><marker id="arrowhead25" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-F" id="L-D-F" style="opacity: 1;"><path class="path" d="M602.0625038146973,266.515625L602.0625038146973,304.875L602.0625038146973,329.875L602.0625038146973,354.875L602.0625038146973,379.875" marker-end="url(https://stackedit.io/app#arrowhead26)" style="fill:none"></path><defs><marker id="arrowhead26" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-G" id="L-E-G" style="opacity: 1;"><path class="path" d="M188.1197967529297,453.3125L188.1197967529297,478.3125L188.1197967529297,503.3125L188.1197967529297,528.3125L288.9349002838135,558.3755114501246" marker-end="url(https://stackedit.io/app#arrowhead27)" style="fill:none"></path><defs><marker id="arrowhead27" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" id="L-F-G" style="opacity: 1;"><path class="path" d="M602.0625038146973,453.3125L602.0625038146973,478.3125L602.0625038146973,503.3125L602.0625038146973,528.3125L501.2474002838135,558.3755114501246" marker-end="url(https://stackedit.io/app#arrowhead28)" style="fill:none"></path><defs><marker id="arrowhead28" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-C" class="edgeLabel L-LS-A' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-D" class="edgeLabel L-LS-A' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-E" class="edgeLabel L-LS-B' L-LE-E"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-F" class="edgeLabel L-LS-D' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-G" class="edgeLabel L-LS-E' L-LE-G"></span></div></foreignObject></g></g><g class="edgeLabel" transform="" style="opacity: 1;"><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-G-165" transform="translate(395.0911502838135,590.03125)" style="opacity: 1;"><rect rx="5" ry="5" x="-106.15625" y="-36.71875" width="212.3125" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-96.15625,-26.71875)"><foreignObject width="192.3125" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Jupyter, Streamlit, FastAPI<br>실행 테스트</div></foreignObject></g></g></g><g class="node default" id="flowchart-E-163" transform="translate(188.1197967529297,416.59375)" style="opacity: 1;"><rect rx="5" ry="5" x="-145.1197967529297" y="-36.71875" width="290.2395935058594" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-135.1197967529297,-26.71875)"><foreignObject width="270.2395935058594" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Python 패키지 설치<br>pip install -r course_requirements.txt</div></foreignObject></g></g></g><g class="node default" id="flowchart-F-164" transform="translate(602.0625038146973,416.59375)" style="opacity: 1;"><rect rx="5" ry="5" x="-130.828125" y="-36.71875" width="261.65625" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-120.828125,-26.71875)"><foreignObject width="241.65625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Gemini CLI 설치<br>npm install -g @google/gemini-cli</div></foreignObject></g></g></g><g class="node default" id="flowchart-B-160" transform="translate(188.1197967529297,243.15625)" style="opacity: 1;"><rect rx="5" ry="5" x="-59.91666793823242" y="-36.71875" width="119.83333587646484" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-49.91666793823242,-26.71875)"><foreignObject width="99.83333587646484" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Python 설치<br>+ Add to PATH</div></foreignObject></g></g></g><g class="node default" id="flowchart-C-161" transform="translate(387.81250381469727,243.15625)" style="opacity: 1;"><rect rx="5" ry="5" x="-89.77604675292969" y="-36.71875" width="179.55209350585938" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-79.77604675292969,-26.71875)"><foreignObject width="159.55209350585938" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">VS Code 설치<br>+ Python/Jupyter 확장</div></foreignObject></g></g></g><g class="node default" id="flowchart-D-162" transform="translate(602.0625038146973,243.15625)" style="opacity: 1;"><rect rx="5" ry="5" x="-74.47396087646484" y="-23.359375" width="148.9479217529297" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-64.47396087646484,-13.359375)"><foreignObject width="128.9479217529297" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Node.js (LTS) 설치</div></foreignObject></g></g></g><g class="node default" id="flowchart-A-159" transform="translate(387.81250381469727,69.71875)" style="opacity: 1;"><rect rx="5" ry="5" x="-73.703125" y="-36.71875" width="147.40625" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-63.703125,-26.71875)"><foreignObject width="127.40625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">프로젝트 폴더 생성<br>C:\ai-agent</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<h2 id="사전-준비">1. 사전 준비</h2>
+<h3 id="필수-확인-사항">1.1. 필수 확인 사항</h3>
+<ul>
+<li><strong>운영체제(OS)</strong>: 본인의 컴퓨터 운영체제 버전을 확인하세요.</li>
+<li><strong>관리자 권한</strong>: 일부 프로그램 설치 시 관리자 암호가 필요할 수 있습니다.</li>
+<li><strong>인터넷 연결</strong>: 모든 설치 과정에서 안정적인 인터넷 연결이 필요합니다.</li>
+<li><strong>재부팅</strong>: 설치 과정 중간에 재부팅이 필요할 수 있습니다. 중요한 작업은 미리 저장해주세요.</li>
+</ul>
+<h3 id="프로젝트-폴더-생성">1.2. 프로젝트 폴더 생성</h3>
+<p><strong>무엇을?</strong> 앞으로 모든 실습 코드와 파일을 저장할 최상위 폴더를 만듭니다.<br>
+<strong>왜?</strong> 파일을 체계적으로 관리하고, 경로 문제 발생을 예방하기 위함입니다.</p>
+<blockquote>
+<p>⚠️ <strong>중요</strong>: 폴더 경로나 파일 이름에 <strong>공백</strong>이나 <strong>한글</strong>을 사용하지 마세요. 많은 개발 도구에서 예기치 않은 오류를 발생시키는 주된 원인입니다.</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>Windows</strong>: 파일 탐색기를 열고 <code>C:\</code> 드라이브에 <code>ai-agent</code> 라는 이름의 새 폴더를 만드세요. 최종 경로는 <code>C:\ai-agent</code>가 됩니다.</p>
+</li>
+<li>
+<p><strong>macOS/Ubuntu</strong>: 터미널을 열고 다음 명령어를 입력하세요.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">mkdir</span> ~/ai-agent
+<span class="token function">cd</span> ~/ai-agent
+</code></pre>
+</li>
+</ul>
+<h3 id="windows-사용자를-위한-커맨드라인터미널-빠른-가이드">1.3. Windows 사용자를 위한 커맨드라인(터미널) 빠른 가이드</h3>
+<p><strong>무엇을?</strong> 앞으로의 설치 및 실행 명령어를 입력할 '명령어 창’을 켭니다. 윈도우에서는 ‘PowerShell’ 또는 'cmd’를 사용하는 것이 일반적입니다.<br>
+<strong>왜?</strong> 개발자들이 사용하는 많은 도구들은 그래픽 인터페이스(GUI)가 아닌 텍스트 기반의 명령어 인터페이스(CLI, Command Line Interface)로 작동합니다. 마우스 클릭 대신 키보드로 명령을 내리는 방식이며, 개발자에게는 필수적인 도구입니다.</p>
+<p><strong>1. 터미널 열기 (여러 방법)</strong></p>
+<ul>
+<li><strong>시작 메뉴 → PowerShell</strong> (권장)<br>
+검색창에 <code>PowerShell</code> 입력 → <strong>Windows PowerShell</strong> 실행 (키보드의 <code>Windows</code> 키(보통 <code>Ctrl</code>과 <code>Alt</code> 키 사이에 있는 창문 모양 키)를 누르고 ‘PowerShell’ 타이핑)</li>
+<li><strong>명령 프롬프트(cmd)</strong><br>
+검색창에 <code>cmd</code> 입력 → <strong>명령 프롬프트</strong> 실행</li>
+<li><strong>VS Code 내장 터미널</strong> (프로젝트 폴더에서 바로 실행. 추후 실습과정에서 활용)<br>
+VS Code 열기 → <strong>Terminal &gt; New Terminal</strong> (단축키: <code>Ctrl</code> + <code>Shift</code> + <code>｀</code>)\</li>
+<li><strong>파일 탐색기에서 현재 폴더로 열기</strong><br>
+탐색기에서 원하는 폴더를 연 뒤, 주소창에 <code>powershell</code> 또는 <code>cmd</code> 입력 후 <strong>Enter</strong></li>
+</ul>
+<p><strong>2. PowerShell 기본 사용법</strong></p>
+<ul>
+<li>
+<p><strong>명령어 복사/붙여넣기</strong>:</p>
+<ul>
+<li>이 가이드에 있는 명령어 블록 오른쪽 위의 ‘Copy’ 버튼을 클릭하여 복사(<code>Ctrl+C</code>)합니다.</li>
+<li>PowerShell 창 안에서 마우스 오른쪽 버튼을 한 번 클릭하면 자동으로 붙여넣기 됩니다. 또는 <code>Ctrl+V</code>를 사용해도 됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>명령어 실행</strong>:</p>
+<ul>
+<li>명령어를 붙여넣거나 직접 입력한 후, <code>Enter</code> 키를 누르면 명령이 실행됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>폴더 이동 (<code>cd</code> 명령어)</strong>:</p>
+<ul>
+<li><code>cd</code>는 Change Directory의 약자로, 현재 작업 위치를 다른 폴더로 변경하는 명령어입니다.</li>
+<li>우리의 프로젝트 폴더인 <code>C:\ai-agent</code>로 이동하려면 아래와 같이 입력하고 <code>Enter</code>를 누릅니다.</li>
+</ul>
+<!-- end list -->
+<pre class=" language-powershell"><code class="prism  language-powershell">cd C:\ai<span class="token operator">-</span>agent
+</code></pre>
+<ul>
+<li>
+<p><code>cd C:\ai-agent</code> 명령어를 실행했을 때, 프롬프트(명령어 입력 줄)의 경로가 <code>PS C:\ai-agent&gt;</code> 와 같이 변경되었는지 확인하세요. 앞으로 모든 터미널 작업은 이 폴더 안에서 진행합니다.</p>
+</li>
+<li>
+<p>경로에 공백이 있을 때: 따옴표로 묶기 예) <code>cd "C:\Users\Hong Kim\ai-agent"</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>현재 폴더 확인:</strong> PowerShell: <code>Get-Location</code> 또는 <code>pwd</code></p>
+</li>
+<li>
+<p><strong>폴더 목록 보기:</strong> <code>dir</code></p>
+</li>
+</ul>
+<p><strong>3. 자주 쓰는 기본 명령(Windows)</strong></p>
+<pre class=" language-powershell"><code class="prism  language-powershell">:: 폴더 만들기 &amp; 이동 <span class="token punctuation">(</span>cmd or PowerShell<span class="token punctuation">)</span>
+mkdir C:\ai<span class="token operator">-</span>agent &amp;&amp; cd <span class="token operator">/</span>d C:\ai<span class="token operator">-</span>agent
+</code></pre>
+<hr>
+<h2 id="python-설치">2. Python 설치</h2>
+<p><strong>무엇을?</strong> AI 개발의 핵심 언어인 Python을 설치합니다.<br>
+<strong>왜?</strong> 대부분의 AI 라이브러리와 프레임워크가 Python을 기반으로 동작하기 때문입니다.</p>
+<h3 id="windows-1011">2.1. Windows 10/11</h3>
+<ol>
+<li><strong>Python 공식 사이트</strong>(<a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>)에 접속하여 최신 버전을 다운로드합니다.</li>
+<li>다운로드한 설치 파일을 실행합니다.</li>
+<li><strong>설치 화면 하단</strong>에서 <strong>“Add Python to PATH”</strong> 또는 <strong>“Add python.exe to PATH”</strong> 체크박스를 <strong>반드시</strong> 체크합니다. 이 옵션을 선택해야만 1.3에서 배운 PowerShell 어디서든 <code>python</code> 명령어를 사용할 수 있습니다.</li>
+<li><code>Install Now</code>를 클릭하여 설치를 진행합니다.</li>
+</ol>
+<h3 id="macos-13">2.2. macOS 13+</h3>
+<p>macOS에는 기본적으로 Python이 설치되어 있지만, 버전이 오래되었을 수 있습니다. <code>Homebrew</code>라는 패키지 관리자를 통해 최신 버전을 설치하는 것을 권장합니다.</p>
+<ol>
+<li>
+<p><strong>Homebrew 설치</strong> (이미 설치되어 있다면 건너뛰세요)<br>
+터미널을 열고 아래 명령어를 붙여넣어 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">/bin/bash -c <span class="token string">"<span class="token variable"><span class="token variable">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="token variable">)</span></span>"</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Python 설치</strong><br>
+Homebrew 설치가 완료되면, 터미널에 아래 명령어를 입력합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">brew <span class="token function">install</span> python3
+</code></pre>
+</li>
+</ol>
+<h3 id="ubuntu-22.04">2.3. Ubuntu 22.04+</h3>
+<p>Ubuntu에는 기본적으로 Python 3가 설치되어 있지만, 개발에 필요한 도구들을 추가로 설치합니다.</p>
+<ol>
+<li>
+<p>터미널을 열고 패키지 목록을 업데이트합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">sudo</span> apt update
+<span class="token function">sudo</span> apt upgrade -y
+</code></pre>
+</li>
+<li>
+<p>Python 개발 도구와 <code>pip</code>(패키지 설치 도구), <code>venv</code>(가상환경 도구)를 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">sudo</span> apt <span class="token function">install</span> -y python3-pip python3.10-venv
+</code></pre>
+</li>
+</ol>
+<p><strong>설치 후 공통 확인</strong></p>
+<p><strong>확인(Check)</strong></p>
+<p>터미널을 열고 (윈도우 사용자는 1.3에서 배운 방법으로 <strong>새로운 PowerShell 창을 엽니다</strong>) 아래 명령어를 입력하여 버전이 올바르게 출력되는지 확인하세요. (버전 숫자는 설치 시점에 따라 다를 수 있습니다.)</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># Python 버전 확인</span>
+python --version
+<span class="token comment"># pip 버전 확인</span>
+pip --version
+</code></pre>
+<ul>
+<li><strong>기대 출력 (예시)</strong>: <code>Python 3.11.4</code>, <code>pip 23.2.1 ...</code></li>
+</ul>
+<h3 id="가상환경venv-설정-선택">2.4. 가상환경(venv) 설정 (선택)</h3>
+<p><strong>무엇을?</strong> 프로젝트별로 독립된 Python 실행 환경을 만듭니다.<br>
+<strong>왜?</strong> 프로젝트마다 사용하는 패키지 버전이 달라 발생하는 충돌을 방지하고, 내 컴퓨터를 깨끗하게 유지하기 위함입니다.</p>
+<blockquote>
+<p>💡 <strong>안내</strong>: 가상환경(venv) 설치는 선택사항이며, 본 교육실습을 위해서는 설치하지 않아도 실습진행에 전혀 문제가 없습니다. 추후 본격적인 개발시에 적용할 수 있도록 사전안내하는 용도입니다.</p>
+</blockquote>
+<ol>
+<li>
+<p><strong>가상환경 생성</strong>:</p>
+<ul>
+<li><strong>Windows</strong>: PowerShell을 실행하고 <code>cd C:\ai-agent</code> 명령어로 프로젝트 폴더로 이동합니다.</li>
+<li><strong>macOS/Ubuntu</strong>: 터미널이 <code>~/ai-agent</code> 경로에 있는지 확인합니다.</li>
+<li><strong>공통</strong>: 현재 폴더에 <code>.venv</code>라는 이름의 가상환경을 생성합니다.</li>
+</ul>
+<!-- end list -->
+<pre class=" language-bash"><code class="prism  language-bash">python -m venv .venv
+</code></pre>
+</li>
+<li>
+<p><strong>가상환경 활성화</strong>:<br>
+터미널 프롬프트 앞에 <code>(.venv)</code>가 붙으면 성공입니다.</p>
+<ul>
+<li><strong>Windows (PowerShell)</strong>:<pre class=" language-powershell"><code class="prism  language-powershell"><span class="token punctuation">.</span>venv\Scripts\Activate<span class="token punctuation">.</span>ps1
+<span class="token comment"># 권한 오류 발생 시: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process 실행 후 재시도</span>
+</code></pre>
+</li>
+<li><strong>macOS/Ubuntu</strong>:<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">source</span> .venv/bin/activate
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>확인(Check)</strong>: PowerShell 프롬프트가 <code>(.venv) PS C:\ai-agent&gt;</code> 와 같이 변경되었는지 확인하세요.</p>
+<ol start="3">
+<li><strong>가상환경 비활성화</strong>
+<ul>
+<li>가상환경을 비활성화하기 위해서는 아래 명령어를 입력하면 됩니다.</li>
+</ul>
+<pre class=" language-powershell"><code class="prism  language-powershell">    deactivate 
+</code></pre>
+</li>
+</ol>
+<blockquote>
+<p>💡 <strong>Tip:</strong> 앞으로 이 프로젝트 관련 작업을 할 때는 항상 터미널을 열고 <strong>가장 먼저 프로젝트 폴더로 이동(<code>cd C:\ai-agent</code>)한 후, 가상환경을 활성화</strong>하는 습관을 들이세요.</p>
+</blockquote>
+<hr>
+<h2 id="필수-python-패키지-설치-jupyter-reliability">3. 필수 Python 패키지 설치 (Jupyter, reliability)</h2>
+<p><strong>무엇을?</strong> AI-Agent 개발 및 데이터 분석에 필수적인 Jupyter와 신뢰성 패키지 및 관련 도구를 설치합니다. 이후에도 실습 과정에서 필요한 Python 패키지는 이 방법을 통해서 설치할 것입니다.<br>
+<strong>왜?</strong> Jupyter 노트북은 코드, 설명, 실행 결과를 한 번에 볼 수 있어 실험과 분석에 매우 유용합니다. 그리고 reliability 패키지는 Python에서 가장 널리 사용되는 신뢰성 분석 패키지입니다.</p>
+<ol>
+<li>
+<p><strong>pip 업그레이드</strong><br>
+이전 단계의 <strong>터미널 창</strong>에서 이어서 아래 명령어를 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">python -m pip <span class="token function">install</span> --upgrade pip
+</code></pre>
+</li>
+<li>
+<p><strong>핵심 패키지 설치</strong><br>
+Jupyter Notebook, reliability와 VS Code 연동에 필요한 패키지들을 한 번에 설치합니다.<br>
+커맨드라인에 많은 메세지가 표시되면서 설치가 진행되고, 시간이 꽤 걸립니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> jupyter ipykernel matplotlib numpy pandas reliability
+</code></pre>
+<blockquote>
+<p>💡 <strong>Tip: 전체 패키지 한번에 설치하기 (적극 권장)</strong></p>
+<p>본 교육과정의 모든 실습에 필요한 패키지를 한 번에 설치하는 두 가지 방법입니다.</p>
+<p><strong>방법 1: <code>requirements.txt</code> 파일 사용 (가장 권장)</strong><br>
+프로젝트 루트 폴더에 있는 <code>course_requirements.txt</code> 파일을 이용하여 모든 패키지를 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> -r course_requirements.txt
+</code></pre>
+<p><strong>방법 2: 직접 모든 패키지 나열</strong><br>
+아래 명령어를 복사하여 붙여넣어도 동일하게 설치할 수 있습니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> requests beautifulsoup4 html2text jupyter ipykernel matplotlib numpy pandas reliability typing typing_extensions streamlit agent python-dotenv dotenv langgraph langchain langchain_google_genai langchain_core langchain_community faiss-cpu Ipython fastapi <span class="token string">"uvicorn[standard]"</span> python-multipart openpyxl
+</code></pre>
+</blockquote>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>설치된 패키지 목록을 확인합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip list
+</code></pre>
+<ul>
+<li><strong>기대 출력</strong>: <code>jupyter</code>, <code>ipykernel</code>, <code>matplotlib</code>, <code>numpy</code>, <code>pandas</code> 등의 패키지가 목록에 보이면 성공입니다.</li>
+</ul>
+<hr>
+<h2 id="vs-code-설치--기본-설정">4. VS Code 설치 &amp; 기본 설정</h2>
+<p><strong>무엇을?</strong> 코드를 작성하고 실행할 통합 개발 환경(IDE)인 Visual Studio Code를 설치합니다.<br>
+<strong>왜?</strong> 가볍고 빠르며, 강력한 확장 기능을 통해 Python, Jupyter, 웹 개발 등 모든 작업을 하나의 도구에서 처리할 수 있습니다.</p>
+<h3 id="vs-code-설치">4.1. VS Code 설치</h3>
+<ul>
+<li><strong>공식 사이트</strong>(<a href="https://code.visualstudio.com/">https://code.visualstudio.com/</a>)에 접속하여 본인 OS에 맞는 버전을 다운로드하여 설치합니다.</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>경고</strong>: 관리자 권한으로 VS Code를 실행하지 마세요. 불필요하며, 확장 프로그램 설치나 파일 권한 관련 문제를 일으킬 수 있습니다.</p>
+</blockquote>
+<h3 id="권장-설정-및-확장-프로그램-설치">4.2. 권장 설정 및 확장 프로그램 설치</h3>
+<p>VS Code를 실행하고, 아래 순서대로 설정을 진행하세요.</p>
+<ol>
+<li>
+<p><strong>한국어 언어 팩 설치</strong></p>
+<ul>
+<li>좌측 메뉴에서 네모 블록 모양의 <strong>확장(Extensions)</strong> 아이콘을 클릭합니다. (단축키: <code>Ctrl+Shift+X</code>)</li>
+<li>검색창에 <code>korean</code>을 입력합니다.</li>
+<li><code>Korean Language Pack for Visual Studio Code</code>를 찾아 <code>Install</code> 버튼을 누르고, 안내에 따라 VS Code를 재시작합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>필수 확장 프로그램 설치</strong><br>
+같은 방식으로 아래 확장 프로그램들을 검색하여 설치합니다.</p>
+<ul>
+<li><strong>Python</strong> (<code>ms-python.python</code>): Python 코드 작성의 필수 도구 (디버깅, 린팅 등)</li>
+<li><strong>Jupyter</strong> (<code>ms-toolsai.jupyter</code>): VS Code 내에서 Jupyter 노트북을 만들고 실행</li>
+<li><strong>Markdown All in One</strong> (<code>yzhang.markdown-all-in-one</code>): 마크다운 문서 작성을 편리하게 해줌</li>
+</ul>
+</li>
+<li>
+<p><strong>자동 저장 설정 (권장)</strong></p>
+<ul>
+<li><code>파일</code> &gt; <code>기본 설정</code> &gt; <code>설정</code> (단축키: <code>Ctrl+,</code>)으로 이동합니다.</li>
+<li>검색창에 <code>auto save</code>를 입력합니다.</li>
+<li><code>Files: Auto Save</code> 옵션을 <code>onFocusChange</code>(파일 외부를 클릭할 때) 또는 <code>afterDelay</code>(일정 시간 후)로 변경합니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="python-인터프리터-설정">4.3. Python 인터프리터 설정</h3>
+<p><strong>무엇을?</strong> VS Code가 우리가 설치한 Python을 사용하도록 지정합니다.<br>
+<strong>왜?</strong> 이 설정을 해야만 VS Code가 Python 코드를 올바르게 인식하고 실행할 수 있습니다.</p>
+<ol>
+<li>VS Code에서 <code>파일</code> &gt; <code>폴더 열기</code>를 선택하고, 1.2에서 만든 <code>ai-agent</code> 폴더를 엽니다. '이 폴더에 있는 작성자를 신뢰합니까?'를 물어보는 경우 ‘예. 작성자를 신뢰합니다.’ 를 클릭합니다.</li>
+<li><code>Ctrl+Shift+P</code>를 눌러 명령 팔레트를 엽니다.</li>
+<li><code>Python: Select Interpreter</code>를 검색하고 선택합니다.</li>
+<li>목록에서 2장에서 설치한 Python 버전을 선택합니다. 보통 <code>Python 3.x.x</code> 와 같이 표시되며, 경로가 <code>C:\Python3x\python.exe</code> (Windows) 또는 <code>/usr/bin/python3</code> (macOS/Ubuntu)와 같이 전역 경로로 되어 있는 것을 선택합니다.
+<blockquote>
+<p>(참고: 만약 2.4절에 따라 가상환경을 만드셨다면, <code>'.venv': venv</code> 라고 표시된 인터프리터를 선택해도 됩니다.)</p>
+</blockquote>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>VS Code 창의 <strong>오른쪽 하단 파란색 상태 표시줄</strong>을 보세요. <code>Python 3.x.x</code> 와 같이 여러분이 설치한 Python 버전이 표시되면 올바르게 설정된 것입니다. (가상환경 사용 시에는 <code>Python 3.x.x ('.venv': venv)</code>로 표시됩니다.)</p>
+<h2 id="jupyter-노트북-간단-실행검증">5. Jupyter 노트북 간단 실행검증</h2>
+<p><strong>무엇을?</strong> VS Code 안에서 Jupyter 노트북을 만들어 간단한 코드를 실행해 봅니다.<br>
+<strong>왜?</strong> 지금까지 설치한 Python, 가상환경, 패키지, VS Code 설정이 모두 올바르게 연동되었는지 최종 확인하는 과정입니다.</p>
+<ol>
+<li>
+<p>VS Code 탐색기에서 <code>새 파일</code> 아이콘을 클릭하고, 파일 이름을 <code>test.ipynb</code>로 만듭니다. (<code>.ipynb</code> 확장자가 중요합니다.)</p>
+</li>
+<li>
+<p><code>test.ipynb</code> 파일을 열면 Jupyter 노트북 화면이 나타납니다.</p>
+</li>
+<li>
+<p><strong>커널 선택</strong>: 화면 우측 상단에 <code>커널 선택(Select Kernel)</code> 버튼을 클릭하고, 목록에서 3.3에서 등록한 <code>ai-agent</code>를 선택합니다. 만약 <code>ai-agent</code> 커널이 보이지 않는다면, 목록에서 <code>Python 3.x.x</code> (Global) 이라고 표시된 것을 선택해도 무방합니다.</p>
+</li>
+<li>
+<p><code>+ 코드</code> 버튼을 클릭하여 코드 셀을 생성하고 첫 번째 코드 셀에 아래 코드를 입력합니다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Hello, AI-agent!"</span><span class="token punctuation">)</span>
+</code></pre>
+</li>
+<li>
+<p>셀 왼쪽에 있는 <strong>재생(▶️)</strong> 버튼을 누르거나, <code>Ctrl+Enter</code>를 눌러 코드를 실행합니다. 셀 바로 아래에 <code>Hello, AI-agent!</code>가 출력되면 성공입니다.</p>
+</li>
+<li>
+<p>아래쪽 <code>+ 코드</code> 버튼을 눌러 새 셀을 추가하고, 아래 코드를 붙여넣은 후 실행해보세요.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+
+x <span class="token operator">=</span> np<span class="token punctuation">.</span>linspace<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">100</span><span class="token punctuation">)</span>
+y <span class="token operator">=</span> np<span class="token punctuation">.</span>sin<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"Test Plot from Jupyter in VS Code"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">"x"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">"sin(x)"</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>grid<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>코드 셀 아래에 사인파(sin wave) 그래프가 나타나면, 데이터 분석 및 시각화 패키지까지 완벽하게 설치된 것입니다.</p>
+<hr>
+<h2 id="node.jslts-설치">6. Node.js(LTS) 설치</h2>
+<p><strong>무엇을?</strong> JavaScript 런타임인 Node.js와 패키지 매니저인 npm을 설치합니다.<br>
+<strong>왜?</strong> 최신 웹 프론트엔드(React 등)를 개발하거나, JavaScript 기반의 AI 관련 도구(Gemini CLI 등)를 사용할 때 필요합니다. <strong>LTS(Long-Term Support)</strong> 버전은 장기적으로 안정적인 지원이 보장되므로 권장됩니다.</p>
+<h3 id="windows-1011-1">6.1. Windows 10/11</h3>
+<ol>
+<li><strong>Node.js 공식 사이트</strong>(<a href="https://nodejs.org/">https://nodejs.org/</a>)에 접속합니다.</li>
+<li><strong>LTS</strong>라고 표시된 버전을 다운로드하여 설치합니다. 설치 과정은 기본 옵션을 그대로 두고 진행하면 됩니다. <code>PATH</code>도 자동으로 추가됩니다.</li>
+</ol>
+<h3 id="macos-13-1">6.2. macOS 13+</h3>
+<p>Homebrew를 사용하여 설치하는 것이 가장 간편합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">brew <span class="token function">install</span> node
+</code></pre>
+<h3 id="ubuntu-22.04-1">6.3. Ubuntu 22.04+</h3>
+<p><code>nvm</code>(Node Version Manager)을 사용하면 다양한 Node.js 버전을 쉽게 관리할 수 있습니다.</p>
+<ol>
+<li>
+<p><strong>nvm 설치 스크립트 실행</strong></p>
+<pre class=" language-bash"><code class="prism  language-bash">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh <span class="token operator">|</span> <span class="token function">bash</span>
+</code></pre>
+</li>
+<li>
+<p>터미널을 껐다가 다시 켜거나, <code>source ~/.bashrc</code> 를 실행하여 nvm 명령어를 활성화합니다.</p>
+</li>
+<li>
+<p><strong>Node.js LTS 버전 설치 및 사용 설정</strong></p>
+<pre class=" language-bash"><code class="prism  language-bash">nvm <span class="token function">install</span> --lts
+nvm use --lts
+</code></pre>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p><strong>새로운 터미널 창을 열고</strong> (윈도우 사용자는 시작 메뉴에서 PowerShell을 새로 실행) 아래 명령어를 입력하여 버전이 올바르게 출력되는지 확인하세요.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># Node.js 버전 확인</span>
+node -v
+<span class="token comment"># npm 버전 확인</span>
+<span class="token function">npm</span> -v
+</code></pre>
+<ul>
+<li><strong>기대 출력 (예시)</strong>:<pre><code>v22.5.1
+10.8.1
+</code></pre>
+</li>
+</ul>
+<h3 id="windows-문제-해결-troubleshooting">6.4. Windows 문제 해결 (Troubleshooting)</h3>
+<p>Node.js 설치 후 Windows 환경에서 발생할 수 있는 몇 가지 일반적인 문제와 해결 방법입니다.</p>
+<ul>
+<li>
+<p><strong>증상 1: <code>npm -v</code> 실행 시 오류 발생</strong></p>
+<p><code>node -v</code>는 정상적으로 실행되지만, <code>npm -v</code>를 실행하면 ‘파일을 로드할 수 없습니다’ 또는 '실행할 수 없습니다’와 같은 경로 관련 오류가 발생하는 경우, PowerShell의 실행 정책(Execution Policy) 문제일 수 있습니다.</p>
+<ul>
+<li><strong>해결 방법: PowerShell 실행 정책 변경</strong>
+<ol>
+<li><strong>관리자 권한으로 PowerShell 실행</strong>: 시작 메뉴에서 <code>PowerShell</code>을 검색한 후, <strong>Windows PowerShell</strong>에 마우스 오른쪽 버튼을 클릭하여 **‘관리자 권한으로 실행’**을 선택합니다.</li>
+<li><strong>실행 정책 변경</strong>: 아래 명령어를 입력하고 <code>Enter</code>를 누릅니다. 실행 정책을 변경할지 묻는 메시지가 나타나면 <code>Y</code> 또는 <code>A</code>를 입력하고 <code>Enter</code>를 누릅니다.<pre class=" language-powershell"><code class="prism  language-powershell"><span class="token function">Set</span><span class="token operator">-</span>ExecutionPolicy RemoteSigned <span class="token operator">-</span>Scope CurrentUser
+</code></pre>
+</li>
+<li><strong>PowerShell 창 닫고 새로 열기</strong>: 관리자 PowerShell 창을 닫고, 일반 PowerShell 창을 새로 열어 <code>npm -v</code>가 정상적으로 실행되는지 다시 확인합니다.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>증상 2: <code>python</code> 명령어 실행 시 Microsoft Store가 열리는 경우</strong></p>
+<p>터미널에서 <code>python</code>을 입력했을 때 Python 인터프리터가 실행되지 않고 Microsoft Store의 Python 앱 페이지로 연결되는 경우가 있습니다. 이는 Windows가 <code>python</code> 명령어에 대한 바로 가기를 앱 스토어로 기본 설정해두었기 때문입니다.</p>
+<ul>
+<li><strong>해결 방법</strong>:
+<ol>
+<li>Windows <code>설정</code> &gt; <code>앱</code> &gt; <code>고급 앱 설정</code> &gt; <code>앱 실행 별칭</code>으로 이동합니다.</li>
+<li>목록에서 <code>Python</code>과 관련된 항목(<code>앱 설치 관리자 (python.exe)</code>)을 찾아 **끔(Off)**으로 변경합니다.</li>
+<li>만약 해결되지 않으면, Python이 올바르게 설치되지 않았거나 설치 시 <strong>“Add Python to PATH”</strong> 옵션을 체크하지 않았을 가능성이 높습니다. 가이드의 <strong>2.1절</strong>을 참고하여 Python을 재설치하세요.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="gemini-cli-설치--테스트">7. Gemini CLI 설치 &amp; 테스트</h2>
+<p><strong>무엇을?</strong> 터미널에서 명령어로 Gemini AI 모델을 통해 개발하고 테스트할 수 있는 <code>gemini-cli</code> 도구를 설치합니다.<br>
+<strong>왜?</strong> 코딩 없이 아이디어를 빠르게 프로토타이핑하고 모델의 성능을 시험해볼 수 있습니다.</p>
+<h3 id="gemini-cli-설치">7.1. Gemini CLI 설치</h3>
+<p>PowerShell과 같은 터미널 창에서 아래 명령어를 입력하여 <code>gemini-cli</code>를 전역(global)으로 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> <span class="token function">install</span> -g @google/gemini-cli
+</code></pre>
+<ul>
+<li><strong>macOS/Ubuntu에서 권한 오류(<code>EACCES</code>) 발생 시</strong>:<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">sudo</span> <span class="token function">npm</span> <span class="token function">install</span> -g @google/gemini-cli
+</code></pre>
+</li>
+</ul>
+<h3 id="gemini-인증-로그인-방식">7.2. Gemini 인증: 로그인 방식</h3>
+<p>API 키를 직접 관리하는 대신, Google 계정으로 직접 로그인하는 방식입니다. 간편하고 안전하여 초보자에게 권장됩니다.</p>
+<ol>
+<li>
+<p>원하는 경로로 이동하여 터미널에 아래 명령어를 입력하고 Gemini CLI를 실행합니다. (C:\ai-agent 경로 이동 권장)</p>
+<pre class=" language-bash"><code class="prism  language-bash">gemini
+</code></pre>
+</li>
+<li>
+<p>명령을 실행하면 로그인 방식을 묻는 질문이 나타납니다. 화살표키로 '1. Login with Google’을 선택하고 <code>Enter</code> 키를 누릅니다.</p>
+</li>
+<li>
+<p>자동으로 웹 브라우저가 열리면서 Google 계정 로그인 및 권한 요청 화면이 나타납니다.</p>
+</li>
+<li>
+<p><strong>Gemini API를 사용할 Google 계정을 선택</strong>하고, "모두 선택"을 통해 필요한 권한을 허용한 후 “계속” 버튼을 클릭합니다.</p>
+</li>
+<li>
+<p>“Authentication successful” (인증 성공) 메시지가 표시된 페이지가 보이면 브라우저 창을 닫아도 됩니다. 터미널이 자동으로 인증을 완료합니다.</p>
+</li>
+</ol>
+<h3 id="gemini-인증-api-키-직접-발급-및-.env-설정">7.3. Gemini 인증: API 키 직접 발급 및 .env 설정</h3>
+<p>웹 기반 로그인이 실패하거나, 서버 환경 등에서 수동으로 키를 관리해야 할 때 사용하는 방법입니다. 이 방법은 CLI 도구를 직접 인증하는 대신, 애플리케이션이 사용할 <code>.env</code> 파일을 바로 설정합니다.</p>
+<ol>
+<li>
+<p><strong>Google AI Studio에서 API 키 발급 (상세내용 부록 참조)</strong></p>
+<ul>
+<li><strong>Google AI Studio</strong>(<a href="https://aistudio.google.com/">https://aistudio.google.com/</a>)에 접속하여 구글 계정으로 로그인합니다.</li>
+<li>좌측 메뉴에서 **<code>Get API key</code>**를 클릭하고, <code>Create API key in new project</code> 버튼을 눌러 새로운 키를 생성합니다.</li>
+<li>생성된 API 키 문자열을 복사합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>.env 파일에 키 저장</strong></p>
+<ul>
+<li>VS Code를 열어 <code>ai-agent</code> 폴더 최상위에 <code>.env</code> 라는 이름의 새 파일을 만듭니다. (이미 있다면 해당 파일을 엽니다.)</li>
+<li>파일 안에 아래 형식으로 1단계에서 복사한 키를 붙여넣고 저장합니다.</li>
+</ul>
+<!-- end list -->
+<pre><code>GOOGLE_API_KEY="여기에-AI-Studio에서-발급받은-키를-따옴표-없이-그대로-붙여넣으세요"
+</code></pre>
+<p>이것으로 여러분의 <strong>애플리케이션</strong>은 API 키를 사용할 준비가 되었습니다.<br>
+Gemini 로그인 시에 '2. Use Gemini API Key’를 선택하면 해당 폴더에서 <code>.env</code> 파일을 찾아서 자동으로 인증을 수행합니다.</p>
+</li>
+</ol>
+<h3 id="동작-확인">7.4. 동작 확인</h3>
+<p>프롬프트 화면에서 <code>gemini</code> 를 입력하고 <code>enter</code>를 누르면, 텍스트환경의 Gemini CLI가 구동됩니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">gemini
+</code></pre>
+<p>Gemini 실행화면창에서 에서 아래와 같이 간단한 프롬프트를 전달하여 Gemini 모델이 응답하는지 확인합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># Gemini 실행화면에서 직접 아래 메세지를 입력</span>
+
+<span class="token string">"AI-agent 개발 환경 구축에 대해서 초보자도 이해하기 쉽게 한 줄로 설명해줘."</span>
+</code></pre>
+<p><strong>확인(Check)</strong></p>
+<ul>
+<li><strong>기대 출력</strong>:<pre><code>(AI 응답) AI-agent 개발 환경은 Python, VS Code, Node.js 등 필수 도구를 설치하고 가상환경을 설정하여 독립적이고 효율적인 개발 기반을 마련하는 과정입니다.
+</code></pre>
+위와 같이 AI의 답변이 정상적으로 출력되면 CLI 설정이 성공적으로 완료된 것입니다.</li>
+</ul>
+<hr>
+<h2 id="프론트엔드백엔드-실습-준비">8. 프론트엔드/백엔드 실습 준비</h2>
+<p>이제 AI 모델을 활용한 웹 애플리케이션을 만들 준비를 합니다. 대표적인 3가지 프레임워크를 설치하고 실행해봅니다.</p>
+<h3 id="streamlit-간단한-웹-ui">8.1. Streamlit (간단한 웹 UI)</h3>
+<p>데이터 분석 결과를 손쉽게 인터랙티브 웹 앱으로 만들 때 유용합니다. (Python 가상환경이 활성화된 상태에서 진행하세요.)</p>
+<ol>
+<li>
+<p><strong>설치</strong>:</p>
+<p><code>ai-agent</code> 폴더로 이동한 터미널에서 아래 명령어를 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> streamlit
+</code></pre>
+</li>
+<li>
+<p><strong>실행 검증</strong>:</p>
+<pre class=" language-bash"><code class="prism  language-bash">streamlit hello
+</code></pre>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>웹 브라우저가 자동으로 열리면서 Streamlit 데모 페이지가 나타납니다. 터미널에서 <code>Ctrl+C</code>를 눌러 서버를 중지할 수 있습니다.</p>
+<h3 id="react-최신-프론트엔드">8.2. React (최신 프론트엔드)</h3>
+<p>복잡하고 동적인 사용자 인터페이스(UI)를 구축할 때 사용되는 표준 프론트엔드 라이브러리입니다. <code>Vite</code>를 사용해 프로젝트를 빠르게 생성합니다.</p>
+<ol>
+<li>
+<p><strong>프로젝트 생성</strong>:<br>
+<strong>가상환경이 활성화되지 않은 일반 터미널 창</strong>에서 <code>ai-agent</code> 폴더로 이동 후 아래 명령어를 실행합니다. (<code>cd C:\ai-agent</code>로 이동)</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> create vite@latest my-react-app -- --template react
+
+</code></pre>
+</li>
+<li>
+<p><strong>의존성 설치 및 개발 서버 실행</strong>:<br>
+명령어 실행이 끝나면, <strong>같은 터미널 창에서</strong> 새로 생긴 <code>my-react-app</code> 폴더로 이동한 후 개발 서버를 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">cd</span> my-react-app
+<span class="token function">npm</span> <span class="token function">install</span>
+<span class="token function">npm</span> run dev
+</code></pre>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>터미널에 <code>Local: http://localhost:5173/</code> (포트 번호는 다를 수 있음)와 같은 주소가 출력됩니다. 이 주소를 웹 브라우저에서 열었을 때 React 로고가 회전하는 페이지가 보이면 성공입니다. <code>Ctrl+C</code>로 서버를 중지하세요.</p>
+<h3 id="fastapi-고성능-백엔드">8.3. FastAPI (고성능 백엔드)</h3>
+<p>AI 모델을 서빙하는 API 서버를 만들 때 매우 유용한 Python 웹 프레임워크입니다.</p>
+<ol>
+<li>
+<p><strong>설치</strong>:</p>
+<p><code>ai-agent</code> 폴더로 이동한 터미널에서 FastAPI와 서버 실행 도구인 <code>uvicorn</code>을 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> fastapi uvicorn<span class="token punctuation">[</span>standard<span class="token punctuation">]</span>
+</code></pre>
+</li>
+<li>
+<p><strong>최소 API 서버 코드 작성</strong>:<br>
+VS Code를 이용해 <code>main.py</code> 파일을 만들고 아래 코드를 붙여넣습니다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token comment"># main.py</span>
+<span class="token keyword">from</span> fastapi <span class="token keyword">import</span> FastAPI
+
+app <span class="token operator">=</span> FastAPI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+@app<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"/health"</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">read_health</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"ok"</span><span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li>
+<p><strong>서버 실행</strong>:<br>
+<code>main.py</code> 파일이 있는 <code>ai-agent</code> 폴더의 터미널에서 아래 명령을 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">uvicorn main:app --reload
+</code></pre>
+</li>
+</ol>
+<p><strong>확인(Check)</strong></p>
+<p>웹 브라우저에서 <code>http://127.0.0.1:8000/health</code> 주소로 접속했을 때 <code>{"status":"ok"}</code> 라는 JSON 응답이 보이면 성공입니다. <code>Ctrl+C</code>로 서버를 중지하세요.</p>
+<hr>
+<h2 id="프로젝트-폴더-구조-제안">9. 프로젝트 폴더 구조 제안</h2>
+<p>본 교육 과정의 실습은 복잡한 폴더 구조 없이 <code>C:\ai-agent</code> 폴더 하나에서 모든 파일을 관리하는 것을 기본으로 합니다. 모든 Python 패키지는 전역(Global) 환경에 설치되므로, 별도의 프로젝트 폴더나 가상환경을 만들지 않아도 실습을 진행하는 데 문제가 없습니다.</p>
+<h3 id="기본-실습-구조-본-과정">9.1. 기본 실습 구조 (본 과정)</h3>
+<p>모든 실습 파일(<code>*.py</code>, <code>*.ipynb</code>, <code>.env</code> 등)은 <code>ai-agent</code> 폴더에 직접 만들어 관리합니다.</p>
+<pre><code>ai-agent/
+│
+├── test.ipynb
+├── main.py
+├── simple_test.py
+└── ... (다른 실습 파일들)
+</code></pre>
+<h3 id="참고-향후-프로젝트를-위한-폴더-구조-심화">9.2. 참고: 향후 프로젝트를 위한 폴더 구조 (심화)</h3>
+<p>실제 현업 개발에서는 여러 프로젝트를 동시에 진행하며, 프로젝트마다 사용하는 라이브러리(패키지) 버전이 달라 충돌이 발생할 수 있습니다. 이를 방지하기 위해 프로젝트별로 폴더를 나누고 그 안에 독립된 가상환경(<code>.venv</code>)을 구성하는 것이 일반적입니다.</p>
+<p>아래는 가상환경을 사용하는 경우의 예시이며, <strong>본 실습 과정에서는 필수가 아닙니다.</strong></p>
+<ol>
+<li><strong>프로젝트 폴더 생성</strong>: <code>ai-agent</code> 폴더 아래에 <code>project-01-fmea</code> 와 같은 새 프로젝트 폴더를 만듭니다.</li>
+<li><strong>VS Code에서 폴더 열기</strong>: VS Code에서 <code>project-01-fmea</code> 폴더를 엽니다.</li>
+<li><strong>가상환경 생성 및 활성화</strong>: 해당 프로젝트 폴더 내에 터미널을 열고 <code>python -m venv .venv</code> 명령으로 가상환경을 만듭니다. 그리고 <code>.venv\Scripts\Activate.ps1</code> (Windows) 또는 <code>source .venv/bin/activate</code> (macOS/Ubuntu)로 활성화합니다.</li>
+<li><strong>독립적인 패키지 설치</strong>: 활성화된 가상환경 안에서 <code>pip install ...</code> 명령을 사용하면, 설치된 패키지들은 해당 프로젝트 폴더(.venv)에만 종속됩니다.</li>
+</ol>
+<p>이러한 구조는 여러 프로젝트를 체계적으로 관리하고 싶을 때 사용하는 좋은 습관이므로 참고용으로 알아두시면 좋습니다.</p>
+<hr>
+<h2 id="부록">10. 부록</h2>
+<h3 id="부록-gemini-api-키-발급-및-테스트-예제">10.1. 부록: Gemini API 키 발급 및 테스트 예제</h3>
+<p>이 섹션은 여러분이 자신만의 AI 애플리케이션을 만들기 위해 필수적인 Gemini API 키를 발급받고, 이 키가 정상적으로 작동하는지 Python 코드를 통해 확인하는 과정을 안내합니다.</p>
+<h4 id="gemini-api-키-발급-절차">1. Gemini API 키 발급 절차</h4>
+<p>API 키는 여러분의 애플리케이션이 Google의 AI 모델과 통신할 때 사용하는 비밀 열쇠와 같습니다.</p>
+<ol>
+<li>
+<p><strong>Google AI Studio 접속 및 로그인</strong></p>
+<ul>
+<li>웹 브라우저에서 **<a href="https://aistudio.google.com/">Google AI Studio</a>**로 이동합니다.</li>
+<li>Google 계정으로 로그인합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>API 키 메뉴로 이동</strong></p>
+<ul>
+<li>로그인 후, 화면 오른쪽 위에서 열쇠(🔑) 모양의 <strong><code>Get API key</code></strong> 버튼을 클릭합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>새 API 키 생성</strong></p>
+<ul>
+<li><code>Create API key</code> 버튼을 클릭합니다.</li>
+<li>기존에 만들어 둔 Google Cloud 프로젝트가 있다면 선택하거나, 없다면 <code>Create API key in new project</code>를 클릭하여 새로운 프로젝트 내에 키를 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>API 키 복사 및 보관</strong></p>
+<ul>
+<li>잠시 후, 영문과 숫자로 조합된 긴 문자열의 API 키가 생성됩니다. 오른쪽에 있는 복사 버튼을 눌러 키를 복사합니다.</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>매우 중요</strong>:</p>
+<ul>
+<li><strong>API 키는 비밀번호와 같습니다.</strong> 이 키가 외부에 노출되면 다른 사람이 여러분의 사용량으로 비용을 발생시킬 수 있습니다.</li>
+<li>절대로 코드에 직접 작성하거나, 블로그, GitHub와 같은 공개된 장소에 올리지 마세요.</li>
+<li>이 가이드에서 배운 <code>.env</code> 파일에 저장하여 안전하게 관리하세요.</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<p>이제 여러분은 자신만의 API 키를 발급받았습니다. 다음 단계에서 이 키가 잘 작동하는지 테스트해 보겠습니다.</p>
+<hr>
+<h4 id="python으로-gemini-llm-간단-호출-예제">2. Python으로 Gemini LLM 간단 호출 예제</h4>
+<p>가장 기본적인 Python 코드를 작성하여 우리가 발급받은 API 키로 Gemini 모델에게 질문하고 답변을 받아보겠습니다.</p>
+<p><strong>1단계: 필요 라이브러리 설치</strong></p>
+<p>먼저, Gemini API를 Python에서 쉽게 사용할 수 있도록 도와주는 Google 공식 라이브러리와 <code>.env</code> 파일을 읽기 위한 라이브러리를 설치해야 합니다.</p>
+<ul>
+<li>
+<p><code>ai-agent</code> 폴더로 이동한 터미널에서 아래 명령어를 실행하세요.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> google-generativeai python-dotenv
+</code></pre>
+</li>
+</ul>
+<p><strong>2단계: <code>.env</code> 파일 준비</strong></p>
+<ul>
+<li>앞서 발급받은 API 키가 프로젝트 폴더 내 <code>.env</code> 파일에 아래와 같이 저장되어 있는지 확인하세요.<pre><code>GOOGLE_API_KEY="여기에_발급받은_API_키를_붙여넣으세요"
+</code></pre>
+</li>
+</ul>
+<p><strong>3단계: Python 코드 작성</strong></p>
+<ul>
+<li>
+<p>VS Code를 사용하여 프로젝트 폴더에 <code>simple_test.py</code>라는 새 파일을 만들고 아래 코드를 그대로 붙여넣으세요.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token comment"># simple_test.py</span>
+
+<span class="token keyword">import</span> os
+<span class="token keyword">import</span> google<span class="token punctuation">.</span>generativeai <span class="token keyword">as</span> genai
+<span class="token keyword">from</span> dotenv <span class="token keyword">import</span> load_dotenv
+
+<span class="token comment"># 1. .env 파일에서 환경 변수 로드</span>
+load_dotenv<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 2. API 키를 사용하여 Gemini API 설정</span>
+<span class="token comment">#    os.getenv()는 환경 변수에서 'GOOGLE_API_KEY' 값을 찾아옵니다.</span>
+<span class="token keyword">try</span><span class="token punctuation">:</span>
+    genai<span class="token punctuation">.</span>configure<span class="token punctuation">(</span>api_key<span class="token operator">=</span>os<span class="token punctuation">.</span>getenv<span class="token punctuation">(</span><span class="token string">"GOOGLE_API_KEY"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"API 키 설정에 실패했습니다. .env 파일을 확인해주세요."</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">"오류: {e}"</span><span class="token punctuation">)</span>
+    exit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 3. 사용할 Gemini 모델 설정</span>
+<span class="token comment">#    'gemini-2.5-flash-latest'는 빠르고 효율적인 최신 모델입니다.</span>
+model <span class="token operator">=</span> genai<span class="token punctuation">.</span>GenerativeModel<span class="token punctuation">(</span><span class="token string">'gemini-2.5-flash-lite'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 4. 모델에게 전달할 프롬프트(질문) 작성</span>
+prompt <span class="token operator">=</span> <span class="token string">"인공지능으로 할 수 있는 재미있는 일 3가지를 간단하게 알려줘."</span>
+
+<span class="token comment"># 5. 모델에 프롬프트를 전달하고 응답 생성</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Gemini 모델에게 질문하는 중..."</span><span class="token punctuation">)</span>
+response <span class="token operator">=</span> model<span class="token punctuation">.</span>generate_content<span class="token punctuation">(</span>prompt<span class="token punctuation">)</span>
+
+<span class="token comment"># 6. 모델의 답변(텍스트) 출력</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"\n--- Gemini 모델의 답변 ---\n"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"\n--------------------------\n"</span><span class="token punctuation">)</span>
+
+</code></pre>
+</li>
+</ul>
+<p><strong>4단계: 코드 실행</strong></p>
+<ul>
+<li>
+<p>파일을 저장한 뒤, 터미널에서 아래 명령어를 입력하여 코드를 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">python simple_test.py
+</code></pre>
+</li>
+</ul>
+<p><strong>예상 출력 결과</strong></p>
+<p>코드가 성공적으로 실행되면, 터미널에 다음과 유사한 형태의 답변이 출력됩니다. (답변 내용은 실행할 때마다 달라질 수 있습니다.)</p>
+<pre><code>Gemini 모델에게 질문하는 중...
+
+--- Gemini 모델의 답변 ---
+
+AI로 할 수 있는 재미있는 일 3가지를 간단하게 알려드릴게요!
+
+1.  **나만의 이야기나 시 쓰기:** AI에게 특정 주제나 분위기를 주면, 그에 맞춰서 흥미로운 이야기나 아름다운 시를 만들어낼 수 있어요. 동화 작가가 된 것처럼 상상력을 발휘해보세요.
+2.  **새로운 노래 멜로디 만들기:** AI에게 좋아하는 음악 장르나 악기를 알려주면, 신나는 멜로디나 감성적인 곡을 즉석에서 작곡해 줄 수 있습니다. 나만의 히트곡을 만들어보는 건 어떨까요?
+3.  **나만의 그림 스타일로 사진 변환:** 평범한 사진을 AI에게 맡기면, 유명 화가의 화풍처럼 독특한 스타일로 바꿔줄 수 있어요. 특별한 나만의 예술 작품을 만들 수 있답니다.
+
+--------------------------
+</code></pre>
+<p>축하합니다! 여러분은 성공적으로 API 키를 발급받고, Python을 통해 처음으로 대규모 언어 모델과 통신하는 데 성공했습니다. 이제 이 기본 원리를 응용하여 더 복잡하고 재미있는 AI Agent를 만들 준비가 되었습니다.</p>
+<h3 id="자주-쓰는-명령-치트시트">10.2. 자주 쓰는 명령 치트시트</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">목적</th>
+<th align="left">Windows (PowerShell)</th>
+<th align="left">macOS / Ubuntu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>가상환경 활성화 (선택)</strong></td>
+<td align="left"><code>.venv\Scripts\Activate.ps1</code></td>
+<td align="left"><code>source .venv/bin/activate</code></td>
+</tr>
+<tr>
+<td align="left"><strong>가상환경 비활성화 (선택)</strong></td>
+<td align="left"><code>deactivate</code></td>
+<td align="left"><code>deactivate</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Python 패키지 설치</strong></td>
+<td align="left"><code>pip install &lt;package_name&gt;</code></td>
+<td align="left"><code>pip install &lt;package_name&gt;</code></td>
+</tr>
+<tr>
+<td align="left"><strong>npm 전역 패키지 설치</strong></td>
+<td align="left"><code>npm install -g &lt;package_name&gt;</code></td>
+<td align="left"><code>sudo npm install -g &lt;package_name&gt;</code></td>
+</tr>
+<tr>
+<td align="left"><strong>React 개발 서버</strong></td>
+<td align="left"><code>npm run dev</code></td>
+<td align="left"><code>npm run dev</code></td>
+</tr>
+<tr>
+<td align="left"><strong>FastAPI 개발 서버</strong></td>
+<td align="left"><code>uvicorn main:app --reload</code></td>
+<td align="left"><code>uvicorn main:app --reload</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Streamlit 앱 실행</strong></td>
+<td align="left"><code>streamlit run app.py</code></td>
+<td align="left"><code>streamlit run app.py</code></td>
+</tr>
+</tbody>
+</table><h3 id="간단한-용어-설명">10.3. 간단한 용어 설명</h3>
+<ul>
+<li><strong>venv (가상환경)</strong>: 프로젝트별로 독립된 Python 실행 공간. "프로젝트용 책가방"처럼, 필요한 라이브러리만 담아 서로 섞이지 않게 해줍니다.</li>
+<li><strong>커널(Kernel)</strong>: Jupyter 노트북에서 실제 코드를 실행하고 계산을 담당하는 엔진. 어떤 버전의 Python(또는 다른 언어)을 사용할지 결정합니다.</li>
+<li><strong>LTS (Long-Term Support)</strong>: 장기 지원 버전. 새로운 기능 추가는 적지만, 오랜 기간 동안 안정성과 보안 업데이트가 보장되는 버전입니다. 서버나 중요한 환경에서 선호됩니다.</li>
+<li><strong>CLI (Command-Line Interface)</strong>: 마우스 클릭 대신 텍스트 명령어로 컴퓨터와 상호작용하는 방식. 개발자들이 선호하는 빠르고 강력한 작업 환경입니다.</li>
+<li><strong>PATH (환경 변수)</strong>: 운영체제가 <code>python</code>이나 <code>node</code> 같은 명령어를 어느 폴더에서 찾아야 할지 알려주는 "주소록"입니다. 여기에 등록되어야 터미널 어디서든 해당 명령어를 실행할 수 있습니다.</li>
+</ul>
+<h3 id="참고-링크-공식-문서">10.4. 참고 링크 (공식 문서)</h3>
+<ul>
+<li><a href="https://www.python.org/">Python 공식 사이트</a></li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code 공식 사이트</a></li>
+<li><a href="https://nodejs.org/">Node.js 공식 사이트</a></li>
+<li><a href="https://aistudio.google.com/">Google AI Studio (Gemini)</a></li>
+</ul>
+</div>
+</body>
+
+</html>

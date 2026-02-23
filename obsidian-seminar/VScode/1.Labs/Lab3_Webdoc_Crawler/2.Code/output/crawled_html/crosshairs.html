@@ -1,0 +1,31 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="crosshairs">
+<h1>Crosshairs<a class="headerlink" href="#crosshairs" title="Link to this heading"></a></h1>
+<p>This function provides interactive crosshairs on matplotlib plots. The crosshairs will follow the users’ mouse cursor when they are near lines or points and will snap to these lines and points. Upon a mouse click the crosshairs will add an annotation to the plot. This annotation can be dragged to a new position. To delete the annotation, right click on it. To temporarily hide all annotations, toggle ‘h’ on your keyboard.</p>
+<p>Note that crosshairs should be called after everything is added to the plot (but before plt.show()) so that the objects in the plot are identified for the ‘snap to’ feature. If something is added to the plot after calling crosshairs then you will not be able to move the crosshairs onto it.</p>
+<p>If your interactive development environment does not generate the plot in its own window then your plot is not interactive and this will not work. For iPython notebook users, the interactive window should be available by typing “%matplotlib qt” after importing matplotlib as described <a class="reference external" href="https://stackoverflow.com/questions/14261903/how-can-i-open-the-interactive-matplotlib-window-in-ipython-notebook">here</a>.</p>
+<p>There are some customisable attributes of the crosshairs and annotations as described in the API reference.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Other_functions/crosshairs.html">API reference</a>.</p>
+</div>
+<p>In the following example, we see the crosshairs being used to display the value of the Weibull CDF. The dynamic nature of this feature is shown in the video at the bottom of this page.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">crosshairs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">CDF</span><span class="p">()</span>
+<span class="n">crosshairs</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">'t'</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">'F'</span><span class="p">)</span> <span class="c1">#it is important to call this last</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/crosshairs.png" src="_images/crosshairs.png"/>
+<div style="position: relative; padding-bottom: 2%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+<iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/xHRS0jHVN1w" width="560"></iframe>
+</div><p>A special thanks goes to Antony Lee, the author of <a class="reference external" href="https://mplcursors.readthedocs.io/en/stable/index.html">mplcursors</a>. The crosshairs function works using mplcursors to enable the ‘snap to’ feature and the annotations. Antony was very helpful in getting this to work.</p>
+</section>
+</div>
+</div>

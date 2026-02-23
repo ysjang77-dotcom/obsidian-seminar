@@ -1,0 +1,1495 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="module-reliability.Utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-reliability.Utils" title="Link to this heading"></a></h1>
+<p>Utils (utilities)</p>
+<p>This is a collection of utilities that are used throughout the python
+reliability library. Functions have been placed here as to declutter the
+dropdown lists of your IDE and to provide a common resource across multiple
+modules. It is not expected that users will be using any utils directly.</p>
+<p>Included functions are:</p>
+<ul class="simple">
+<li><p>ALT_MLE_optimization - performs optimization for the ALT_Fitters</p></li>
+<li><p>ALT_fitters_input_checking - performs input checking for the ALT_Fitters</p></li>
+<li><p>ALT_least_squares - least squares estimation for ALT_Fitters</p></li>
+<li><p>ALT_prob_plot - probability plotting for ALT_Fitters</p></li>
+<li><p>LS_optimization - least squares optimization for Fitters</p></li>
+<li><p>MLE_optimization - maximum likelihood estimation optimization for Fitters</p></li>
+<li><p>anderson_darling - calculated the anderson darling (AD) goodness of fit statistic</p></li>
+<li><p>axes_transforms - Custom scale functions used in Probability_plotting</p></li>
+<li><p>clean_CI_arrays - cleans the CI arrays of nan and illegal values</p></li>
+<li><p>colorprint - prints to the console in color, bold, italic, and underline</p></li>
+<li><p>distribution_confidence_intervals - calculates and plots the confidence intervals for the distributions</p></li>
+<li><p>fill_no_autoscale - creates a shaded region without adding it to the global list of objects to consider when autoscale is calculated</p></li>
+<li><p>fitters_input_checking - error checking and default values for all the fitters</p></li>
+<li><p>generate_X_array - generates the X values for all distributions</p></li>
+<li><p>get_axes_limits - gets the current axes limits</p></li>
+<li><p>least_squares - provides parameter estimates for distributions using the method of least squares. Used extensively by Fitters.</p></li>
+<li><p>life_stress_plot - generates the life stress plot for ALT_Fitters</p></li>
+<li><p>line_no_autoscale - creates a line without adding it to the global list of objects to consider when autoscale is calculated</p></li>
+<li><p>linear_regression - given x and y data it will return slope and intercept of line of best fit. Includes options to specify slope or intercept.</p></li>
+<li><p>make_fitted_dist_params_for_ALT_probplots - creates a class structure for the ALT probability plots to give to Probability_plotting</p></li>
+<li><p>no_reverse - corrects for reversals in confidence intervals</p></li>
+<li><p>probability_plot_xylims - sets the x and y limits on probability plots</p></li>
+<li><p>probability_plot_xyticks - sets the x and y ticks on probability plots</p></li>
+<li><p>removeNaNs - removes nan</p></li>
+<li><p>restore_axes_limits - restores the axes limits based on values from get_axes_limits()</p></li>
+<li><p>round_and_string - applies different rounding rules and converts to string</p></li>
+<li><p>show_figure_from_object - Re-shows a figure from an axes or figure handle even after the figure has been closed.</p></li>
+<li><p>transform_spaced - Creates linearly spaced array (in transform space) based on a specified transform. This is like np.logspace but it can make an array that is weibull spaced, normal spaced, etc.</p></li>
+<li><p>validate_CI_params - checks that the confidence intervals have all the right parameters to be generated</p></li>
+<li><p>write_df_to_xlsx - converts a dataframe to an xlsx file</p></li>
+<li><p>xy_transform - provides conversions between spatial (-inf,inf) and axes coordinates (0,1).</p></li>
+<li><p>zeroise_below_gamma - sets all y values to zero when x &lt; gamma. Used when the HF and CHF equations are specified</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.ALT_MLE_optimization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">ALT_MLE_optimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LL_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_guess</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.ALT_MLE_optimization" title="Link to this definition"></a></dt>
+<dd><p>This performs the MLE method to find the parameters.
+If the optimizer is None then all bounded optimizers will be tried and the
+best result (lowest log-likelihood) will be returned. If the optimizer is
+specified then it will be used. If it fails then the initial guess will be
+returned with a warning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Must be either “Exponential”, “Eyring”, “Power”, “Dual_Exponential”,
+“Power_Exponential”, or “Dual_Power”.</p></li>
+<li><p><strong>dist</strong> (<em>str</em>) – Must be either “Weibull”, “Exponential”, “Lognormal”, or “Normal”.</p></li>
+<li><p><strong>LL_func</strong> (<em>function</em>) – The log-likelihood function from the fitter</p></li>
+<li><p><strong>initial_guess</strong> (<em>list, array</em>) – The initial guess of the model parameters that is used by the
+optimizer.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – This must be either “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”,
+“all” or None. Fot detail on how these optimizers are used, please see
+the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>failures</strong> (<em>list, array</em>) – The failure data</p></li>
+<li><p><strong>right_censored</strong> (<em>list, array</em>) – The right censored data. If there is no right censored data then this
+should be an empty array.</p></li>
+<li><p><strong>failure_stress_1</strong> (<em>array, list</em>) – The failure stresses.</p></li>
+<li><p><strong>failure_stress_2</strong> (<em>array, list</em>) – The failure second stresses. This is only used for daul stress
+models.</p></li>
+<li><p><strong>right_censored_stress_1</strong> (<em>array, list</em>) – The right censored stresses. If there is no right censored data
+then this should be an empty array.</p></li>
+<li><p><strong>right_censored_stress_2</strong> (<em>array, list</em>) – The right censored second stresses. If there is no right
+censored data then this should be an empty array. This is only
+used for daul stress models.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – Only returned for Exponential, Eyring, Power, Dual_exponential, and
+Power_Exponential</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Only returned for Exponential and Dual_Exponential</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Only returned for Eyring, Dual_Exponential, Power_Exponential and
+Dual_Power</p></li>
+<li><p><strong>n</strong> (<em>float</em>) – Only returned for Power, Power_Exponential, and Dual_Power</p></li>
+<li><p><strong>m</strong> (<em>float</em>) – Only returned for Dual_Power</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Only returned for Weibull models</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – Only returned for Normal and Lognormal models</p></li>
+<li><p><strong>success</strong> (<em>bool</em>) – Whether at least one optimizer succeeded. If False then the least
+squares result will be returned in place of the MLE result.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – The optimizer used. If MLE failed then None is returned as the
+optimizer.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Not all of the above returns are always returned. It depends on which model
+is being used.</p>
+<p>If the MLE method fails then the initial guess (from least squares) will be
+returned with a printed warning.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.ALT_fitters_input_checking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">ALT_fitters_input_checking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">life_stress_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.ALT_fitters_input_checking" title="Link to this definition"></a></dt>
+<dd><p>This function performs error checking and some basic default operations for
+all the inputs given to each of the ALT_fitters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>str</em>) – Must be one of “Exponential”, “Weibull”, “Lognormal”, “Normal”,
+“Everything”.</p></li>
+<li><p><strong>life_stress_model</strong> (<em>str</em>) – Must be one of “Exponential”, “Eyring”, “Power”,”Dual_Exponential”,
+“Power_Exponential”, “Dual_Power”, “Everything”.</p></li>
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data</p></li>
+<li><p><strong>failure_stress_1</strong> (<em>array, list</em>) – The stresses corresponding to the failure data</p></li>
+<li><p><strong>failure_stress_2</strong> (<em>array, list, optional</em>) – The second stresses corresponding to the failure data. Only required for
+dual stress models. Default is None.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data. Default is None.</p></li>
+<li><p><strong>right_censored_stress_1</strong> (<em>array, list, optional</em>) – The stresses corresponding to the right censored data. Default is None.</p></li>
+<li><p><strong>right_censored_stress_2</strong> (<em>array, list, optional</em>) – The second stresses corresponding to the right censored data. Only
+required for dual stress models. Default is None.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence interval (between 0 and 1). Default is 0.95 for 95%
+confidence interval (two sided).</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – This will return “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”, or
+None. Default is None.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>float, int, list, array, optional</em>) – The use level stress. Must be float or int for single stress models.
+Must be array or list [stress_1, stress_2] for dual stress models.
+Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>failures</strong> (<em>array</em>) – The failure times</p></li>
+<li><p><strong>failure_stress_1</strong> (<em>array</em>) – The failure stresses</p></li>
+<li><p><strong>failure_stress_2</strong> (<em>array</em>) – The second failure stresses. This will be an empty array if the input
+was None.</p></li>
+<li><p><strong>right_censored</strong> (<em>array</em>) – The right censored times. This will be an empty array if the input was
+None.</p></li>
+<li><p><strong>right_censored_stress_1</strong> (<em>array</em>) – The right censored failure stresses. This will be an empty array if the
+input was None.</p></li>
+<li><p><strong>right_censored_stress_2</strong> (<em>array</em>) – The right censored second failure stresses. This will be an empty array
+if the input was None.</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval (between 0 and 1)</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – This will return “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”, or
+None.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>float, array, None</em>) – The use level stress. This will be a float for single stress models, or
+an array for dual stress models. This will be None if the input was
+None.</p></li>
+<li><p><strong>failure_groups</strong> (<em>array</em>) – An array of arrays. This is the failure data grouped by failure
+stresses.</p></li>
+<li><p><strong>right_censored_groups</strong> (<em>array</em>) – An array of arrays. This is the right censored data grouped by right
+censored stresses.</p></li>
+<li><p><strong>stresses_for_groups</strong> (<em>array</em>) – An array of arrays. These are the stresses for each of the groups.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For full detail on what is checked and the errors produced, you should read
+the source code.</p>
+<p>Some returns are None if the input is None. How None affects the behavior
+is governed by other functions such as the individual ALT fitters and other
+Utils.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.ALT_least_squares">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">ALT_least_squares</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_1_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_2_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.ALT_least_squares" title="Link to this definition"></a></dt>
+<dd><p>Uses least squares estimation to fit the parameters of the ALT stress-life
+model to the time to failure data.</p>
+<p>Unlike least_squares for probability distributions, this function does not
+use the plotting positions because it is working on the life-stress model
+L(S) and not the life distribution F(t), so it uses the failure data directly.</p>
+<p>This function therefore only fits the parameters of the model to the failure
+data and does not take into account the right censored data. Right censored
+data is only used when fitting the life-stress distribution (eg. “Weibull
+Eyring”) which is done using MLE.</p>
+<p>The output of this function is used as the initial guess for the MLE
+method for the life-stress distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Must be either “Exponential”, “Eyring”, “Power”, “Dual_Exponential”,
+“Power_Exponential”, or “Dual_Power”</p></li>
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data</p></li>
+<li><p><strong>stress_1_array</strong> (<em>list, array</em>) – The stresses corresponding to the failure data.</p></li>
+<li><p><strong>stress_2_array</strong> (<em>list, array, optional</em>) – The second stresses corresponding to the failure data. Used only for
+dual-stress models. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>model_parameters</strong> (<em>list</em>) – The model’s parameters in a list. This depends on the model.
+Exponential - [a,b], Eyring - [a,c], Power - [a,n],
+Dual_Exponential - [a,b,c], Power_Exponential - [a,c,n],
+Dual_Power - [c,m,n]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For more information on least squares estimation, see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html">documentation</a>.
+For more information on fitting ALT models, see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20ALT%20models.html">documentation</a>.</p>
+<p>For models with more than two parameters, linear algebra is equally valid,
+but in these cases it is not finding the line of best fit, it is instead
+finding the plane of best fit.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.ALT_prob_plot">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">ALT_prob_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stresses_for_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">life_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_for_change_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_for_change_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.ALT_prob_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates an ALT probability plot using the inputs provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>str</em>) – Must be either “Weibull”, “Exponential”, “Lognormal”, or “Normal”</p></li>
+<li><p><strong>model</strong> (<em>str</em>) – Must be either “Exponential”, “Eyring”, “Power”, “Dual_Exponential”,
+“Power_Exponential”, or “Dual_Power”.</p></li>
+<li><p><strong>stresses_for_groups</strong> (<em>list</em>) – The stresses for the failure groups</p></li>
+<li><p><strong>failure_groups</strong> (<em>list</em>) – The failure groups. This is a list of lists.</p></li>
+<li><p><strong>right_censored_groups</strong> – The failure groups. This is a list of lists.</p></li>
+<li><p><strong>life_func</strong> (<em>function</em>) – The life function for the ALT life model.</p></li>
+<li><p><strong>shape</strong> (<em>float, int</em>) – The shape parameter of the model.</p></li>
+<li><p><strong>scale_for_change_df</strong> (<em>array, list</em>) – The list of scale parameters for the lines.</p></li>
+<li><p><strong>shape_for_change_df</strong> – The list of shape parameters for the lines.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>float, int, array, list, None</em>) – The use level stress. This must be an array or list for dual stress
+models. Default is None.</p></li>
+<li><p><strong>ax</strong> (<em>axis, bool, optional</em>) – The axis handle to use. Default is True which will create a new plot.
+If False then no plot will be generated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>current_axis</strong> (<em>axis</em>) – The axis handle of the plot. If ax is specified in the inputs then this
+will be the same handle.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.LS_optimization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">LS_optimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LL_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LL_func_force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.LS_optimization" title="Link to this definition"></a></dt>
+<dd><p>This function is a control function for least squares regression and it is
+used by each of the Fitters. There is no actual “optimization” done here,
+with the exception of checking which method (RRX or RRY) gives the better
+solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_name</strong> (<em>str</em>) – The function to be fitted. Eg. “Weibull_2P”.</p></li>
+<li><p><strong>LL_func</strong> (<em>function</em>) – The log-likelihood function from the fitter</p></li>
+<li><p><strong>failures</strong> (<em>list, array</em>) – The failure data</p></li>
+<li><p><strong>right_censored</strong> (<em>list, array</em>) – The right censored data. If there is no right censored data then this
+should be an empty array.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – Must be either “RRX”, “RRY”, “LS”, or “NLLS”. Default is “LS”.</p></li>
+<li><p><strong>force_shape</strong> (<em>float, int, optional</em>) – The shape parameter to be forced. Default is None which results in no
+forcing of the shape parameter.</p></li>
+<li><p><strong>LL_func_force</strong> (<em>function</em>) – The log-likelihood function for when the shape parameter is forced. Only
+required if force_shape is not None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>guess</strong> (<em>list</em>) – The guess of the models parameters. The length of this list depends on
+the number of parameters in the model. The guess is obtained using
+Utils.least_squares</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – The method used. This will be either “RRX”, “RRY” or “NLLS”.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If method=”LS” then both “RRX” and “RRY” will be tried and the best one will
+be returned.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.MLE_optimization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">MLE_optimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LL_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_guess</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LL_func_force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.MLE_optimization" title="Link to this definition"></a></dt>
+<dd><p>This function performs Maximum Likelihood Estimation (MLE) to find the
+optimal parameters of the probability distribution. This functions is used
+by each of the fitters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_name</strong> (<em>str</em>) – The function to be fitted. Eg. “Weibull_2P”.</p></li>
+<li><p><strong>LL_func</strong> (<em>function</em>) – The log-likelihood function from the fitter</p></li>
+<li><p><strong>initial_guess</strong> (<em>list, array</em>) – The initial guess of the model parameters that is used by the optimizer.</p></li>
+<li><p><strong>failures</strong> (<em>list, array</em>) – The failure data</p></li>
+<li><p><strong>right_censored</strong> (<em>list, array</em>) – The right censored data. If there is no right censored data then this
+should be an empty array.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – This must be either “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”,
+“all” or None. Fot detail on how these optimizers are used, please see
+the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>force_shape</strong> (<em>float, int, optional</em>) – The shape parameter to be forced. Default is None which results in no
+forcing of the shape parameter.</p></li>
+<li><p><strong>LL_func_force</strong> (<em>function</em>) – The log-likelihood function for when the shape parameter is forced. Only
+required if force_shape is not None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>scale</strong> (<em>float</em>) – Only returned for Weibull_2P, Weibull_3P, Lognormal_2P, Lognormal_3P,
+Gamma_2P, Gamma_3P, Loglogistic_2P, Loglogistic_3P, Exponential_1P,
+Exponential_2P, Normal_2P, Beta_2P, and Gumbel_2P</p></li>
+<li><p><strong>shape</strong> (<em>float</em>) – Only returned for Weibull_2P, Weibull_3P, Lognormal_2P, Lognormal_3P,
+Gamma_2P, Gamma_3P, Loglogistic_2P, Loglogistic_3P, Normal_2P, Beta_2P,
+and Gumbel_2P</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Only returned for Weibull_DS, Weibull_ZI and Weibull_DSZI</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Only returned for Weibull_DS, Weibull_ZI and Weibull_DSZI</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – Only returned for Weibull_3P, Exponential_2P, Gamma_3P, Lognormal_3P,
+and Loglogistic_3P.</p></li>
+<li><p><strong>DS</strong> (<em>float</em>) – Only returned for Weibull_DS and Weibull_DSZI</p></li>
+<li><p><strong>ZI</strong> (<em>float</em>) – Only returned for Weibull_ZI and Weibull_DSZI</p></li>
+<li><p><strong>alpha_1</strong> (<em>float</em>) – Only returned for Weibull_mixture and Weibull_CR</p></li>
+<li><p><strong>beta_1</strong> (<em>float</em>) – Only returned for Weibull_mixture and Weibull_CR</p></li>
+<li><p><strong>alpha_2</strong> (<em>float</em>) – Only returned for Weibull_mixture and Weibull_CR</p></li>
+<li><p><strong>beta_2</strong> (<em>float</em>) – Only returned for Weibull_mixture and Weibull_CR</p></li>
+<li><p><strong>proportion_1</strong> (<em>float</em>) – Only returned for Weibull_mixture</p></li>
+<li><p><strong>proportion_2</strong> (<em>float</em>) – Only returned for Weibull_mixture</p></li>
+<li><p><strong>success</strong> (<em>bool</em>) – Whether at least one optimizer succeeded. If False then the least
+squares result will be returned in place of the MLE result.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – The optimizer used. If MLE failed then None is returned as the
+optimizer.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Not all of the above returns are always returned. It depends on which model
+is being used.</p>
+<p>If the MLE method fails then the initial guess (from least squares) will be
+returned with a printed warning.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.anderson_darling">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">anderson_darling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitted_cdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empirical_cdf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.anderson_darling" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Anderson-Darling goodness of fit statistic.
+These formulas are based on the method used in MINITAB which gives an
+adjusted form of the original AD statistic described on Wikipedia.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitted_cdf</strong> (<em>list, array</em>) – The fitted CDF values at the data points</p></li>
+<li><p><strong>empirical_cdf</strong> (<em>list, array</em>) – The empirical (rank adjustment) CDF values at the data points</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AD</strong> (<em>float</em>) – The anderson darling (adjusted) test statistic.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">axes_transforms</span></span><a class="headerlink" href="#reliability.Utils.axes_transforms" title="Link to this definition"></a></dt>
+<dd><p>Custom scale functions used in Probability_plotting
+Each of these functions is either a forward or inverse transform.</p>
+<p>There are no parameters for this class, only a collection of subfunctions
+which can be called individually to perform the transforms.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.beta_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beta_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.beta_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.beta_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beta_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.beta_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.exponential_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exponential_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.exponential_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.exponential_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exponential_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.exponential_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.gamma_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gamma_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.gamma_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.gamma_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gamma_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.gamma_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.gumbel_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gumbel_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.gumbel_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.gumbel_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gumbel_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.gumbel_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.loglogistic_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loglogistic_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.loglogistic_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.loglogistic_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loglogistic_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.loglogistic_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.normal_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normal_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.normal_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.normal_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normal_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.normal_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.weibull_forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weibull_forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.weibull_forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.axes_transforms.weibull_inverse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weibull_inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.axes_transforms.weibull_inverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.clean_CI_arrays">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">clean_CI_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xupper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yupper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.clean_CI_arrays" title="Link to this definition"></a></dt>
+<dd><p>This function cleans the CI arrays of nans and numbers &lt;= 0 and also removes
+numbers &gt;= 1 if plot_type is CDF or SF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlower</strong> (<em>list, array</em>) – The lower x array for the confidence interval</p></li>
+<li><p><strong>xupper</strong> (<em>list, array</em>) – The upper x array for the confidence interval</p></li>
+<li><p><strong>ylower</strong> (<em>list, array</em>) – The lower y array for the confidence interval</p></li>
+<li><p><strong>yupper</strong> (<em>list, array</em>) – The upper y array for the confidence interval</p></li>
+<li><p><strong>plot_type</strong> (<em>str, optional</em>) – Must be “CDF”, “SF”, “CHF”. Default is “CDF”</p></li>
+<li><p><strong>x</strong> (<em>array, optional</em>) – The x array for CI extraction</p></li>
+<li><p><strong>q</strong> (<em>array, optional</em>) – The q array for CI extraction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>xlower</strong> (<em>array</em>) – The “cleaned” lower x array for the confidence interval</p></li>
+<li><p><strong>xupper</strong> (<em>array</em>) – The “cleaned” upper x array for the confidence interval</p></li>
+<li><p><strong>ylower</strong> (<em>array</em>) – The “cleaned” lower y array for the confidence interval</p></li>
+<li><p><strong>ylower</strong> (<em>array</em>) – The “cleaned” upper y array for the confidence interval</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The returned arrays will all be the same length</p>
+<p>The cleaning is done by deleting values. If the cleaned arrays are &lt; 2 items
+in length then an error will be triggered.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.colorprint">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">colorprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">italic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.colorprint" title="Link to this definition"></a></dt>
+<dd><p>Provides easy access to color printing in the console.</p>
+<p>This function is used to print warnings in red text, but it can also do a
+lot more.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong></p></li>
+<li><p><strong>text_color</strong> (<em>str, None, optional</em>) – Must be either grey, red, green, yellow, blue, pink, or turquoise. Use
+None to leave the color as white. Default is None.</p></li>
+<li><p><strong>background_color</strong> (<em>str, None, optional</em>) – Must be either grey, red, green, yellow, blue, pink, or turquoise. Use
+None to leave the color as the transparent. Default is None.</p></li>
+<li><p><strong>bold</strong> (<em>bool, optional</em>) – Default is False.</p></li>
+<li><p><strong>underline</strong> (<em>bool, optional</em>) – Default is False.</p></li>
+<li><p><strong>italic</strong> (<em>bool, optional</em>) – Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The output is printed to the console.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Some flexibility in color names is allowed. eg. red and r will both give red.</p>
+<p>As there is only one string argument, if you have multiple strings to print,
+you must first combine them using str(string_1,string_2,…).</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">distribution_confidence_intervals</span></span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals" title="Link to this definition"></a></dt>
+<dd><p>This class contains several subfunctions that provide all the confidence
+intervals for CDF, SF, CHF for each distribution for which it is
+implemented.</p>
+<p>The class has no parameters or returns as it is used primarily to create the
+confidence interval object which is used by the subfunctions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.exponential_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exponential_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.exponential_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Exponential distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if q is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if q is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.Lambda_SE and self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For the Exponential distribution, the bounds on time and reliability are
+the same.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.gamma_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gamma_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.gamma_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Gamma distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.mu_SE, self.beta_SE, self.Cov_mu_beta, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.gumbel_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gumbel_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.gumbel_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Gumbel distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.loglogistic_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loglogistic_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.loglogistic_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Loglogistic distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.lognormal_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lognormal_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.lognormal_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Lognormal distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.normal_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normal_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.normal_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Normal distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Utils.distribution_confidence_intervals.weibull_CI">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weibull_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distribution_confidence_intervals.weibull_CI" title="Link to this definition"></a></dt>
+<dd><p>Generates the confidence intervals for CDF, SF, and CHF of the
+Weibull distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either “CDF”, “SF” or “CHF”. Default is “CDF”</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, None</em>) – The confidence intervals will only be plotted if plot_CI is True.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either “time” or “reliability”</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1</p></li>
+<li><p><strong>text_title</strong> (<em>str</em>) – The existing CDF/SF/CHF text title to which the confidence interval
+string will be added.</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – The color to be used to fill the confidence intervals.</p></li>
+<li><p><strong>q</strong> (<em>array, list, optional</em>) – The quantiles to be calculated. Default is None. Only used if
+CI_type=’time’.</p></li>
+<li><p><strong>x</strong> (<em>array, list, optional</em>) – The x-values to be calculated. Default is None. Only used if
+CI_type=’reliability’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t_lower</strong> (<em>array</em>) – The lower bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>t_upper</strong> (<em>array</em>) – The upper bounds on time. Only returned if CI_type is “time” and q
+is not None.</p></li>
+<li><p><strong>R_lower</strong> (<em>array</em>) – The lower bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+<li><p><strong>R_upper</strong> (<em>array</em>) – The upper bounds on reliability. Only returned if CI_type is
+“reliability” and x is not None.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self must contain particular values for this function to work. These
+include self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z.</p>
+<p>As a Utils function, there is very limited error checking done, as this
+function is not intended for users to access directly.</p>
+<p>For an explaination of how the confidence inervals are calculated,
+please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html">documentation</a>.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.distributions_input_checking">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">distributions_input_checking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.distributions_input_checking" title="Link to this definition"></a></dt>
+<dd><p>Performs checks and sets default values for the inputs to distributions
+sub function (PDF, CDF, SF, HF, CHF)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<em>object</em>) – Distribution object created by reliability.Distributions</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either ‘PDF’,’CDF’, ‘SF’, ‘HF’, ‘CHF’</p></li>
+<li><p><strong>xvals</strong> (<em>array, list</em>) – x-values for plotting.</p></li>
+<li><p><strong>xmin</strong> (<em>int, float</em>) – minimum x-value for plotting.</p></li>
+<li><p><strong>xmax</strong> (<em>int, float</em>) – maximum x-value for plotting.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool</em>) – Whether the plot is to be shown.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, optional</em>) – Whether the confidence intervals are to be shown on the plot. Default is
+None.</p></li>
+<li><p><strong>CI_type</strong> (<em>str, optional</em>) – If specified, it must be “time” or “reliability”. Default is None</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence intervals. If specified, it must be between 0 and 1.
+Default is None.</p></li>
+<li><p><strong>CI_y</strong> (<em>list, array, optional</em>) – The confidence interval y-values to trace. Default is None.</p></li>
+<li><p><strong>CI_x</strong> (<em>list, array, optional</em>) – The confidence interval x-values to trace. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – An array of the x-values for the plot. Created using generate_X_array</p></li>
+<li><p><strong>xvals</strong> (<em>array, list</em>) – x-values for plotting.</p></li>
+<li><p><strong>xmin</strong> (<em>int, float</em>) – minimum x-value for plotting.</p></li>
+<li><p><strong>xmax</strong> (<em>int, float</em>) – maximum x-value for plotting.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool</em>) – Whether the plot is to be shown. Default is True. Only returned if func
+is ‘PDF’,’CDF’, ‘SF’, ‘HF, or ‘CHF’</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool</em>) – Whether the confidence intervals are to be shown on the plot. Default is
+True. Only returned if func is ‘CDF’, ‘SF’, or ‘CHF’ and self.name
+!=’Beta’.</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – The type of confidence interval. Will be either “time”, “reliability”, or “none”.
+Default is “time”. Only returned if func is ‘CDF’, ‘SF’, or ‘CHF’.
+If self.name ==’Beta’ or self.name==’Exponential’ it will return ‘none’. If
+self.CI_type is specified and CI_type is not specified then self.CI_type will be
+used for CI_type.</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence intervals between 0 and 1. Default is 0.95. Only returned
+if func is ‘CDF’, ‘SF’, or ‘CHF’ and self.name !=’Beta’. If self.CI is
+specified and CI is None then self.CI will be used for CI.</p></li>
+<li><p><strong>CI_y</strong> (<em>list, array, float, int</em>) – The confidence interval y-values to trace. Default is None. Only
+returned if func is ‘CDF’, ‘SF’, or ‘CHF’ and self.name !=’Beta’.</p></li>
+<li><p><strong>CI_x</strong> (<em>list, array, float, int</em>) – The confidence interval x-values to trace. Default is None. Only
+returned if func is ‘CDF’, ‘SF’, or ‘CHF’ and self.name !=’Beta’.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.extract_CI">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">extract_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.extract_CI" title="Link to this definition"></a></dt>
+<dd><p>Extracts the confidence bounds at CI_x or CI_y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>object</em>) – Distribution object from reliability.Distributions</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – Must be either ‘CDF’, ‘SF’, ‘CHF’</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either ‘time’ or ‘reliability’</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval. Must be between 0 and 1.</p></li>
+<li><p><strong>CI_y</strong> (<em>list, array</em>) – The y-values from which to extract the confidence interval (x-values)
+for bounds on time.</p></li>
+<li><p><strong>CI_x</strong> (<em>list, array</em>) – The x-values from which to extract the confidence interval (y-values)
+for bounds on reliability.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lower</strong> (<em>array</em>) – An array of the lower confidence bounds at CI_x or CI_y</p></li>
+<li><p><strong>upper</strong> (<em>array</em>) – An array of the upper confidence bounds at CI_x or CI_y</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If CI_type=”time” then CI_y must be specified in order to extract the
+confidence bounds on time.</p>
+<p>If CI_type=”reliability” then CI_x must be specified in order to extract the
+confidence bounds on reliability.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.fill_no_autoscale">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">fill_no_autoscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xupper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yupper</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.fill_no_autoscale" title="Link to this definition"></a></dt>
+<dd><p>Creates a filled region (polygon) without adding it to the global list of
+autoscale objects. Use this function when you want to plot something but not
+have it considered when autoscale sets the range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlower</strong> (<em>list, array</em>) – The lower x array for the polygon.</p></li>
+<li><p><strong>xupper</strong> (<em>list, array</em>) – The upper x array for the polygon.</p></li>
+<li><p><strong>ylower</strong> (<em>list, array</em>) – The lower y array for the polygon.</p></li>
+<li><p><strong>ylower</strong> (<em>list, array</em>) – The upper y array for the polygon.</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments passed to the matplotlib PolyCollection</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The filled polygon will be added to the plot.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.fitters_input_checking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">fitters_input_checking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.fitters_input_checking" title="Link to this definition"></a></dt>
+<dd><p>This function performs error checking and some basic default operations for
+all the inputs given to each of the fitters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>str</em>) – Must be one of “Everything”, “Weibull_2P”, “Weibull_3P”, “Gamma_2P”,
+“Gamma_3P”, “Exponential_1P”, “Exponential_2P”, “Gumbel_2P”,
+“Normal_2P”, “Lognormal_2P”, “Lognormal_3P”, “Loglogistic_2P”,
+“Loglogistic_3P”, “Beta_2P”, “Weibull_Mixture”, “Weibull_CR”,
+“Weibull_DSZI”, “Weibull_DS”, “Weibull_ZI”.</p></li>
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – Must be either “MLE”,”LS”,”RRX”, or “RRY”. Some flexibility in input is
+tolerated. eg “LS”, “LEAST SQUARES”, “LSQ”, “NLRR”, “NLLS” will all be
+recogsised as “LS”. Default is MLE</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – Must be one of “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”.
+Default is None which will result in each being tried until one
+succeeds. For more detail see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – Confidence interval. Must be between 0 and 1. Default is 0.95 for 95%
+confidence interval (2 sided).</p></li>
+<li><p><strong>quantiles</strong> (<em>array, list, bool, optional</em>) – An array or list of the quantiles to calculate. If True then the
+default array will be used. Default array is [0.01, 0.05, 0.1, 0.2, 0.25,
+0.5, 0.75, 0.8, 0.9, 0.95, 0.99].
+If False then no quantiles will be calculated. Default is False.</p></li>
+<li><p><strong>force_beta</strong> (<em>float, int, optional</em>) – Used to force beta for the Weibull_2P distribution. Default is None
+which will not force beta.</p></li>
+<li><p><strong>force_sigma</strong> (<em>float, int, optional</em>) – Used to force sigma for the Normal_2P and Lognormal_2P distributions.
+Default is None which will not force sigma.</p></li>
+<li><p><strong>CI_type</strong> (<em>str, optional</em>) – Must be either “time” or “reliability”. Default is None which results in
+“time” being used (controlled in Fitters). Some flexibility is strings
+is allowed. eg. “r”, “R”, “rel”, “REL”, “reliability”, “RELIABILITY”
+will all be recognized as “reliability”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>failures</strong> (<em>array</em>) – The failure times</p></li>
+<li><p><strong>right_censored</strong> (<em>array</em>) – The right censored times. This will be an empty array if the input was
+None.</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval (between 0 and 1)</p></li>
+<li><p><strong>method</strong> (<em>str, None</em>) – This will return “MLE”, “LS”, “RRX”, “RRY” or None.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, None</em>) – This will return “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”, “best”, or
+None.</p></li>
+<li><p><strong>quantiles</strong> (<em>array, None</em>) – The quantiles or None.</p></li>
+<li><p><strong>force_beta</strong> (<em>float, None</em>) – The beta parameter to be forced in Weibull_2P</p></li>
+<li><p><strong>force_sigma</strong> (<em>float, None</em>) – The sigma parameter to be forced in Normal_2P, or Lognormal_2P</p></li>
+<li><p><strong>CI_type</strong> (<em>str, None</em>) – “time”, “reliability”, ‘None’ or None</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For full detail on what is checked and the errors produced, you should read
+the source code.</p>
+<p>Some returns are None if the input is None. How None affects the behavior
+is governed by other functions such as the individual fitters and other
+Utils.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.generate_X_array">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">generate_X_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.generate_X_array" title="Link to this definition"></a></dt>
+<dd><p>Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
+functions within reliability.Distributions</p>
+<p>This is done with a variety of cases in order to ensure that for regions of
+high gradient (particularly asymptotes to inf) the points are more
+concentrated. This ensures that the line always looks as smooth as possible
+using only 200 data points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>object</em>) – The distribution object</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – The xvals for the plot if specified</p></li>
+<li><p><strong>xmin</strong> (<em>array, list, optional</em>) – The xmin for the plot if specified</p></li>
+<li><p><strong>xmax</strong> (<em>array, list, optional</em>) – The xmax for the plot if specified</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>X</strong> (<em>array</em>) – The X array that was generated.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.get_axes_limits">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">get_axes_limits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.get_axes_limits" title="Link to this definition"></a></dt>
+<dd><p>This function works in a pair with restore_axes_limits
+This function gets the previous xlim and ylim and also checks whether there
+was a previous plot (based on whether the default 0,1 axes had been
+changed).</p>
+<p>It returns a list of items that are used by restore_axes_limits after the
+plot has been performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong> – The plot properties are extracted automatically for analysis</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> (<em>list</em>) – A list of [xlims, ylims, use_prev_lims]. These values are used by
+restore_axes_limits to determine how the axes limits need to be
+changed after plotting.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.least_squares">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">least_squares</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RRX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.least_squares" title="Link to this definition"></a></dt>
+<dd><p>Uses least squares or non-linear least squares estimation to fit the
+parameters of the distribution to the plotting positions.</p>
+<p>Plotting positions are based on failures and right_censored so while least
+squares estimation does not consider the right_censored data in the same way
+as MLE, the plotting positions do. This means that right censored data are
+not ignored by least squares estimation, but the way the values are treated
+differs between least squares and MLE.</p>
+<p>The output of this method may be used as the initial guess for the MLE
+method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>object</em>) – Thew distribution object</p></li>
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list</em>) – The right censored data. If there is no data then this should be an
+empty list.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – Must be “RRX” or “RRY”. Default is RRX.</p></li>
+<li><p><strong>force_shape</strong> (<em>float, int, optional</em>) – Used to force the shape (beta or sigma) parameter. Default is None which
+will not force the slope.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>model_parameters</strong> (<em>list</em>) – The model’s parameters in a list. eg. for “Weibull_2P” it will return
+[alpha,beta]. For “Weibull_3P” it will return [alpha,beta,gamma].</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For more information on least squares estimation, see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html">documentation</a>.</p>
+<p>For cases where the CDF is not linearizable (eg. Weibull_3P), this function
+uses non-linear least squares (NLLS) which uses scipy’s curve_fit to find
+the parameters. This may sometimes fail as curve_fit is an optimization
+routine that needs an initial guess provided by this function.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.life_stress_plot">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">life_stress_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">life_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stresses_for_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.life_stress_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a life stress plot using the inputs provided. The life stress plot
+is an output from each of the ALT_fitters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Must be either “Exponential”, “Eyring”, “Power”, “Dual_Exponential”,
+“Power_Exponential”, or “Dual_Power”.</p></li>
+<li><p><strong>dist</strong> (<em>str</em>) – Must be either “Weibull”, “Exponential”, “Lognormal”, or “Normal”</p></li>
+<li><p><strong>life_func</strong> (<em>function</em>) – The life function for the ALT life model.</p></li>
+<li><p><strong>failure_groups</strong> (<em>list</em>) – The failure groups. This is a list of lists.</p></li>
+<li><p><strong>stresses_for_groups</strong> (<em>list</em>) – The stresses for the failure groups</p></li>
+<li><p><strong>use_level_stress</strong> (<em>float, int, array, list, None</em>) – The use level stress. This must be an array or list for dual stress
+models. Default is None.</p></li>
+<li><p><strong>ax</strong> (<em>axes, bool, optional</em>) – The axes handle to use. Default is True which will create a new plot.
+If False then no plot will be generated.
+This is also used to flip the x and y axes to make a stress-life plot. Use ax=’swap’ to make the life-stress
+plot change its axes to be a stress-life plot (similar to SN diagram).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>current_axes</strong> (<em>axes</em>) – The axes handle of the plot. If ax is specified in the inputs then this
+will be the same handle.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.line_no_autoscale">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">line_no_autoscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.line_no_autoscale" title="Link to this definition"></a></dt>
+<dd><p>Creates a line without adding it to the global list of autoscale objects.
+Use this when you want to plot something but not have it considered when
+autoscale sets the range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array, list</em>) – The x values for the line</p></li>
+<li><p><strong>y</strong> (<em>array, list</em>) – The y values for the line</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments passed to the matplotlib LineCollection</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The line will be added to the plot.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.linear_regression">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_intercept</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_intercept</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RRX_or_RRY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RRX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.linear_regression" title="Link to this definition"></a></dt>
+<dd><p>This function provides the linear algebra solution to find line of best fit
+passing through points (x,y). Options to specify slope or intercept enable
+these parameters to be forced.</p>
+<p>Rank regression can be on X (RRX) or Y (RRY). Default is RRX.
+Note that slope depends on RRX_or_RRY. If you use RRY then slope is dy/dx
+but if you use RRX then slope is dx/dy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array, list</em>) – The x values</p></li>
+<li><p><strong>y</strong> (<em>array, list</em>) – The y values</p></li>
+<li><p><strong>slope</strong> (<em>float, int, optional</em>) – Used to force the slope. Default is None.</p></li>
+<li><p><strong>x_intercept</strong> (<em>float, int, optional</em>) – Used to force the x-intercept. Default is None. Only used for RRY.</p></li>
+<li><p><strong>y_intercept</strong> (<em>float, int, optional</em>) – Used to force the y-intercept. Default is None. Only used for RRX.</p></li>
+<li><p><strong>RRX_or_RRY</strong> (<em>str, optional</em>) – Must be “RRY” or “RRX”. Default is “RRY”.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True, a plot of the line and points will be generated. Use plt.show()
+to show it.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments for the plot that are passed to matplotlib for the
+line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>slope</strong> (<em>float</em>) – The slope of the line.</p></li>
+<li><p><strong>intercept</strong> (<em>float</em>) – The intercept (x or y depending on RRX_or_RRY) of the line.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The equation of a line used here is Y = slope * X + intercept. This is the
+RRY form. For RRX it can be rearranged to X = (Y - intercept)/slope</p>
+<p>For more information on linear regression, see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html">documentation</a>.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Utils.make_fitted_dist_params_for_ALT_probplots">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">make_fitted_dist_params_for_ALT_probplots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.make_fitted_dist_params_for_ALT_probplots" title="Link to this definition"></a></dt>
+<dd><p>This function creates a class structure for the ALT probability plots to
+give to Probability_plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist</strong> (<em>str</em>) – The distribution. Must be either “Weibull”, “Lognormal”, “Normal”, or
+“Exponential”.</p></li>
+<li><p><strong>params</strong> (<em>list, array</em>) – The parameters of the model. Must be 2 elements for Weibull, Lognormal,
+and Normal, and must be 1 element for Exponential.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – Only returned for Weibull</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Only returned for Weibull</p></li>
+<li><p><strong>gamma</strong> (<em>int</em>) – This will always be 0. Only returned for Weibull, Lognormal, and
+Exponential.</p></li>
+<li><p><strong>alpha_SE</strong> (<em>None</em>) – Only returned for Weibull</p></li>
+<li><p><strong>beta_SE</strong> (<em>None</em>) – Only returned for Weibull</p></li>
+<li><p><strong>Cov_alpha_beta</strong> (<em>None</em>) – Only returned for Weibull</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – Only returned for Normal and Lognormal</p></li>
+<li><p><strong>sigma</strong> (<em>float</em>) – Only returned for Normal and Lognormal</p></li>
+<li><p><strong>Cov_mu_sigma</strong> (<em>None</em>) – Only returned for Normal and Lognormal</p></li>
+<li><p><strong>Lambda</strong> (<em>float</em>) – Only returned for Exponential</p></li>
+<li><p><strong>Lambda_SE</strong> (<em>None</em>) – Only returned for Exponential</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function only exists to convert a list or array of parameters into a
+class with the correct parameters for the probability plots to use.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.no_reverse">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">no_reverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.no_reverse" title="Link to this definition"></a></dt>
+<dd><p>This is used to convert an array that decreases and then increases into an
+array that decreases then is constant at its minimum.</p>
+<p>The always decreasing rule will apply unless CI_type = ‘time’ and
+plot_type = ‘CHF’</p>
+<p>This function is used to provide a correction to the confidence intervals
+which mathematically are correct but practically should never decrease.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array, list</em>) – The array or list to which the no_reverse correction is applied</p></li>
+<li><p><strong>CI_type</strong> (<em>str</em>) – Must be either ‘time’ or ‘reliability’</p></li>
+<li><p><strong>plot_type</strong> (<em>str</em>) – Must be either ‘CDF’, ‘SF’, or ‘CHF’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>array</em>) – A corrected form of the input x that obeys the always decreasing rule
+(or the always increasing rule in the case of CI_type = ‘time’ and
+plot_type = ‘CHF’).</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.probability_plot_xylims">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">probability_plot_xylims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.probability_plot_xylims" title="Link to this definition"></a></dt>
+<dd><p>This function finds what the x and y limits of probability plots should be
+and sets these limits. This is similar to autoscaling, but the rules here
+are different to the matplotlib defaults.
+It is used extensively by the functions within the probability_plotting
+module to achieve the plotting style used within this library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list, array</em>) – The x-values from the plot</p></li>
+<li><p><strong>y</strong> (<em>list, array</em>) – The y-values from the plot</p></li>
+<li><p><strong>dist</strong> (<em>str</em>) – Must be either “weibull”, “lognormal”, “loglogistic”, “normal”, “gamma”,
+“exponential”, “beta”, or “gumbel”.</p></li>
+<li><p><strong>spacing</strong> (<em>float</em>) – The spacing between the points and the edge of the plot. Default is 0.1
+for 10% spacing.</p></li>
+<li><p><strong>gamma_beta</strong> (<em>float, int, optional</em>) – The beta parameter from the gamma distribution. Only required if dist =
+“gamma”.</p></li>
+<li><p><strong>beta_alpha</strong> (<em>float, int, optional</em>) – The alpha parameter from the beta distribution. Only required if dist =
+“beta”.</p></li>
+<li><p><strong>beta_beta</strong> (<em>float, int, optional</em>) – The beta parameter from the beta distribution. Only required if dist =
+“beta”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – There are no outputs from this function. It will set the xlim() and
+ylim() of the probability plot automatically.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.probability_plot_xyticks">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">probability_plot_xyticks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.probability_plot_xyticks" title="Link to this definition"></a></dt>
+<dd><p>This function sets the x and y ticks for probability plots.</p>
+<p>X ticks are selected using either MaxNLocator or LogLocator. X ticks are
+formatted using a custom formatter.</p>
+<p>Y ticks are specified with FixedLocator due to their irregular spacing.
+Minor y ticks use MaxNLocator. Y ticks are formatted using a custom Percent
+Formatter that handles decimals better than the default.</p>
+<p>This function is used by all the probability plots.</p>
+<p>Within this function are several sub functions that are called internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yticks</strong> (<em>list, array</em>) – The yticks to use. If unspecified, the default yticks are [0.0001, 0.001,
+0.002, 0.005, 0.01, 0.02, 0.03, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7,
+0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.999999].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – This function will set the ticks but it does not return anything.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.removeNaNs">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">removeNaNs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.removeNaNs" title="Link to this definition"></a></dt>
+<dd><p>Removes NaNs from a list or array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>array, list</em>) – The array or list to be processed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> (<em>list, array</em>) – A list or array of the same type as the input with the NaNs removed.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is better than simply using “x = x[numpy.logical_not(numpy.isnan(x))]”
+as numpy crashes for str and bool.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.reshow_figure">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">reshow_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.reshow_figure" title="Link to this definition"></a></dt>
+<dd><p>Shows a figure from an axes handle or figure handle.
+This is useful if the handle is saved to a variable but the figure has been
+closed.
+Note that the Navigation Toolbar (for pan, zoom, and save) is still
+connected to the old figure. There is no known work around for this issue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>handle</strong> (<em>object</em>) – The axes handle (type(_axes.Axes)) or figure handle (type(Figure))</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The figure is automatically shown using plt.show().</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.restore_axes_limits">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">restore_axes_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.restore_axes_limits" title="Link to this definition"></a></dt>
+<dd><p>This function works in a pair with get_axes_limits. Using the values
+producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this
+function will determine how to change the axes limits to meet the style
+requirements of the library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>limits</strong> (<em>list</em>) – A list of [xlims, ylims, use_prev_lims] created by get_axes_limits</p></li>
+<li><p><strong>dist</strong> (<em>object</em>) – The distribution object which the axes limits are influenced by.</p></li>
+<li><p><strong>X</strong> (<em>array, list</em>) – The x-values of the plot</p></li>
+<li><p><strong>Y</strong> (<em>array, list</em>) – The y-values of the plot</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – The plot xvals if specified. May be None if not specified.</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – The plot xmin if specified. May be None if not specified.</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – The plot xmax if specified. May be None if not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – This function will scale the plot but it does not return anything</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>No scaling will be done if the axes are not linear due to errors that result
+from log and function scaled axes when a limit of 0 is used. This means that
+this function is not able to be applied to the probability plots are they
+have non-linear scaled axes.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.round_and_string">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">round_and_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integer_floats_to_ints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">large_scientific_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small_scientific_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.round_and_string" title="Link to this definition"></a></dt>
+<dd><p>This function is used to round a number to a specified number of decimals and convert to string.
+It is used heavily in the formatting of the parameter titles within reliability.Distributions</p>
+<p>The rules applied are slightly different than rounding to a number of significant figures as it keeps more
+preceeding zeros. Special formatting rules are applied when:</p>
+<blockquote>
+<div><p>abs(number) &lt;= small_scientific_limit
+abs(number) &gt;= large_scientific_limit
+number = 0</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number</strong> (<em>float</em>) – The number to be rounded</p></li>
+<li><p><strong>decimals</strong> (<em>int</em>) – The number of decimals (not including preceeding zeros) that are to be
+in the output</p></li>
+<li><p><strong>integer_floats_to_ints</strong> (<em>bool, optional</em>) – Default is True. Removes trailing zeros from floats if there are no
+significant decimals (eg. 12.0 becomes 12).</p></li>
+<li><p><strong>large_scientific_limit</strong> (<em>int, float, optional</em>) – The limit above which to keep numbers formatted in scientific notation. Default is 1e9.</p></li>
+<li><p><strong>small_scientific_limit</strong> (<em>int, float, optional</em>) – The limit below which to keep numbers formatted in scientific notation. Default is 1e-4.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> (<em>string</em>) – The number formatted and converted to string.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Examples (with decimals = 5):</dt><dd><p>original: -1e+20  // new: -1e+20
+original: -100000000.0  // new: -100000000
+original: -10.0  // new: -10
+original: -5.4857485e-05  // new: -5.48575e-05
+original: -2.54875415e-16  // new: -2.54875e-16
+original: 0.0  // new: 0
+original: 0  // new: 0
+original: 2.54875415e-16  // new: 2.54875e-16
+original: 5.4857485e-05  // new: 5.48575e-05
+original: 10.0  // new: 10
+original: 100000000.0  // new: 100000000
+original: 1e+20  // new: 1e+20</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.transform_spaced">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">transform_spaced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99999999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.transform_spaced" title="Link to this definition"></a></dt>
+<dd><p>Creates linearly spaced array based on a specified transform.</p>
+<p>This is similar to np.linspace or np.logspace but is designed for weibull
+space, exponential space, normal space, gamma space, loglogistic space,
+gumbel space and beta space.</p>
+<p>It is useful if the points generated are going to be plotted on axes that
+are scaled using the same transform and need to look equally spaced in the
+transform space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transform</strong> (<em>str</em>) – The transform name. Must be either weibull, exponential, normal, gamma,
+gumbel, loglogistic, or beta.</p></li>
+<li><p><strong>y_upper</strong> (<em>float, optional</em>) – The lower bound (must be within the bounds 0 to 1). Default is 1e-8</p></li>
+<li><p><strong>y_lower</strong> (<em>float, optional</em>) – The upper bound (must be within the bounds 0 to 1). Default is 1-1e-8</p></li>
+<li><p><strong>num</strong> (<em>int, optional</em>) – The number of values in the array. Default is 1000.</p></li>
+<li><p><strong>alpha</strong> (<em>int, float, optional</em>) – The alpha value of the beta distribution. Only used if the transform is
+beta</p></li>
+<li><p><strong>beta</strong> (<em>int, float, optional</em>) – The beta value of the beta or gamma distribution. Only used if the
+transform is beta or gamma</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transformed_array</strong> (<em>array</em>) – transform spaced array. This appears linearly spaced when plotted in
+transform space.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Note that lognormal is the same as normal, since the x-axis is what is
+transformed in lognormal, not the y-axis.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.unpack_single_arrays">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">unpack_single_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.unpack_single_arrays" title="Link to this definition"></a></dt>
+<dd><p>Unpacks arrays with a single element to return just that element</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>array</strong> (<em>float, int, list, array</em>) – The value for unpacking</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> (<em>float, list, int, array</em>) – If the input was a single length numpy array then the output will be the
+item from the array. If the input was anything else then the output will
+match the input</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.validate_CI_params">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">validate_CI_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.validate_CI_params" title="Link to this definition"></a></dt>
+<dd><p>Returns False if any of the args is None or Nan, else returns True.
+This function is different to using all() because it performs the checks
+using np.isfinite(arg).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<em>bool</em>) – Any number of boolean arguments</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>is_valid</strong> (<em>bool</em>) – False if any of the args is None or Nan else returns True.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.write_df_to_xlsx">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">write_df_to_xlsx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.write_df_to_xlsx" title="Link to this definition"></a></dt>
+<dd><p>Writes a dataframe to an xlsx file
+For use exclusively by the Convert_data module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – The dataframe to be written</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – The file path to the xlsx file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – Writing the dataframe is the only action from this function.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The path must include the full file path including the extension. It is also
+necessary to use r at the start to specify raw text. See the
+<a class="reference external" href="https://reliability.readthedocs.io/en/latest/Converting%20data%20between%20different%20formats.html">documentation</a> for an example.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.xy_downsample">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">xy_downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.xy_downsample" title="Link to this definition"></a></dt>
+<dd><p>This function downsamples the x and y arrays. This exists to make plotting
+much faster, particularly when matplotlib becomes very slow for tens of
+thousands of datapoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array, list</em>) – The x values</p></li>
+<li><p><strong>y</strong> (<em>array, list</em>) – The y values</p></li>
+<li><p><strong>downsample_factor</strong> (<em>int, optional</em>) – How must downsampling to do. See Notes for more detail.</p></li>
+<li><p><strong>default_max_values</strong> (<em>int, optional</em>) – The maximum number of values to be returned if downsample_factor is
+None. See Notes for more detail.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – The downsampled x values</p></li>
+<li><p><strong>y</strong> (<em>array</em>) – The downsampled y values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Downsampling is done using the downsample_factor. If the down_sample factor
+is 2 then every second value will be returned, if 3 then every third value
+will be returned. The first and last items will always be included in the
+downsampled dataset.</p>
+<p>If downsample_factor is not specified, downsampling will only occur if there
+are more than default_max_values. The downsample factor will aim for the
+number of values to be returned to be between default_max_values/2 and
+default_max_values. By default this is between 500 and 1000.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.xy_transform">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">xy_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.xy_transform" title="Link to this definition"></a></dt>
+<dd><p>This function converts between data values and axes coordinates (based on
+xlim() or ylim()).</p>
+<p>If direction is forward the returned value will always be between 0 and 1
+provided the value is on the plot.</p>
+<p>If direction is reverse the input should be between 0 and 1 and the returned
+value will be the data value based on the current plot lims</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>int, float, list, array</em>) – The value/s to be transformed</p></li>
+<li><p><strong>direction</strong> (<em>str, optional</em>) – Must be “forward” or “inverse”. Default is “forward”</p></li>
+<li><p><strong>axis</strong> (<em>str, optional</em>) – Must be “x” or “y”. Default is “x”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>transformed_values</strong> (<em>float, array</em>) – The transformed values. This will be a float if the input was int or
+float, or an array if the input was list or array.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reliability.Utils.zeroise_below_gamma">
+<span class="sig-prename descclassname"><span class="pre">reliability.Utils.</span></span><span class="sig-name descname"><span class="pre">zeroise_below_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Utils.zeroise_below_gamma" title="Link to this definition"></a></dt>
+<dd><p>This will make all Y values 0 for the corresponding X values being below
+gamma (the threshold parameter for Weibull, Exponential, Gamma, Loglogistic,
+and Lognormal).</p>
+<p>Used by HF and CHF which need to be zeroized if the gamma shifted form of
+the equation is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array, list</em>) – The x values of the distribution. These areused to determine whis Y
+values to zeroize.</p></li>
+<li><p><strong>Y</strong> (<em>array, list</em>) – The y-values of the distribution</p></li>
+<li><p><strong>gamma</strong> (<em>float, int</em>) – The gamma parameter. This is the point at which Y values corresponding
+to X values below gamma will be zeroized.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Y</strong> (<em>array</em>) – The zeroized Y array</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

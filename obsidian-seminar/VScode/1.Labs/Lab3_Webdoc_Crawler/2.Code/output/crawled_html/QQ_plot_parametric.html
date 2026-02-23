@@ -1,0 +1,54 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="qq-plot-parametric">
+<h1>QQ_plot_parametric<a class="headerlink" href="#qq-plot-parametric" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Probability_plotting.QQ_plot_parametric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Probability_plotting.</span></span><span class="sig-name descname"><span class="pre">QQ_plot_parametric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_fitted_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_diagonal_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Probability_plotting.QQ_plot_parametric" title="Link to this definition"></a></dt>
+<dd><p>A QQ plot (quantile-quantile plot) consists of plotting failure units vs
+failure units for shared quantiles. A quantile is simply the fraction
+failing (ranging from 0 to 1). To generate this plot we calculate the
+failure units (these may be units of time, strength, cycles, landings, etc.)
+at which a certain fraction has failed (0.01,0.02,0.03…0.99) for each
+distribution and plot them together. The time (or any other failure unit) at
+which a given fraction has failed is found using the inverse survival
+function. If the distributions are similar in shape, then the QQ plot should
+be a reasonably straight line. By plotting the failure times at equal
+quantiles for each distribution we can obtain a conversion between the two
+distributions which is useful for Field-to-Test conversions that are
+necessary during accelerated life testing (ALT).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_dist</strong> (<em>object</em>) – A probability distribution object created using the
+reliability.Distributions module. The failure times at given quantiles
+from this distribution will be plotted along the X-axis.</p></li>
+<li><p><strong>Y_dist</strong> (<em>object</em>) – A probability distribution object created using the
+reliability.Distributions module. The failure times at given quantiles
+from this distribution will be plotted along the Y-axis.</p></li>
+<li><p><strong>show_fitted_lines</strong> (<em>bool</em>) – Default = True. These are the Y=mX and Y=mX+c lines of best fit.</p></li>
+<li><p><strong>show_diagonal_line</strong> (<em>bool</em>) – Default = False. If True the diagonal line will be shown on the plot.</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is False which will
+result in no downsampling. This functionality makes plotting faster when
+there are very large numbers of points. It only affects the scatterplot
+not the calculations.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib (e.g. color,
+label, linestyle).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>model_parameters</strong> (<em>list</em>) – [m,m1,c1] - these are the values for the lines of best fit. m is used in
+Y=m.X, and m1 and c1 are used in Y=m1.X+c1</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If your plot does not appear automatically, use plt.show() to show it.</p>
+</dd></dl>
+</section>
+</div>
+</div>

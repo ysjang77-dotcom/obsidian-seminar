@@ -1,0 +1,55 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="palmgren-miner-linear-damage">
+<h1>palmgren_miner_linear_damage<a class="headerlink" href="#palmgren-miner-linear-damage" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.palmgren_miner_linear_damage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">palmgren_miner_linear_damage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rated_life</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_at_stress</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.palmgren_miner_linear_damage" title="Link to this definition"></a></dt>
+<dd><p>Uses the Palmgren-Miner linear damage hypothesis to calculate the outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rated life</strong> (<em>array, list</em>) – How long the component will last at a given stress level.</p></li>
+<li><p><strong>time_at_stress</strong> (<em>array, list</em>) – How long the component is subjected to the stress that gives the
+specified rated_life</p></li>
+<li><p><strong>stress</strong> (<em>float, int</em>) – What stress the component is subjected to. This is not used in the
+calculation but is required for printing the output. Ensure that the
+time_at_stress and rated life are in the same units as the answer will
+also be in those units</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The printed results are the only output.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The output will print the results to the console. The printed results
+include:</p>
+<ul class="simple">
+<li><p>Fraction of life consumed per load cycle</p></li>
+<li><p>service life of the component</p></li>
+<li><p>Fraction of damage caused at each stress level</p></li>
+</ul>
+<p>Example usage:
+Ball bearings are fail after 50000 hrs, 6500 hrs, and 1000 hrs, after being subjected to a stress of 1kN, 2kN, and 4kN respectively.
+If each load cycle involves 40 mins at 1kN, 15 mins at 2kN, and 5 mins at 4kN, how long will the ball bearings last?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">palmgren_miner_linear_damage</span>
+<span class="n">palmgren_miner_linear_damage</span><span class="p">(</span><span class="n">rated_life</span><span class="o">=</span><span class="p">[</span><span class="mi">50000</span><span class="p">,</span><span class="mi">6500</span><span class="p">,</span><span class="mi">1000</span><span class="p">],</span> <span class="n">time_at_stress</span><span class="o">=</span><span class="p">[</span><span class="mi">40</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">60</span><span class="p">],</span> <span class="n">stress</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="sd">'''</span>
+<span class="sd">Palmgren-Miner Linear Damage Model results:</span>
+<span class="sd">Each load cycle uses 0.01351 % of the components life.</span>
+<span class="sd">The service life of the component is 7400.37951 load cycles.</span>
+<span class="sd">The amount of damage caused at each stress level is:</span>
+<span class="sd">Stress =  1 , Damage fraction = 9.86717 %.</span>
+<span class="sd">Stress =  2 , Damage fraction = 28.463 %.</span>
+<span class="sd">Stress =  4 , Damage fraction = 61.66983 %.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

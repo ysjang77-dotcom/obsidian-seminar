@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>신뢰성 분석 전문가 챗봇</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<ul>
+<li><a href="#🤖-신뢰성-분석-전문가-챗봇">🤖 신뢰성 분석 전문가 챗봇</a>
+<ul>
+<li><a href="#🚀-주요-기능">🚀 주요 기능</a></li>
+<li><a href="#📂-프로젝트-구조">📂 프로젝트 구조</a></li>
+<li><a href="#⚙️-app_v1.py-상세-구현-구조">⚙️ app_v1.py 상세 구현 구조</a></li>
+<li><a href="#🔍-작동-원리-및-프로세스">🔍 작동 원리 및 프로세스</a></li>
+<li><a href="#💡-대표-사용-사례-use-cases">💡 대표 사용 사례 (Use Cases)</a></li>
+<li><a href="#🛠️-실행-방법">🛠️ 실행 방법</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <h1 id="🤖-신뢰성-분석-전문가-챗봇">🤖 신뢰성 분석 전문가 챗봇</h1>
+<p>이 프로젝트는 Streamlit과 LangChain을 기반으로 구축된 RAG(Retrieval-Augmented Generation) 챗봇입니다. 사용자는 기술 문서 기반의 지식 베이스에 대해 질문하고, 신뢰성 공학 전문가의 관점에서 심층적인 답변을 얻을 수 있습니다.</p>
+<h2 id="🚀-주요-기능">🚀 주요 기능</h2>
+<ul>
+<li><strong>RAG 기반 답변 생성</strong>: FAISS 벡터 데이터베이스에 저장된 기술 문서를 검색하여 질문과 관련된 내용을 답변에 활용합니다.</li>
+<li><strong>전문가 페르소나</strong>: "신뢰성 공학 전문가"라는 특정 역할을 부여하여, 단순히 정보를 요약하는 것을 넘어 분석적이고 체계적인 답변을 제공합니다.</li>
+<li><strong>대화 기록 유지</strong>: 이전 대화 내용을 기억하고 다음 답변에 활용하여 맥락에 맞는 대화를 이어갑니다.</li>
+<li><strong>출처 표시</strong>: 답변의 근거가 된 기술 문서의 출처(source)를 명확하게 밝혀 신뢰성을 높입니다.</li>
+<li><strong>스트리밍 응답</strong>: 사용자가 답변이 생성되는 과정을 실시간으로 볼 수 있어 대화형 경험을 향상시킵니다.</li>
+</ul>
+<h2 id="📂-프로젝트-구조">📂 프로젝트 구조</h2>
+<pre><code>.
+├── .env                  # GOOGLE_API_KEY 등 환경 변수 설정 파일
+├── 1.RAG_VectorDB_load_test.py # VectorDB 로드 및 테스트 스크립트
+├── app_v1.py             # 메인 Streamlit 애플리케이션
+├── docs/                 # RAG의 기반이 되는 원본 문서 폴더
+│   ├── AIAGVDA_FMEA_Guide_Summary.md
+│   ├── failure_report-ballpen.md
+│   ├── failure_report-panormic_sunroof.md
+│   └── failure_report-turbocharger.md
+├── faiss_index/          # 생성된 FAISS VectorDB가 저장되는 폴더
+│   ├── index.faiss
+│   └── index.pkl
+└── README.md             # 프로젝트 설명 파일
+</code></pre>
+<h2 id="⚙️-app_v1.py-상세-구현-구조">⚙️ <code>app_v1.py</code> 상세 구현 구조</h2>
+<p><code>app_v1.py</code>는 Streamlit UI와 LangChain RAG 체인을 결합하여 챗봇의 핵심 기능을 구현합니다.</p>
+<h3 id="초기-설정-및-캐싱">1. 초기 설정 및 캐싱</h3>
+<ul>
+<li><strong>환경 변수 로드</strong>: <code>dotenv</code>를 사용하여 <code>.env</code> 파일의 <code>GOOGLE_API_KEY</code>를 로드합니다.</li>
+<li><strong>핵심 객체 캐싱</strong>: <code>@st.cache_resource</code> 데코레이터를 사용하여 LLM, 임베딩 모델, VectorDB 등 초기화에 시간이 걸리는 객체들을 캐시에 저장합니다. 이를 통해 사용자가 질문할 때마다 모델을 새로 로드하는 비효율을 방지하고 응답 속도를 향상시킵니다.</li>
+</ul>
+<h3 id="rag-체인-정의-get_rag_chain-함수">2. RAG 체인 정의 (<code>get_rag_chain</code> 함수)</h3>
+<p>이 함수는 LangChain Expression Language (LCEL)를 사용하여 RAG 파이프라인을 구성합니다. 각 컴포넌트는 <code>|</code> (파이프) 연산자로 연결되어 데이터의 흐름을 정의합니다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token comment"># app_v1.py 내 RAG Chain의 개념적 구조</span>
+chain <span class="token operator">=</span> <span class="token punctuation">(</span>
+    <span class="token punctuation">{</span>
+        <span class="token string">"context"</span><span class="token punctuation">:</span> retriever <span class="token operator">|</span> format_docs<span class="token punctuation">,</span>
+        <span class="token string">"question"</span><span class="token punctuation">:</span> RunnablePassthrough<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token string">"chat_history"</span><span class="token punctuation">:</span> RunnableLambda<span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">[</span><span class="token string">"chat_history"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+    <span class="token operator">|</span> prompt
+    <span class="token operator">|</span> llm
+    <span class="token operator">|</span> StrOutputParser<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li><strong><code>retriever</code></strong>: FAISS VectorDB에서 사용자 질문과 의미적으로 유사한 문서 조각(context)을 검색하는 역할을 합니다.</li>
+<li><strong><code>format_docs</code></strong>: 검색된 문서 조각들을 LLM의 프롬프트에 적합한 형태로 가공합니다.</li>
+<li><strong><code>RunnablePassthrough</code></strong>: 사용자의 질문을 다음 단계로 그대로 전달하는 역할을 합니다.</li>
+<li><strong><code>RunnableLambda</code></strong>: 대화 기록(<code>chat_history</code>)을 체인에 동적으로 주입합니다.</li>
+<li><strong><code>prompt</code></strong>: <code>ChatPromptTemplate</code>을 사용하여 시스템 메시지(전문가 페르소나), 대화 기록, 검색된 문서(context), 그리고 사용자 질문을 조합하여 LLM에 전달할 최종 프롬프트를 생성합니다.</li>
+<li><strong><code>llm</code></strong>: Google의 <code>gemini-pro</code> 모델이 최종 프롬프트를 받아 답변을 생성합니다.</li>
+<li><strong><code>StrOutputParser</code></strong>: LLM이 생성한 답변(AI Message 객체)을 사람이 읽을 수 있는 문자열 형태로 변환합니다.</li>
+</ul>
+<h3 id="streamlit-ui-및-상태-관리">3. Streamlit UI 및 상태 관리</h3>
+<ul>
+<li><strong>UI 구성</strong>: <code>st.title</code>, <code>st.chat_message</code> 등을 사용하여 챗봇 인터페이스를 구성합니다.</li>
+<li><strong>대화 기록 관리</strong>: <code>st.session_state</code>를 사용하여 사용자와 챗봇 간의 대화 기록을 세션 내에 유지합니다. 이는 LLM이 이전 대화의 맥락을 이해하고 답변을 생성하는 데 사용됩니다.</li>
+<li><strong>사용자 입력 처리</strong>: <code>st.chat_input</code>으로 사용자의 질문을 받고, 질문이 입력되면 RAG 체인을 실행(<code>chain.stream</code>)하여 답변 생성을 시작합니다.</li>
+<li><strong>스트리밍 출력</strong>: <code>st.write_stream</code>을 사용하여 LLM이 생성하는 답변을 실시간으로 화면에 표시하여 사용자 경험을 향상시킵니다.</li>
+</ul>
+<h2 id="🔍-작동-원리-및-프로세스">🔍 작동 원리 및 프로세스</h2>
+<p>아래 다이어그램은 챗봇의 전체 작동 흐름을 보여줍니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-sgPU1AUqdFgWZt1t" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1457.9390869140625" style="max-width: 1183.254638671875px;" viewBox="0 0 1183.254638671875 1457.9390869140625"><style>#mermaid-svg-sgPU1AUqdFgWZt1t{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-sgPU1AUqdFgWZt1t .error-icon{fill:#552222;}#mermaid-svg-sgPU1AUqdFgWZt1t .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-sgPU1AUqdFgWZt1t .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-sgPU1AUqdFgWZt1t .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-sgPU1AUqdFgWZt1t .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-sgPU1AUqdFgWZt1t .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-sgPU1AUqdFgWZt1t .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-sgPU1AUqdFgWZt1t .marker{fill:#666;stroke:#666;}#mermaid-svg-sgPU1AUqdFgWZt1t .marker.cross{stroke:#666;}#mermaid-svg-sgPU1AUqdFgWZt1t svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-sgPU1AUqdFgWZt1t .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-sgPU1AUqdFgWZt1t .cluster-label text{fill:#333;}#mermaid-svg-sgPU1AUqdFgWZt1t .cluster-label span{color:#333;}#mermaid-svg-sgPU1AUqdFgWZt1t .label text,#mermaid-svg-sgPU1AUqdFgWZt1t span{fill:#000000;color:#000000;}#mermaid-svg-sgPU1AUqdFgWZt1t .node rect,#mermaid-svg-sgPU1AUqdFgWZt1t .node circle,#mermaid-svg-sgPU1AUqdFgWZt1t .node ellipse,#mermaid-svg-sgPU1AUqdFgWZt1t .node polygon,#mermaid-svg-sgPU1AUqdFgWZt1t .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-sgPU1AUqdFgWZt1t .node .label{text-align:center;}#mermaid-svg-sgPU1AUqdFgWZt1t .node.clickable{cursor:pointer;}#mermaid-svg-sgPU1AUqdFgWZt1t .arrowheadPath{fill:#333333;}#mermaid-svg-sgPU1AUqdFgWZt1t .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-sgPU1AUqdFgWZt1t .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-sgPU1AUqdFgWZt1t .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-sgPU1AUqdFgWZt1t .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-sgPU1AUqdFgWZt1t .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-sgPU1AUqdFgWZt1t .cluster text{fill:#333;}#mermaid-svg-sgPU1AUqdFgWZt1t .cluster span{color:#333;}#mermaid-svg-sgPU1AUqdFgWZt1t div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-sgPU1AUqdFgWZt1t:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-sgPU1AUqdFgWZt1t flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph1-300" style="opacity: 1;" transform="translate(901.8601684570312,728.9695358276367)"><rect width="546.7890625" height="1441.9390716552734" x="-273.39453125" y="-720.9695358276367"></rect><g class="label" transform="translate(0, -706.9695434570312)" id="mermaid-svg-sgPU1AUqdFgWZt1tText"><g transform="translate(-56.34375,-13.359375)"><foreignObject width="112.6875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사용자 질문 처리</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-301" style="opacity: 1;" transform="translate(142.6640625,561.5179748535156)"><rect width="269.328125" height="863.5984497070312" x="-134.6640625" y="-431.7992248535156"></rect><g class="label" transform="translate(0, -417.7992248535156)" id="mermaid-svg-sgPU1AUqdFgWZt1tText"><g transform="translate(-79.125,-13.359375)"><foreignObject width="158.25" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">초기화 (1회 실행, 캐싱)</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M142.6640625,79.71875L142.6640625,104.71875L142.6640625,129.71875L143.1640625,155.21875" marker-end="url(https://stackedit.io/app#arrowhead59)" style="fill:none"></path><defs><marker id="arrowhead59" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-B1" style="opacity: 1;" id="L-B-B1"><path class="path" d="M143.1640625,347.5234375L142.6640625,372.0234375L142.6640625,397.0234375" marker-end="url(https://stackedit.io/app#arrowhead60)" style="fill:none"></path><defs><marker id="arrowhead60" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B1 LE-B2" style="opacity: 1;" id="L-B1-B2"><path class="path" d="M142.6640625,443.7421875L142.6640625,468.7421875L142.6640625,493.7421875" marker-end="url(https://stackedit.io/app#arrowhead61)" style="fill:none"></path><defs><marker id="arrowhead61" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B2 LE-B3" style="opacity: 1;" id="L-B2-B3"><path class="path" d="M142.6640625,540.4609375L142.6640625,565.4609375L142.6640625,590.4609375" marker-end="url(https://stackedit.io/app#arrowhead62)" style="fill:none"></path><defs><marker id="arrowhead62" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B3 LE-B4" style="opacity: 1;" id="L-B3-B4"><path class="path" d="M142.6640625,637.1796875L142.6640625,662.1796875L142.6640625,804.3890686035156" marker-end="url(https://stackedit.io/app#arrowhead63)" style="fill:none"></path><defs><marker id="arrowhead63" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B4 LE-C" style="opacity: 1;" id="L-B4-C"><path class="path" d="M142.6640625,851.1078186035156L142.6640625,993.3171997070312L142.6640625,1018.3171997070312L222.8534824944467,1043.3171997070312" marker-end="url(https://stackedit.io/app#arrowhead64)" style="fill:none"></path><defs><marker id="arrowhead64" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M297.7804718017578,1090.0359497070312L297.7804718017578,1115.0359497070312L298.28047180175776,1140.5359512329098" marker-end="url(https://stackedit.io/app#arrowhead65)" style="fill:none"></path><defs><marker id="arrowhead65" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-E" style="opacity: 1;" id="L-D-E"><path class="path" d="M364.525555573425,1235.756492461243L842.3289184570312,1339.8609466552734L982.3171997070312,1383.2698694615851" marker-end="url(https://stackedit.io/app#arrowhead66)" style="fill:none"></path><defs><marker id="arrowhead66" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-E1" style="opacity: 1;" id="L-E-E1"><path class="path" d="M1055.37674282412,1378.2203216552734L1078.3875122070312,1339.8609466552734L1078.3875122070312,1220.7687606811523L1078.3875122070312,1115.0359497070312L1078.3875122070312,1066.6765747070312L1078.3875122070312,1018.3171997070312L1078.3875122070312,993.3171997070312L1078.3875122070312,827.7484436035156L1078.3875122070312,662.1796875L1078.3875122070312,613.8203125L1078.3875122070312,565.4609375L1078.3875122070312,517.1015625L1078.3875122070312,468.7421875L1078.3875122070312,420.3828125L1078.3875122070312,372.0234375L1078.3875122070312,250.87109375L1078.3875122070312,129.71875L1078.3875122070312,104.71875L1020.239289266805,79.71875" marker-end="url(https://stackedit.io/app#arrowhead67)" style="fill:none"></path><defs><marker id="arrowhead67" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E1 LE-E2" style="opacity: 1;" id="L-E1-E2"><path class="path" d="M911.5747976472575,79.71875L853.4265747070312,104.71875L853.4265747070312,129.71875L853.4265747070312,227.51171875" marker-end="url(https://stackedit.io/app#arrowhead68)" style="fill:none"></path><defs><marker id="arrowhead68" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E2 LE-E3" style="opacity: 1;" id="L-E2-E3"><path class="path" d="M853.4265747070312,274.23046875L853.4265747070312,372.0234375L853.4265747070312,397.0234375" marker-end="url(https://stackedit.io/app#arrowhead69)" style="fill:none"></path><defs><marker id="arrowhead69" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E3 LE-E4" style="opacity: 1;" id="L-E3-E4"><path class="path" d="M853.4265747070312,443.7421875L853.4265747070312,468.7421875L853.4265747070312,493.7421875" marker-end="url(https://stackedit.io/app#arrowhead70)" style="fill:none"></path><defs><marker id="arrowhead70" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E4 LE-F" style="opacity: 1;" id="L-E4-F"><path class="path" d="M853.4265747070312,540.4609375L853.4265747070312,565.4609375L551.1468811035156,601.9577498245512" marker-end="url(https://stackedit.io/app#arrowhead71)" style="fill:none"></path><defs><marker id="arrowhead71" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" style="opacity: 1;" id="L-F-G"><path class="path" d="M452.8968811035156,637.1796875L452.8968811035156,662.1796875L453.39688110351557,687.6796936035156" marker-end="url(https://stackedit.io/app#arrowhead72)" style="fill:none"></path><defs><marker id="arrowhead72" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-G LE-C" style="opacity: 1;" id="L-G-C"><path class="path" d="M453.39688110351557,968.8171813964843L452.8968811035156,993.3171997070312L452.8968811035156,1018.3171997070312L372.70746110906896,1043.3171997070312" marker-end="url(https://stackedit.io/app#arrowhead73)" style="fill:none"></path><defs><marker id="arrowhead73" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-B1" class="edgeLabel L-LS-B' L-LE-B1"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B1-B2" class="edgeLabel L-LS-B1' L-LE-B2"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B2-B3" class="edgeLabel L-LS-B2' L-LE-B3"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B3-B4" class="edgeLabel L-LS-B3' L-LE-B4"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B4-C" class="edgeLabel L-LS-B4' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(842.3289184570312,1339.8609466552734)"><g transform="translate(-31.8515625,-13.359375)" class="label"><rect rx="0" ry="0" width="63.703125" height="26.71875"></rect><foreignObject width="63.703125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-E" class="edgeLabel L-LS-D' L-LE-E">질문 입력</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-E1" class="edgeLabel L-LS-E' L-LE-E1"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E1-E2" class="edgeLabel L-LS-E1' L-LE-E2"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E2-E3" class="edgeLabel L-LS-E2' L-LE-E3"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E3-E4" class="edgeLabel L-LS-E3' L-LE-E4"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E4-F" class="edgeLabel L-LS-E4' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-G-C" class="edgeLabel L-LS-G' L-LE-C"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-E1-287" transform="translate(965.9070434570312,56.359375)"><rect rx="0" ry="0" x="-138.734375" y="-23.359375" width="277.46875" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-128.734375,-13.359375)"><foreignObject width="257.46875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. Retriever: 질문과 유사한 문서 검색</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E-285" transform="translate(1041.3640747070312,1401.5796966552734)"><rect rx="0" ry="0" x="-59.046875" y="-23.359375" width="118.09375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-49.046875,-13.359375)"><foreignObject width="98.09375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">RAG 체인 실행</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E2-289" transform="translate(853.4265747070312,250.87109375)"><rect rx="0" ry="0" x="-189.9609375" y="-23.359375" width="379.921875" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-179.9609375,-13.359375)"><foreignObject width="359.921875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">2. Prompt Template: 컨텍스트, 질문, 대화 기록 결합</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E3-291" transform="translate(853.4265747070312,420.3828125)"><rect rx="0" ry="0" x="-134.21875" y="-23.359375" width="268.4375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-124.21875,-13.359375)"><foreignObject width="248.4375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. LLM: 전문가 페르소나로 답변 생성</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E4-293" transform="translate(853.4265747070312,517.1015625)"><rect rx="0" ry="0" x="-145.40625" y="-23.359375" width="290.8125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-135.40625,-13.359375)"><foreignObject width="270.8125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. Output Parser: 답변을 문자열로 변환</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B1-273" transform="translate(142.6640625,420.3828125)"><rect rx="0" ry="0" x="-75.015625" y="-23.359375" width="150.03125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-65.015625,-13.359375)"><foreignObject width="130.03125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Google API 키 로드</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-271" transform="translate(142.6640625,250.87109375)"><polygon points="96.15234375,0 192.3046875,-96.15234375 96.15234375,-192.3046875 0,-96.15234375" transform="translate(-96.15234375,96.15234375)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-73.4765625,-13.359375)"><foreignObject width="146.953125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">환경설정 및 모델 로딩</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B2-275" transform="translate(142.6640625,517.1015625)"><rect rx="0" ry="0" x="-99.6640625" y="-23.359375" width="199.328125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-89.6640625,-13.359375)"><foreignObject width="179.328125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">LLM 및 임베딩 모델 초기화</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B3-277" transform="translate(142.6640625,613.8203125)"><rect rx="0" ry="0" x="-80.0546875" y="-23.359375" width="160.109375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-70.0546875,-13.359375)"><foreignObject width="140.109375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">FAISS VectorDB 로드</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B4-279" transform="translate(142.6640625,827.7484436035156)"><rect rx="0" ry="0" x="-59.046875" y="-23.359375" width="118.09375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-49.046875,-13.359375)"><foreignObject width="98.09375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">RAG 체인 구성</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-270" transform="translate(142.6640625,56.359375)"><rect rx="0" ry="0" x="-34.4921875" y="-23.359375" width="68.984375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-24.4921875,-13.359375)"><foreignObject width="48.984375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">앱 시작</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-281" transform="translate(297.7804718017578,1066.6765747070312)"><rect rx="0" ry="0" x="-103.0703125" y="-23.359375" width="206.140625" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-93.0703125,-13.359375)"><foreignObject width="186.140625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">UI 렌더링 및 대화 기록 표시</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-283" transform="translate(297.7804718017578,1220.7687606811523)"><polygon points="80.73281250000001,0 161.46562500000002,-80.73281250000001 80.73281250000001,-161.46562500000002 0,-80.73281250000001" transform="translate(-80.73281250000001,80.73281250000001)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-56.34375,-13.359375)"><foreignObject width="112.6875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사용자 입력 대기</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-F-295" transform="translate(452.8968811035156,613.8203125)"><rect rx="0" ry="0" x="-98.25" y="-23.359375" width="196.5" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-88.25,-13.359375)"><foreignObject width="176.5" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">UI에 답변 실시간 스트리밍</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-G-297" transform="translate(452.8968811035156,827.7484436035156)"><polygon points="140.56875,0 281.1375,-140.56875 140.56875,-281.1375 0,-140.56875" transform="translate(-140.56875,140.56875)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-122.828125,-13.359375)"><foreignObject width="245.65625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">대화 기록을 st.session_state에 저장</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<p><strong>프로세스 설명:</strong></p>
+<ol>
+<li><strong>초기화</strong>: 사용자가 앱을 처음 실행하면, <code>get_rag_chain</code> 함수가 호출되어 LLM, 임베딩 모델, VectorDB를 로드하고 RAG 체인을 구성합니다. 이 결과는 캐시에 저장됩니다.</li>
+<li><strong>UI 렌더링</strong>: Streamlit이 화면에 제목, 환영 메시지, 그리고 <code>st.session_state</code>에 저장된 이전 대화 내용을 표시합니다.</li>
+<li><strong>사용자 입력</strong>: 사용자가 채팅 입력창에 질문을 입력하고 전송합니다.</li>
+<li><strong>RAG 체인 실행</strong>:
+<ul>
+<li>입력된 질문은 RAG 체인으로 전달됩니다.</li>
+<li><strong>검색(Retrieve)</strong>: FAISS Retriever가 <code>docs</code> 폴더의 문서 기반 VectorDB에서 질문과 가장 관련성 높은 내용을 찾습니다.</li>
+<li><strong>보강(Augment)</strong>: 시스템 프롬프트, 검색된 문서(컨텍스트), 이전 대화 기록, 그리고 사용자의 현재 질문이 모두 결합되어 LLM에게 전달될 최종 프롬프트가 만들어집니다.</li>
+<li><strong>생성(Generate)</strong>: LLM(Gemini Pro)은 "신뢰성 공학 전문가"의 역할에 맞춰, 주어진 정보를 바탕으로 답변을 생성합니다.</li>
+</ul>
+</li>
+<li><strong>응답 출력 및 저장</strong>:
+<ul>
+<li>생성된 답변은 <code>st.write_stream</code>을 통해 UI에 실시간으로 표시됩니다.</li>
+<li>답변 생성이 완료되면, 사용자의 질문과 AI의 답변이 <code>st.session_state</code>에 저장되어 다음 대화의 맥락으로 활용됩니다.</li>
+</ul>
+</li>
+<li><strong>대기</strong>: 시스템은 다시 사용자의 다음 입력을 기다립니다.</li>
+</ol>
+<h2 id="💡-대표-사용-사례-use-cases">💡 대표 사용 사례 (Use Cases)</h2>
+<h3 id="사례-1-fmea-가이드라인에-대한-개념-질문">사례 1: FMEA 가이드라인에 대한 개념 질문</h3>
+<ul>
+<li>
+<p><strong>사용자 질문</strong>: <code>AIAGVDA FMEA 가이드라인의 7단계 접근법에 대해 설명해줘.</code></p>
+</li>
+<li>
+<p><strong>작동 절차</strong>:</p>
+<ol>
+<li><strong>검색</strong>: Retriever는 VectorDB에서 <code>AIAGVDA_FMEA_Guide_Summary.md</code> 문서 내용 중 “7단계 접근법”, “기획 및 준비”, “구조 분석” 등과 관련된 텍스트 조각들을 추출합니다.</li>
+<li><strong>보강</strong>: 추출된 텍스트 조각들이 "신뢰성 전문가로서 다음 정보를 바탕으로 질문에 답하라"는 시스템 프롬프트 및 사용자 질문과 결합됩니다.</li>
+<li><strong>생성</strong>: LLM은 제공된 FMEA 가이드라인 요약 정보를 바탕으로 7단계 접근법(기획 및 준비, 구조 분석, 기능 분석, 고장 분석, 리스크 분석, 최적화, 결과 문서화)을 체계적으로 설명하는 답변을 생성합니다.</li>
+<li><strong>출력</strong>: 생성된 답변과 함께, 정보의 출처가 <code>AIAGVDA_FMEA_Guide_Summary.md</code>임을 명시하여 신뢰성을 더합니다.</li>
+</ol>
+</li>
+</ul>
+<h3 id="사례-2-두-가지-고장-보고서-비교-분석-요청">사례 2: 두 가지 고장 보고서 비교 분석 요청</h3>
+<ul>
+<li>
+<p><strong>사용자 질문</strong>: <code>볼펜과 터보차저의 고장 보고서 내용을 비교해서, 고장 원인 분석의 접근 방식 차이를 설명해줘.</code></p>
+</li>
+<li>
+<p><strong>작동 절차</strong>:</p>
+<ol>
+<li><strong>검색</strong>: Retriever는 <code>failure_report-ballpen.md</code>와 <code>failure_report-turbocharger.md</code> 두 문서에서 각각 고장 원인, 분석 방법, 메커니즘과 관련된 핵심 내용을 모두 검색합니다.</li>
+<li><strong>보강</strong>: 두 보고서의 핵심 내용이 컨텍스트로 제공되며, "두 대상의 분석 접근 방식 차이"를 설명하라는 사용자 질문과 결합됩니다.</li>
+<li><strong>생성</strong>: LLM은 "신뢰성 전문가"의 관점에서 두 사례를 비교 분석합니다.
+<ul>
+<li>볼펜: 사용 환경 및 물리적 마모와 같은 단순하고 직관적인 원인 분석에 초점을 맞춥니다.</li>
+<li>터보차저: 재료 피로, 윤활 불량, 고온/고압 환경 등 복잡한 공학적 요소를 고려한 시스템 수준의 심층 분석이 필요함을 설명합니다.</li>
+<li>이를 통해 단순 부품과 복잡한 시스템 간의 신뢰성 분석 접근법 차이를 논리적으로 설명하는 답변을 생성합니다.</li>
+</ul>
+</li>
+<li><strong>출력</strong>: 답변과 함께 <code>failure_report-ballpen.md</code>와 <code>failure_report-turbocharger.md</code>를 출처로 명시합니다.</li>
+</ol>
+</li>
+</ul>
+<h2 id="🛠️-실행-방법">🛠️ 실행 방법</h2>
+<h3 id="사전-준비">1. 사전 준비</h3>
+<ul>
+<li>
+<p><strong>Google API 키 발급</strong>: <a href="https://aistudio.google.com/app/apikey">Google AI Studio</a>에서 API 키를 발급받아 프로젝트 루트 디렉터리에 <code>.env</code> 파일을 생성하고 아래와 같이 입력합니다.</p>
+<pre><code>GOOGLE_API_KEY="발급받은_API_키를_여기에_입력하세요"
+</code></pre>
+</li>
+<li>
+<p><strong>VectorDB 생성</strong>: <code>faiss_index</code> 폴더가 비어있거나 존재하지 않는 경우, 먼저 VectorDB를 생성해야 합니다. (이 프로젝트에서는 이미 생성되어 있습니다. 만약 문서를 추가하거나 변경했다면 <code>1.RAG_VectorDB_load_test.py</code> 와 유사한 스크립트를 사용하여 DB를 다시 생성해야 합니다.)</p>
+</li>
+</ul>
+<h3 id="필요-라이브러리-설치">2. 필요 라이브러리 설치</h3>
+<p>터미널 또는 명령 프롬프트에서 아래 명령어를 실행하여 필요한 파이썬 라이브러리를 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> streamlit python-dotenv langchain langchain-core langchain-google-genai langchain-community faiss-cpu
+</code></pre>
+<p><em>참고: GPU 환경에서는 <code>faiss-cpu</code> 대신 <code>faiss-gpu</code>를 설치할 수 있습니다.</em></p>
+<h3 id="챗봇-실행">3. 챗봇 실행</h3>
+<p>터미널에서 아래 명령어를 입력하여 Streamlit 앱을 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">streamlit run app_v1.py
+</code></pre>
+<p>명령어 실행 후 웹 브라우저가 자동으로 열리며 챗봇 애플리케이션이 나타납니다.</p>
+
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="acceleration-factor">
+<h1>Acceleration factor<a class="headerlink" href="#acceleration-factor" title="Link to this heading"></a></h1>
+<p>The Arrhenius model for Acceleration factor due to higher temperature is <span class="math notranslate nohighlight">\(AF = exp\left[\frac{E_a}{K_B}\left(\frac{1}{T_{use}}-\frac{1}{T_{acc}}\right)\right]\)</span>
+This function accepts T_use as a mandatory input and you may specify any two of the three other variables, and the third variable will be found.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/acceleration_factor.html">API reference</a>.</p>
+</div>
+<p>In the example below, the acceleration factor is found for an accelerated test at 100°C for a component that is normally run at 60°C and has an activation energy of 1.2 eV.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">acceleration_factor</span>
+<span class="n">acceleration_factor</span><span class="p">(</span><span class="n">T_use</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span><span class="n">T_acc</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">Ea</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from acceleration_factor:</span>
+<span class="sd">Acceleration Factor: 88.29574588463338</span>
+<span class="sd">Use Temperature: 60 °C</span>
+<span class="sd">Accelerated Temperature: 100 °C</span>
+<span class="sd">Activation Energy: 1.2 eV</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+</div>
+</div>

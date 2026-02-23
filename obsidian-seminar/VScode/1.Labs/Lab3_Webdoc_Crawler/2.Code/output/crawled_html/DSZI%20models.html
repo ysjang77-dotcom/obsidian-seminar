@@ -1,0 +1,290 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="dszi-models">
+<h1>DSZI models<a class="headerlink" href="#dszi-models" title="Link to this heading"></a></h1>
+<section id="what-are-dszi-models">
+<h2>What are DSZI models?<a class="headerlink" href="#what-are-dszi-models" title="Link to this heading"></a></h2>
+<p>DSZI is an acronym for “Defective Subpopulation Zero Inflated”. It is a combination of the Defective Subpopulation (DS) model and the Zero Inflated (ZI) model.</p>
+<p>A defective subpopulation model is where the CDF does not reach 1 during the period of observation.
+This is caused when a portion of the population fails (known as the defective subpopulation) but the remainder of the population does not fail (and is right censored) by the end of the observation period.</p>
+<p>A zero inflated model is where the CDF starts above 0 at the start of the observation period.
+This is caused by many “dead-on-arrival” items from the population, represented by failure times of 0.
+This is not the same as left censored data since left censored is when the failures occurred between 0 and the observation time.
+In the zero inflated model, the observation time is considered to start at 0 so the failure times are 0.</p>
+<p>In a DSZI model, the CDF (which normally goes from 0 to 1) goes from above 0 to below 1, as shown in the image below.
+In this image the scale of the PDF and CDF are normalized so they can both be viewed together. In reality the CDF is much larger than the PDF.</p>
+<img alt="_images/DSZI_explained.png" src="_images/DSZI_explained.png"/>
+<p>A DSZI model may be applied to any distribution (Weibull, Normal, Lognormal, etc.) using the transformations explained in the next section.
+The plot below shows how a Weibull distribution can become a DS_Weibull, ZI_Weibull and DSZI_Weibull.
+Note that the PDF of the DS, ZI, and DSZI models appears smaller than that of the original Weibull model since the area under the PDF is no longer 1.
+This is because the CDF does not range from 0 to 1.</p>
+<img alt="_images/DSZI_combined.png" src="_images/DSZI_combined.png"/>
+</section>
+<section id="equations-of-dszi-models">
+<h2>Equations of DSZI models<a class="headerlink" href="#equations-of-dszi-models" title="Link to this heading"></a></h2>
+<p>A DSZI Model adds a minor modification to the PDF and CDF of any standard distribution (referred to here as the “base distribution”) to transform it into a DSZI Model. The transformations are as follows:</p>
+<p><span class="math notranslate nohighlight">\(PDF_{DSZI} = PDF_{base} × (DS-ZI)\)</span></p>
+<p><span class="math notranslate nohighlight">\(CDF_{DSZI} = CDF_{base} × (DS-ZI) + ZI\)</span></p>
+<p>In the above equations the base distribution (represented by <span class="math notranslate nohighlight">\(PDF_{base}\)</span> and <span class="math notranslate nohighlight">\(CDF_{base}\)</span>) is transformed using the parameters DS and ZI.
+DS is the maximum of the CDF which represents the fraction of the total population that is defective (the defective subpopulation).
+ZI is the minimum of the CDF which represents the fraction of the total population that failed at t=0 or equivalently were “dead-on-arrival” (the zero inflated fraction).
+To create only a DS model we can set ZI as 0. To create only a ZI model we can set DS as 1. The parameters DS and ZI must be between 0 and 1, and DS must be greater than ZI.
+The above equations can be expanded depending on the equation of the base distribution. For example, if the base distribution is a two parameter Weibull distribution, the DSZI model would be:</p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{\beta}{\alpha}\left(\frac{t}{\alpha}\right)^{(\beta-1)}{\rm e}^{-(\frac{t}{\alpha })^ \beta } \left(DS - ZI \right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \left(1 - {\rm e}^{-(\frac{t}{\alpha })^ \beta }\right) \left(DS - ZI \right) + ZI\)</span></p>
+<p>The SF, HF and CHF can be obtained using transformations from the CDF and PDF using the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20supported%20distributions.html#relationships-between-the-five-functions">relationships between the five functions</a>.</p>
+</section>
+<section id="creating-a-dszi-model">
+<h2>Creating a DSZI model<a class="headerlink" href="#creating-a-dszi-model" title="Link to this heading"></a></h2>
+<p>Within reliability, the DSZI Model is available within the Distributions module. The input requires the base distribution to be specified using a distribution object and the DS and ZI parameters to be specified if required.
+DS defaults to 1 and ZI defaults to 0. The output API matches the API for the standard distributions.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Distributions/DSZI_Model.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h3>
+<p>In this first example, we will create a Gamma DSZI model and plot the 5 functions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gamma_Distribution</span><span class="p">,</span> <span class="n">DSZI_Model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DSZI_Model</span><span class="p">(</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">Gamma_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">DS</span><span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">ZI</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example1.png" src="_images/DSZI_example1.png"/>
+</section>
+<section id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h3>
+<p>In this second example, we will create a Lognormal_DS model, draw some random samples and plot those samples on the survival function plot.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lognormal_Distribution</span><span class="p">,</span> <span class="n">DSZI_Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DSZI_Model</span><span class="p">(</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">Lognormal_Distribution</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">DS</span><span class="o">=</span> <span class="mf">0.75</span><span class="p">)</span>
+<span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">right_censored_time</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">SF</span><span class="p">()</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span> <span class="o">=</span> <span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span> <span class="o">=</span> <span class="n">right_censored</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s2">"SF"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example2.png" src="_images/DSZI_example2.png"/>
+<p>Note that in the above example, the random_samples function returns failures and right_censored values. This differs from all other Distributions which only return failures.
+The reason for returning failures and right_censored data is that is is essential to have right_censored data in order to have a DS Model.</p>
+</section>
+</section>
+<section id="fitting-a-dszi-model">
+<h2>Fitting a DSZI model<a class="headerlink" href="#fitting-a-dszi-model" title="Link to this heading"></a></h2>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the API reference for <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Fitters/Fit_Weibull_DS.html">Fit_Weibull_DS</a>, <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Fitters/Fit_Weibull_ZI.html">Fit_Weibull_ZI</a>, and <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Fitters/Fit_Weibull_DSZI.html">Fit_Weibull_DSZI</a>.</p>
+</div>
+<p>As we saw above, the DSZI_Model can be either DS, ZI, or DSZI depending on the values of the DS and ZI parameters.
+Within the Fitters module, three functions are offered, one of each of these cases with the Weibull_2P distribution as the base distribution.
+The three Fitters available are Fit_Weibull_DS, Fit_Weibull_ZI, and Fit_Weibull_DSZI.
+If your data contains zeros then only the Fit_Weibull_ZI and Fit_Weibull_DSZI fitters are appropriate. Using anything else will cause the zeros to be automatically removed and a warning to be printed.
+Fit_Weibull_ZI does not mandate that the failures contain zeros, but if failures does not contain zeros then ZI will be 0 and the alpha and beta parameters will be equivalent to the results from Fit_Weibull_2P.
+Fit_Weibull_DS does not mandate that right_censored data is provided, but if right_censored data is not provided then DS will be 1 and the alpha and beta parameters will be equivalent to the results from Fit_Weibull_2P.
+Fit_Weibull_DSZI does not mandate that failures contain zeros or that right_censored data is provided. If right_censored data is not provided then DS will be 1. If failures does not contain zeros then ZI will be 0. If failures does not contain zeros and no right censored data is provided then DS will be 1, ZI will be 0 and the alpha and beta parameters will be equivalent to the results from Fit_Weibull_2P.</p>
+<section id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h3>
+<p>In this example, we will create 70 samples of failure data from a Weibull Distribution, and append 30 zeros to it. We will then use Fit_Weibull_ZI to model the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_ZI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">zeros</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_ZI</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">()</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_ZI (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 100/0 (0% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         192.931         5.33803   182.747   203.682</span>
+<span class="sd">     Beta         4.53177        0.431272   3.76064   5.46102</span>
+<span class="sd">       ZI             0.3       0.0458258  0.218403  0.396613</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -426.504</span>
+<span class="sd">           AICc  859.259</span>
+<span class="sd">            BIC  866.824</span>
+<span class="sd">             AD  5.88831</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example3.png" src="_images/DSZI_example3.png"/>
+<p>We can see above how the fitter correctly identified that the distribution was 30% zero inflated, and it did a reasonable job of finding the alpha and beta parameters of the base distribution.</p>
+</section>
+<section id="example-4">
+<h3>Example 4<a class="headerlink" href="#example-4" title="Link to this heading"></a></h3>
+<p>In this example, we will use Fit_Weibull_DS to model some data that is heavily right censored. The DS=0.4 parameter means that only 40% of the data is failure data, with the rest being right censored.
+The original distribution is overlayed in the plot for comparison of the goodness of fit.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DSZI_Model</span><span class="p">,</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_DS</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DSZI_Model</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">2.5</span><span class="p">),</span> <span class="n">DS</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">right_censored_time</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"true model"</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">fit_DS</span> <span class="o">=</span> <span class="n">Fit_Weibull_DS</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fit_DS</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"fitted Weibull_DS"</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_DS (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 41/59 (59% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         67.9275         4.61424   59.4599   77.6009</span>
+<span class="sd">     Beta         2.63207        0.357826    2.0164   3.43571</span>
+<span class="sd">       DS        0.414739       0.0500682  0.321106  0.514964</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -254.236</span>
+<span class="sd">           AICc  514.721</span>
+<span class="sd">            BIC  522.287</span>
+<span class="sd">             AD  374.746</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example4.png" src="_images/DSZI_example4.png"/>
+</section>
+<section id="example-5">
+<h3>Example 5<a class="headerlink" href="#example-5" title="Link to this heading"></a></h3>
+<p>In this example, we will use some real world data from a vehicle manufacturer, which is available in the Datasets module.
+This example shows how the Weibull_2P model can be an inappropriate choice for a dataset that is heavily right censored.
+In addition the the visual proof provided by the probability plot (left) and the CDF (right), we can see the goodness of fit criterion indicate that Weibull_DS was much better (closer to zero) than Weibull_2P.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_DS</span><span class="p">,</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">defective_sample</span>
+
+<span class="n">failures</span> <span class="o">=</span> <span class="n">defective_sample</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="n">defective_sample</span><span class="p">()</span><span class="o">.</span><span class="n">right_censored</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">fit_DS</span> <span class="o">=</span> <span class="n">Fit_Weibull_DS</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'-------------------------------------------'</span><span class="p">)</span>
+<span class="n">fit_2P</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">fit_DS</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"fitted Weibull_DS"</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">fit_2P</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"fitted Weibull_2P"</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Cumulative Distribution Function'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">'Comparison of Weibull_2P with Weibull_DS'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_DS (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 1350/12295 (90.10627% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         170.983         4.61716   162.169   180.276</span>
+<span class="sd">     Beta         1.30109       0.0297713   1.24403   1.36077</span>
+<span class="sd">       DS         0.12482      0.00333709  0.118425  0.131509</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -11977.7</span>
+<span class="sd">           AICc  23961.3</span>
+<span class="sd">            BIC  23983.9</span>
+<span class="sd">             AD  27212.4</span>
+
+<span class="sd">-------------------------------------------</span>
+<span class="sd">Results from Fit_Weibull_2P (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 1350/12295 (90.10627% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         10001.5         883.952    8410.7   11893.1</span>
+<span class="sd">     Beta        0.677348        0.016663  0.645463  0.710807</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -12273.2</span>
+<span class="sd">           AICc  24550.3</span>
+<span class="sd">            BIC  24565.4</span>
+<span class="sd">             AD    27213</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example5.png" src="_images/DSZI_example5.png"/>
+</section>
+<section id="example-6">
+<h3>Example 6<a class="headerlink" href="#example-6" title="Link to this heading"></a></h3>
+<p>In this example we will create a DSZI model with DS=0.7 and ZI=0.2.
+Based on these parameters, we expect the random samples to be around 70% failures and of those failures 20% of the total samples (failures + right censored) should be zeros due to the zero inflated fraction.
+We draw the random samples from the model and then fit a Weibull_DSZI model to the data.
+The result is surprisingly accurate showing DS=0.700005 and ZI=0.22, with the alpha and beta parameters closely resembling the parameters of the input Weibull Distribution.
+The plot below shows the CDF on the Weibull probability plot (left) and on linear axes (right) which each provide a different perspective of how the distribution models the failure points.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DSZI_Model</span><span class="p">,</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_DSZI</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DSZI_Model</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span><span class="n">DS</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span><span class="n">ZI</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">right_censored_time</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_DSZI</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'fitted Weibull_DSZI'</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'true model'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'fitted Weibull_DSZI'</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'true model'</span><span class="p">)</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_DSZI (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 70/30 (30% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         1170.12         68.0933   1043.99   1311.49</span>
+<span class="sd">     Beta         2.60255        0.299069   2.07771   3.25997</span>
+<span class="sd">       DS        0.700005        0.045826  0.603391  0.781602</span>
+<span class="sd">       ZI            0.22       0.0414247  0.149465  0.311627</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -463.613</span>
+<span class="sd">           AICc  935.647</span>
+<span class="sd">            BIC  945.646</span>
+<span class="sd">             AD  166.025</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/DSZI_example6.png" src="_images/DSZI_example6.png"/>
+<p>The DSZI model is a model of my own making. It combines the well established DS and ZI models together for the first time to enable heavily right censored data to be modelled using a DS distribution while also allowing for zero inflation of the failures.</p>
+</section>
+</section>
+</section>
+</div>
+</div>

@@ -1,0 +1,31 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="optimal-replacement-time">
+<h1>Optimal replacement time<a class="headerlink" href="#optimal-replacement-time" title="Link to this heading"></a></h1>
+<p>When conducting maintenance planning, we must optimise the frequency of preventative maintenance (PM) for the minimum overall cost. If PM is conducted too frequently then we will have high costs, but if not conducted often enough then failures will result and we incur the higher cost of corrective maintenance (CM). Depending on the underlying failure distribution, it is possible to model these costs for a range of PM intervals, with the lowest cost per unit time resulting from the optimal replacement time. This function calculates the cost per unit time to determine how cost varies with replacement time. The cost model can be used for HPP (ie. the maintenance makes the system “as good as new”) or Power Law NHPP (ie. the maintenance makes the system “as good as old”). The default is for “as good as new”.</p>
+<p>Cost in the above context should include all associated costs of PM and CM. These are not just the costs associated with parts and labor but may also include other costs such as system downtime (which may vary between PM and CM), loss of production output, customer satisfaction, etc. Some of these costs are difficult to quantify but organisations should strive to quantify all the costs of PM and system failure (requiring CM) if they want to accurately optimise their maintenance schedule.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Repairable_systems/optimal_replacement_time.html">API reference</a>.</p>
+</div>
+<p>In the example below, we provide the cost of preventative maintenance (cost_PM), and the cost of corrective maintenance (cost_CM), as well as the Weibull parameters of the failure distribution. Leaving the default outputs, we obtain a plot of the cost per unit time and the printed results. This example is based of the example provided on the <a class="reference external" href="http://www.reliawiki.org/index.php/Optimum_Replacement_Time_Example">reliasoft article</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimal_replacement_time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">optimal_replacement_time</span><span class="p">(</span><span class="n">cost_PM</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cost_CM</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">weibull_alpha</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">weibull_beta</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from optimal_replacement_time:</span>
+<span class="sd">Cost model assuming as good as new replacement (q=0):</span>
+<span class="sd">The minimum cost per unit time is 0.0035</span>
+<span class="sd">The optimal replacement time is 493.19</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/optimal_replacement_time.png" src="_images/optimal_replacement_time.png"/>
+<img alt="_images/optimal_replacement_interval.png" src="_images/optimal_replacement_interval.png"/>
+</section>
+</div>
+</div>

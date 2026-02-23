@@ -1,0 +1,105 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="mcf-parametric">
+<h1>MCF_parametric<a class="headerlink" href="#mcf-parametric" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Repairable_systems.MCF_parametric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Repairable_systems.</span></span><span class="sig-name descname"><span class="pre">MCF_parametric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Repairable_systems.MCF_parametric" title="Link to this definition"></a></dt>
+<dd><p>The Mean Cumulative Function (MCF) is a cumulative history function that
+shows the cumulative number of recurrences of an event, such as repairs over
+time. In the context of repairs over time, the value of the MCF can be
+thought of as the average number of repairs that each system will have
+undergone after a certain time. It is only applicable to repairable systems
+and assumes that each event (repair) is identical. In the case of the fitted
+paramertic MCF, it is assumed that each system’s MCF is identical.</p>
+<p>The shape (beta parameter) of the MCF is a key indicator that shows whether
+the systems are improving (beta&lt;1), worsening (beta&gt;1), or staying the same
+(beta=1) over time. If the MCF is concave down (appearing to level out) then
+the system is improving. A straight line (constant increase) indicates it is
+staying the same. Concave up (getting steeper) shows the system is worsening
+as repairs are required more frequently as time progresses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em>) – The repair times for each system. Format this as a list of lists. eg.
+data=[[4,7,9],[3,8,12]] would be the data for 2 systems. The largest
+time for each system is assumed to be the retirement time and is treated
+as a right censored value. If the system was retired immediately after
+the last repair then you must include a repeated value at the end as
+this will be used to indicate a right censored value. eg. A system that
+had repairs at 4, 7, and 9 then was retired after the last repair would
+be entered as data = [4,7,9,9] since the last value is treated as a
+right censored value. If you only have data from 1 system you may enter
+the data in a single list as data = [3,7,12] and it will be nested
+within another list automatically.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Prints the table of MCF results (state, time, MCF_lower, MCF, MCF_upper,
+variance). Default = True.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – Confidence interval. Must be between 0 and 1. Default = 0.95 for 95% CI
+(one sided).</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True the plot will be shown. Default = True. Use plt.show() to show
+it.</p></li>
+<li><p><strong>plot_CI</strong> (<em>bool, optional</em>) – If True, the plot will include the confidence intervals. Default = True.
+Set as False to remove the confidence intervals from the plot.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib (e.g. color,
+label, linestyle).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>times</strong> (<em>array</em>) – This is the times (x values) from the scatter plot. This value is
+calculated using MCF_nonparametric.</p></li>
+<li><p><strong>MCF</strong> (<em>array</em>) – This is the MCF (y values) from the scatter plot. This value is
+calculated using MCF_nonparametric.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – The calculated alpha parameter from MCF = (t/alpha)^beta</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The calculated beta parameter from MCF = (t/alpha)^beta</p></li>
+<li><p><strong>alpha_SE</strong> (<em>float</em>) – The standard error in the alpha parameter</p></li>
+<li><p><strong>beta_SE</strong> (<em>float</em>) – The standard error in the beta parameter</p></li>
+<li><p><strong>cov_alpha_beta</strong> (<em>float</em>) – The covariance between the parameters</p></li>
+<li><p><strong>alpha_upper</strong> (<em>float</em>) – The upper CI estimate of the parameter</p></li>
+<li><p><strong>alpha_lower</strong> (<em>float</em>) – The lower CI estimate of the parameter</p></li>
+<li><p><strong>beta_upper</strong> (<em>float</em>) – The upper CI estimate of the parameter</p></li>
+<li><p><strong>beta_lower</strong> (<em>float</em>) – The lower CI estimate of the parameter</p></li>
+<li><p><strong>results</strong> (<em>dataframe</em>) – A dataframe of the results (point estimate, standard error, Lower CI and
+Upper CI for each parameter)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This example is taken from Reliasoft’s example (available at
+<a class="reference external" href="http://reliawiki.org/index.php/Recurrent_Event_Data_Analysis">http://reliawiki.org/index.php/Recurrent_Event_Data_Analysis</a>). The failure
+times and retirement times (retirement time is indicated by +) of 5 systems
+are:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>System</p></td>
+<td><p>Times</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>5,10,15,17+</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>6,13,17,19+</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>12,20,25,26+</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>13,15,24+</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>16,22,25,28+</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCF_parametric</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">28</span><span class="p">]]</span>
+<span class="n">MCF_parametric</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,31 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="likelihood-plot">
+<h1>Likelihood plot<a class="headerlink" href="#likelihood-plot" title="Link to this heading"></a></h1>
+<p>The likelihood plot provides a graphical representation of the confidence bounds on the parameters of a distribution at a particular confidence interval.
+When multiple distributions (of the same type) are plotted together, it is possible to determine whether there is a statistically significant difference between them by looking at whether their likelihood plots overlap.</p>
+<p>Please note that it is not possible to overlay the likelihood plots of different types of distributions (e.g. Weibull and Normal) on the same plot because the axes must match.</p>
+<p>The likelihood plot is only implemented for 2P distributions (Weibull, Normal, Lognormal, Gamma, Gumbel, Loglogistic, Beta) that are not location shifted. To compare two Exponential_1P distributions, simply look for overlap on the confidence bounds on the lambda parameter.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Reliability_testing/likelihood_plot.html">API reference</a>.</p>
+</div>
+<p>In the example below we have two datasets that are from two different design iterations of the same component. We want to know if the new design really is better than the old design. The parameters of the distribution certainly seem different, but is there a statistically significant difference between the distributions? To find out we need to plot the confidence bounds on the parameters. This is done at the 90% and 95% confidence levels.</p>
+<p>The resulting plot shows that there is no overlap at the 90% confidence level, but there is a small overlap at the 95% confidence level. From this plot we can say that we are 90% confident that the new design is better than the old one, but at the 95% confidence level, there is not a statistically significant difference between the two designs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">likelihood_plot</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">old_design</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">197</span><span class="p">]</span>
+<span class="n">new_design</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">178</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">183</span><span class="p">]</span>
+<span class="n">likelihood_plot</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s2">"Weibull"</span><span class="p">,</span> <span class="n">failures</span><span class="o">=</span><span class="n">old_design</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+<span class="n">likelihood_plot</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s2">"Weibull"</span><span class="p">,</span> <span class="n">failures</span><span class="o">=</span><span class="n">new_design</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/likelihood_plot.png" src="_images/likelihood_plot.png"/>
+<p>This example uses the same data as the <a class="reference external" href="https://www.reliawiki.com/index.php/Contour_Plot_Example">example from reliawiki</a>.</p>
+</section>
+</div>
+</div>

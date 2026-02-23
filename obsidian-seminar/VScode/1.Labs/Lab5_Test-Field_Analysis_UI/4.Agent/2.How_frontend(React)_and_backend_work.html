@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React(프론트엔드)와 FastAPI(백엔드) 연동 아키텍처 심층 분석</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="react프론트엔드와-fastapi백엔드-연동-아키텍처-심층-분석">React(프론트엔드)와 FastAPI(백엔드) 연동 아키텍처 심층 분석</h2>
+<p>이 문서는 <code>frontend_react</code> 폴더에 있는 React 애플리케이션이 백엔드 FastAPI 서버와 어떻게 통신하고 상호작용하여, 동적이고 현대적인 “브레이크 패드 수명 분석” 웹 애플리케이션을 구성하는지 상세히 설명합니다. 웹 개발이 처음인 분들도 이해할 수 있도록 React의 핵심 개념부터 실제 코드의 동작까지 단계별로 안내합니다.</p>
+<h3 id="기본-개념-클라이언트-서버-모델">1. 기본 개념: 클라이언트-서버 모델</h3>
+<p>이 프로젝트의 아키텍처는 Streamlit 버전과 마찬가지로 <strong>클라이언트-서버 모델</strong>을 따릅니다. 하지만 클라이언트가 더 정교하고 동적인 방식으로 동작합니다.</p>
+<ul>
+<li>
+<p><strong>서버 (Server):</strong> FastAPI 백엔드. 데이터 분석 로직을 수행하고 API를 제공하는 "전문가"입니다. <code>http://127.0.0.1:8000</code> 주소에서 요청을 기다립니다. (역할 동일)</p>
+</li>
+<li>
+<p><strong>클라이언트 (Client):</strong> React 프론트엔드. 사용자와 직접 상호작용하는 “고급 창구” 역할을 합니다. 단순한 페이지 표시를 넘어, 자체적으로 상태를 관리하고 사용자의 행동에 따라 페이지 전체를 새로고침하지 않고 필요한 부분만 동적으로 변경하는 **단일 페이지 애플리케이션(SPA, Single Page Application)**입니다.</p>
+</li>
+</ul>
+<p>이 둘은 여전히 <strong>HTTP</strong>를 통해 대화하지만, React 앱은 마치 하나의 완성된 프로그램처럼 브라우저 위에서 동작하며 필요할 때만 서버와 통신합니다.</p>
+<h4 id="시각화-클라이언트-서버-아키텍처-react">시각화: 클라이언트-서버 아키텍처 (React)</h4>
+<pre class=" language-mermaid"><svg id="mermaid-svg-5EkYxwEik3DmWVrV" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="463.03125" style="max-width: 344.65625px;" viewBox="0 0 344.65625 463.03125"><style>#mermaid-svg-5EkYxwEik3DmWVrV{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-5EkYxwEik3DmWVrV .error-icon{fill:#552222;}#mermaid-svg-5EkYxwEik3DmWVrV .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-5EkYxwEik3DmWVrV .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-5EkYxwEik3DmWVrV .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-5EkYxwEik3DmWVrV .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-5EkYxwEik3DmWVrV .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-5EkYxwEik3DmWVrV .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-5EkYxwEik3DmWVrV .marker{fill:#666;stroke:#666;}#mermaid-svg-5EkYxwEik3DmWVrV .marker.cross{stroke:#666;}#mermaid-svg-5EkYxwEik3DmWVrV svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-5EkYxwEik3DmWVrV .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-5EkYxwEik3DmWVrV .cluster-label text{fill:#333;}#mermaid-svg-5EkYxwEik3DmWVrV .cluster-label span{color:#333;}#mermaid-svg-5EkYxwEik3DmWVrV .label text,#mermaid-svg-5EkYxwEik3DmWVrV span{fill:#000000;color:#000000;}#mermaid-svg-5EkYxwEik3DmWVrV .node rect,#mermaid-svg-5EkYxwEik3DmWVrV .node circle,#mermaid-svg-5EkYxwEik3DmWVrV .node ellipse,#mermaid-svg-5EkYxwEik3DmWVrV .node polygon,#mermaid-svg-5EkYxwEik3DmWVrV .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-5EkYxwEik3DmWVrV .node .label{text-align:center;}#mermaid-svg-5EkYxwEik3DmWVrV .node.clickable{cursor:pointer;}#mermaid-svg-5EkYxwEik3DmWVrV .arrowheadPath{fill:#333333;}#mermaid-svg-5EkYxwEik3DmWVrV .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-5EkYxwEik3DmWVrV .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-5EkYxwEik3DmWVrV .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-5EkYxwEik3DmWVrV .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-5EkYxwEik3DmWVrV .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-5EkYxwEik3DmWVrV .cluster text{fill:#333;}#mermaid-svg-5EkYxwEik3DmWVrV .cluster span{color:#333;}#mermaid-svg-5EkYxwEik3DmWVrV div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-5EkYxwEik3DmWVrV:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-5EkYxwEik3DmWVrV .note > *{fill:#FFF6BF !important;stroke:#E0C370 !important;color:#333 !important;}#mermaid-svg-5EkYxwEik3DmWVrV .note tspan{fill:#333 !important;}#mermaid-svg-5EkYxwEik3DmWVrV flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-SERVER-237" style="opacity: 1;" transform="translate(165.4453125,56.359375)"><rect width="292.6796875" height="96.71875" x="-146.33984375" y="-48.359375"></rect><g class="label" transform="translate(0, -34.359375)" id="mermaid-svg-5EkYxwEik3DmWVrVText"><g transform="translate(-72.8515625,-13.359375)"><foreignObject width="145.703125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">서버 컴퓨터/프로세스</div></foreignObject></g></g></g><g class="cluster" id="flowchart-CLIENT-238" style="opacity: 1;" transform="translate(165.4453125,229.796875)"><rect width="279.1328125" height="96.71875" x="-139.56640625" y="-48.359375"></rect><g class="label" transform="translate(0, -34.359375)" id="mermaid-svg-5EkYxwEik3DmWVrVText"><g transform="translate(-94.0703125,-13.359375)"><foreignObject width="188.140625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사용자 컴퓨터 (웹 브라우저)</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M210.25,207.71289044994174L257.609375,181.4375L257.609375,143.078125L257.609375,104.71875L212.5487934168013,79.71875" marker-end="url(https://stackedit.io/app#arrowhead24)" style="fill:none"></path><defs><marker id="arrowhead24" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-A" style="opacity: 1;" id="L-B-A"><path class="path" d="M128.3418315831987,79.71875L83.28125,104.71875L83.28125,143.078125L83.28125,181.4375L130.640625,207.71289044994174" marker-end="url(https://stackedit.io/app#arrowhead25)" style="fill:none"></path><defs><marker id="arrowhead25" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-A LE-N" style="opacity: 1;" id="L-A-N"><path class="path" d="M170.4453125,253.15625L170.4453125,278.15625L170.4453125,316.515625L170.4453125,354.875" marker-end="url(https://stackedit.io/app#arrowhead26)" style="fill:none;stroke-width:2px;stroke-dasharray:3;"></path><defs><marker id="arrowhead26" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 0 0 L 0 0 z" style="fill: #333"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform="translate(257.609375,143.078125)"><g transform="translate(-79.046875,-13.359375)" class="label"><rect rx="0" ry="0" width="158.09375" height="26.71875"></rect><foreignObject width="158.09375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B">HTTP 요청 (파일, 설정)</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(83.28125,143.078125)"><g transform="translate(-75.28125,-13.359375)" class="label"><rect rx="0" ry="0" width="150.5625" height="26.71875"></rect><foreignObject width="150.5625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-A" class="edgeLabel L-LS-B' L-LE-A">HTTP 응답 (결과 URL)</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(170.4453125,316.515625)"><g transform="translate(-14.7265625,-13.359375)" class="label"><rect rx="0" ry="0" width="29.453125" height="26.71875"></rect><foreignObject width="29.453125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-N" class="edgeLabel L-LS-A' L-LE-N">참고</span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-B-229" transform="translate(170.4453125,56.359375)"><rect rx="0" ry="0" x="-53.3515625" y="-23.359375" width="106.703125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-43.3515625,-13.359375)"><foreignObject width="86.703125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">FastAPI 서버</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-228" transform="translate(170.4453125,229.796875)"><rect rx="0" ry="0" x="-39.8046875" y="-23.359375" width="79.609375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-29.8046875,-13.359375)"><foreignObject width="59.609375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">React 앱</div></foreignObject></g></g></g><g class="node note" style="opacity: 1;" id="flowchart-N-234" transform="translate(170.4453125,404.953125)"><rect rx="0" ry="0" x="-133.265625" y="-50.078125" width="266.53125" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-123.265625,-40.078125)"><foreignObject width="246.53125" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">React 앱은 받은 응답으로<br>자신의 '상태(State)'를 업데이트하고,<br>화면을 동적으로 다시 그립니다.</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<h3 id="react.js란-무엇인가---핵심-개념-소개">2. React.js란 무엇인가? - 핵심 개념 소개</h3>
+<p>React는 Facebook(현 Meta)에서 개발한, 사용자 인터페이스(UI)를 만들기 위한 JavaScript 라이브러리입니다. React를 이해하기 위한 핵심 개념은 다음과 같습니다.</p>
+<ul>
+<li>
+<p><strong>컴포넌트 (Components):</strong> React 앱은 작고 재사용 가능한 코드 조각인 <strong>컴포넌트</strong>들로 만들어집니다. 예를 들어, 이 프로젝트의 <code>FileUpload.tsx</code>, <code>AnalysisForm.tsx</code>는 각각 파일 업로드 UI, 분석 설정 UI를 담당하는 독립적인 컴포넌트입니다. 이렇게 UI를 조립 가능한 부품처럼 만들어 개발 효율성과 유지보수성을 높입니다.</p>
+</li>
+<li>
+<p><strong>JSX (JavaScript XML):</strong> JavaScript 코드 안에서 HTML과 유사한 문법을 사용하여 UI를 선언적으로 작성할 수 있게 해줍니다. 개발자는 UI가 어떻게 보일지에만 집중하면, React가 실제 브라우저에 렌더링하는 복잡한 과정을 처리합니다.</p>
+</li>
+</ul>
+<pre class=" language-jsx"><code class="prism  language-jsx">
+<span class="token comment">// 이것은 JSX입니다. HTML처럼 보이지만 JavaScript입니다.</span>
+
+<span class="token keyword">return</span> <span class="token punctuation">(</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>App<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>수명 분석기<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>FileUpload</span> <span class="token punctuation">/&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>상태 (State)와 <code>useState</code>:</strong>  <strong>State</strong>는 컴포넌트가 "기억"해야 할 데이터입니다. 예를 들어, 사용자가 업로드한 파일, 입력창의 텍스트, 분석 결과 데이터 등이 모두 State로 관리됩니다. <code>useState</code>는 React에서 State를 만드는 도구(Hook)입니다. <strong>State가 변경되면, React는 해당 State를 사용하는 컴포넌트의 UI를 자동으로 다시 렌더링(업데이트)합니다.</strong> 이것이 React의 가장 강력하고 핵심적인 특징입니다.</p>
+</li>
+<li>
+<p><strong>이벤트 처리 (Event Handling):</strong> 사용자의 클릭(<code>onClick</code>), 입력(<code>onChange</code>) 같은 이벤트를 처리하는 방식을 정의합니다. React에서는 이벤트가 발생했을 때 실행할 함수를 JSX에 직접 연결합니다.</p>
+</li>
+</ul>
+<h3 id="핵심-라이브러리-역할">3. 핵심 라이브러리 역할</h3>
+<ul>
+<li>
+<p><code>react</code>: React의 핵심 기능(컴포넌트, 상태 관리 등)을 제공하는 라이브러리입니다.</p>
+</li>
+<li>
+<p><code>axios</code>: HTTP 통신을 쉽게 할 수 있게 해주는 JavaScript 라이브러리입니다. React(클라이언트)가 FastAPI(서버)와 통신하는 데 사용하는 "최신 스마트폰"과 같습니다. 비동기(Asynchronous) 요청을 깔끔하게 처리할 수 있습니다.</p>
+</li>
+<li>
+<p><code>marked</code>: 서버에서 받은 Markdown 형식의 텍스트를 HTML로 변환해 주는 라이브러리입니다.</p>
+</li>
+</ul>
+<h3 id="frontend_react-작동-원리-상세-분석-단계별">4. <code>frontend_react</code> 작동 원리 상세 분석 (단계별)</h3>
+<p>사용자가 React 앱과 상호작용하여 분석을 완료하기까지의 전체 프로세스를 코드와 함께 살펴보겠습니다.</p>
+<h4 id="전체-워크플로우-시각화-sequence-diagram">전체 워크플로우 시각화 (Sequence Diagram)</h4>
+<pre class=" language-mermaid"><svg id="mermaid-svg-ojAX6RYrhWTrYIu4" width="100%" xmlns="http://www.w3.org/2000/svg" height="1186" style="max-width: 1260.5px;" viewBox="-50 -10 1260.5 1186"><style>#mermaid-svg-ojAX6RYrhWTrYIu4{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-ojAX6RYrhWTrYIu4 .error-icon{fill:#552222;}#mermaid-svg-ojAX6RYrhWTrYIu4 .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-ojAX6RYrhWTrYIu4 .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-ojAX6RYrhWTrYIu4 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-ojAX6RYrhWTrYIu4 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-ojAX6RYrhWTrYIu4 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-ojAX6RYrhWTrYIu4 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-ojAX6RYrhWTrYIu4 .marker{fill:#666;stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4 .marker.cross{stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4 svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-ojAX6RYrhWTrYIu4 .actor{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-ojAX6RYrhWTrYIu4 text.actor > tspan{fill:#333;stroke:none;}#mermaid-svg-ojAX6RYrhWTrYIu4 .actor-line{stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4 .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 #arrowhead path{fill:#333;stroke:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 .sequenceNumber{fill:white;}#mermaid-svg-ojAX6RYrhWTrYIu4 #sequencenumber{fill:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 #crosshead path{fill:#333;stroke:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 .messageText{fill:#333;stroke:#333;}#mermaid-svg-ojAX6RYrhWTrYIu4 .labelBox{stroke:hsl(0,0%,83%);fill:#eee;}#mermaid-svg-ojAX6RYrhWTrYIu4 .labelText,#mermaid-svg-ojAX6RYrhWTrYIu4 .labelText > tspan{fill:#333;stroke:none;}#mermaid-svg-ojAX6RYrhWTrYIu4 .loopText,#mermaid-svg-ojAX6RYrhWTrYIu4 .loopText > tspan{fill:#333;stroke:none;}#mermaid-svg-ojAX6RYrhWTrYIu4 .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(0,0%,83%);fill:hsl(0,0%,83%);}#mermaid-svg-ojAX6RYrhWTrYIu4 .note{stroke:hsl(60,100%,23.3333333333%);fill:#ffa;}#mermaid-svg-ojAX6RYrhWTrYIu4 .noteText,#mermaid-svg-ojAX6RYrhWTrYIu4 .noteText > tspan{fill:#333;stroke:none;}#mermaid-svg-ojAX6RYrhWTrYIu4 .activation0{fill:#f4f4f4;stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4 .activation1{fill:#f4f4f4;stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4 .activation2{fill:#f4f4f4;stroke:#666;}#mermaid-svg-ojAX6RYrhWTrYIu4:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-ojAX6RYrhWTrYIu4 sequence{fill:apa;}</style><g></g><g><line id="actor6" x1="75" y1="5" x2="75" y2="1175" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="0" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="75" dy="0">사용자</tspan></text></g><g><line id="actor7" x1="379.5" y1="5" x2="379.5" y2="1175" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="304.5" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="379.5" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="379.5" dy="0">React 앱 (브라우저)</tspan></text></g><g><line id="actor8" x1="957.5" y1="5" x2="957.5" y2="1175" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="882.5" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="957.5" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="957.5" dy="0">FastAPI 백엔드</tspan></text></g><defs><marker id="arrowhead" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="16" refY="4"><path fill="black" stroke="#000000" stroke-width="1px" d="M 9,2 V 6 L16,4 Z" style="stroke-dasharray: 0, 0;"></path><path fill="none" stroke="#000000" stroke-width="1px" d="M 0,1 L 6,7 M 6,1 L 0,7" style="stroke-dasharray: 0, 0;"></path></marker></defs><defs><marker id="filled-head" refX="18" refY="7" markerWidth="20" markerHeight="28" orient="auto"><path d="M 18,7 L9,13 L14,7 L9,1 Z"></path></marker></defs><defs><marker id="sequencenumber" refX="15" refY="15" markerWidth="60" markerHeight="40" orient="auto"><circle cx="15" cy="15" r="6"></circle></marker></defs><text x="227" y="80" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">웹 페이지 접속</text><line x1="75" y1="113" x2="379.5" y2="113" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="125" y="123" fill="#EDF2AE" stroke="#666" width="509" height="37" rx="0" ry="0" class="note"></rect><text x="380" y="128" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="380">App.tsx가 렌더링되고, 자식 컴포넌트들(FileUpload, AnalysisForm 등)이 렌더링됨</tspan></text></g><text x="227" y="175" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">1. 파일 업로드, 2. 컬럼명 입력</text><line x1="75" y1="208" x2="379.5" y2="208" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="164.5" y="218" fill="#EDF2AE" stroke="#666" width="430" height="36" rx="0" ry="0" class="note"></rect><text x="380" y="223" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="380">onChange 이벤트 발생, `useState`로 파일과 컬럼명 State 업데이트</tspan></text></g><text x="227" y="269" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">3. "분석 실행" 버튼 클릭</text><line x1="75" y1="302" x2="379.5" y2="302" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="221.5" y="312" fill="#EDF2AE" stroke="#666" width="316" height="36" rx="0" ry="0" class="note"></rect><text x="380" y="317" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="380">onClick 이벤트 발생, `handleSubmit` 함수 호출</tspan></text></g><text x="380" y="363" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">1. 로딩 State를 true로 변경 (UI에 "분석 중..." 표시)</text><path d="M 379.5,396 C 439.5,386 439.5,426 379.5,416" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></path><text x="380" y="441" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">2. `FormData` 객체 생성 및 데이터 추가</text><path d="M 379.5,474 C 439.5,464 439.5,504 379.5,494" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></path><text x="669" y="519" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">3. 비동기 HTTP POST 요청 (`axios.post`)</text><line x1="379.5" y1="562" x2="957.5" y2="562" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="754.5" y="572" fill="#EDF2AE" stroke="#666" width="406" height="37" rx="0" ry="0" class="note"></rect><text x="958" y="577" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="958">`/analyze` 엔드포인트에서 요청 수신 및 처리 (Streamlit과 동일)</tspan></text></g><text x="669" y="624" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">4. HTTP 200 OK 응답 + 결과(URL) JSON</text><line x1="957.5" y1="667" x2="379.5" y2="667" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line><g><rect x="266.5" y="677" fill="#EDF2AE" stroke="#666" width="226" height="37" rx="0" ry="0" class="note"></rect><text x="380" y="682" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="380">응답 수신 및 처리 (try-catch 블록)</tspan></text></g><text x="380" y="729" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">5. 받은 JSON으로 results State 업데이트 (`setResults`)</text><path d="M 379.5,772 C 439.5,762 439.5,802 379.5,792" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></path><g><rect x="148.5" y="812" fill="#EDF2AE" stroke="#666" width="462" height="36" rx="0" ry="0" class="note"></rect><text x="380" y="817" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 14px; font-weight: 400;"><tspan x="380">results State가 변경되자, ResultsDisplay 컴포넌트가 자동으로 리렌더링됨</tspan></text></g><text x="669" y="863" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">6. (ResultsDisplay 내부에서) 보고서 URL로 HTTP GET 요청 (`axios.get`)</text><line x1="379.5" y1="906" x2="957.5" y2="906" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="669" y="921" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">보고서 텍스트(Markdown) 응답</text><line x1="957.5" y1="964" x2="379.5" y2="964" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line><text x="380" y="979" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">7. 받은 텍스트를 HTML로 변환하여 화면에 표시</text><path d="M 379.5,1012 C 439.5,1002 439.5,1042 379.5,1032" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></path><text x="227" y="1057" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial, sans-serif; font-size: 16px; font-weight: 400;">최종 분석 결과 확인</text><line x1="379.5" y1="1090" x2="75" y2="1090" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="0" y="1110" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="1142.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="75" dy="0">사용자</tspan></text></g><g><rect x="304.5" y="1110" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="379.5" y="1142.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="379.5" dy="0">React 앱 (브라우저)</tspan></text></g><g><rect x="882.5" y="1110" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="957.5" y="1142.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, &quot;sans-serif&quot;;"><tspan x="957.5" dy="0">FastAPI 백엔드</tspan></text></g></svg></pre>
+<hr>
+<h4 id="단계-ui-렌더링-및-상태state-초기화"><strong>1단계: UI 렌더링 및 상태(State) 초기화</strong></h4>
+<ul>
+<li><strong>코드 (<code>App.tsx</code>):</strong></li>
+</ul>
+<pre class=" language-typescript"><code class="prism  language-typescript"><span class="token keyword">const</span> App<span class="token punctuation">:</span> React<span class="token punctuation">.</span><span class="token function-variable function">FC</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> <span class="token punctuation">[</span>file<span class="token punctuation">,</span> setFile<span class="token punctuation">]</span> <span class="token operator">=</span> useState<span class="token operator">&lt;</span>File <span class="token operator">|</span> <span class="token keyword">null</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">[</span>lifetimeColumn<span class="token punctuation">,</span> setLifetimeColumn<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">useState</span><span class="token punctuation">(</span><span class="token string">'distance(km)'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">[</span>results<span class="token punctuation">,</span> setResults<span class="token punctuation">]</span> <span class="token operator">=</span> useState<span class="token operator">&lt;</span>AnalysisResult <span class="token operator">|</span> <span class="token keyword">null</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">[</span>loading<span class="token punctuation">,</span> setLoading<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">useState</span><span class="token punctuation">(</span><span class="token keyword">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// ...</span>
+
+<span class="token keyword">return</span> <span class="token punctuation">(</span>
+<span class="token operator">&lt;</span>div className<span class="token operator">=</span><span class="token string">"App"</span><span class="token operator">&gt;</span>
+<span class="token punctuation">{</span><span class="token comment">/* ... */</span><span class="token punctuation">}</span>
+<span class="token operator">&lt;</span>FileUpload onFileSelect<span class="token operator">=</span><span class="token punctuation">{</span>setFile<span class="token punctuation">}</span> <span class="token operator">/</span><span class="token operator">&gt;</span>
+<span class="token operator">&lt;</span>AnalysisForm <span class="token comment">/* ... */</span> <span class="token operator">/</span><span class="token operator">&gt;</span>
+<span class="token punctuation">{</span><span class="token comment">/* ... */</span><span class="token punctuation">}</span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">&gt;</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>설명:</strong></p>
+</li>
+<li>
+<p><code>App</code> 컴포넌트가 처음 렌더링될 때, <code>useState</code>를 통해 필요한 모든 상태 변수(<code>file</code>, <code>lifetimeColumn</code>, <code>results</code> 등)가 <code>null</code>이나 기본값으로 초기화됩니다.</p>
+</li>
+<li>
+<p>JSX가 반환되어 화면에 초기 UI가 그려집니다. 이때 <code>FileUpload</code> 같은 자식 컴포넌트들이 함께 렌더링됩니다.</p>
+</li>
+<li>
+<p><code>onFileSelect={setFile}</code>: <code>App</code> 컴포넌트의 <code>setFile</code> 함수를 <code>FileUpload</code> 컴포넌트로 전달(이를 <strong>props</strong>라 부름)합니다. 자식 컴포넌트가 부모의 상태를 변경할 수 있게 해주는 핵심 패턴입니다.</p>
+</li>
+</ul>
+<h4 id="단계-사용자-입력과-상태state-업데이트"><strong>2단계: 사용자 입력과 상태(State) 업데이트</strong></h4>
+<ul>
+<li><strong>코드 (<code>FileUpload.tsx</code>):</strong></li>
+</ul>
+<pre class=" language-typescript"><code class="prism  language-typescript">
+<span class="token keyword">const</span> FileUpload<span class="token punctuation">:</span> React<span class="token punctuation">.</span>FC<span class="token operator">&lt;</span>FileUploadProps<span class="token operator">&gt;</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">{</span> onFileSelect <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> <span class="token function-variable function">handleFileChange</span> <span class="token operator">=</span> <span class="token punctuation">(</span>event<span class="token punctuation">:</span> React<span class="token punctuation">.</span>ChangeEvent<span class="token operator">&lt;</span>HTMLInputElement<span class="token operator">&gt;</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>event<span class="token punctuation">.</span>target<span class="token punctuation">.</span>files <span class="token operator">&amp;&amp;</span> event<span class="token punctuation">.</span>target<span class="token punctuation">.</span>files<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token function">onFileSelect</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>target<span class="token punctuation">.</span>files<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 부모로부터 받은 함수 호출</span>
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">return</span> <span class="token operator">&lt;</span>input <span class="token keyword">type</span><span class="token operator">=</span><span class="token string">"file"</span> onChange<span class="token operator">=</span><span class="token punctuation">{</span>handleFileChange<span class="token punctuation">}</span> <span class="token operator">/</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>설명:</strong></p>
+</li>
+<li>
+<p>사용자가 파일을 선택하면 <code>input</code> 태그의 <code>onChange</code> 이벤트가 발생하여 <code>handleFileChange</code> 함수가 실행됩니다.</p>
+</li>
+<li>
+<p>이 함수는 부모(<code>App.tsx</code>)로부터 전달받은 <code>onFileSelect</code> 함수(실제로는 <code>setFile</code> 함수)를 호출하여, 선택된 파일을 인자로 넘깁니다.</p>
+</li>
+<li>
+<p><code>setFile(선택된_파일)</code>이 실행되는 순간, <code>App</code> 컴포넌트의 <code>file</code> 상태가 업데이트되고, React는 변경을 감지하여 UI를 자동으로 다시 그립니다. (물론 이 경우에는 눈에 띄는 시각적 변화는 없습니다.)</p>
+</li>
+</ul>
+<h4 id="단계-분석-실행-및-비동기asynchronous-api-호출"><strong>3단계: 분석 실행 및 비동기(Asynchronous) API 호출</strong></h4>
+<ul>
+<li><strong>코드 (<code>App.tsx</code>):</strong></li>
+</ul>
+<pre class=" language-typescript"><code class="prism  language-typescript">
+<span class="token keyword">const</span> handleSubmit <span class="token operator">=</span> <span class="token keyword">async</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token comment">// ...</span>
+<span class="token function">setLoading</span><span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 로딩 상태 시작</span>
+<span class="token keyword">const</span> formData <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FormData</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+formData<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">'file'</span><span class="token punctuation">,</span> file<span class="token punctuation">)</span><span class="token punctuation">;</span>
+formData<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">'lifetime_column'</span><span class="token punctuation">,</span> lifetimeColumn<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// ...</span>
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> response <span class="token operator">=</span> <span class="token keyword">await</span> axios<span class="token punctuation">.</span>post<span class="token operator">&lt;</span>AnalysisResult<span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token string">'http://127.0.0.1:8000/analyze/'</span><span class="token punctuation">,</span> formData<span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token comment">/* ... */</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">setResults</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">err</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token comment">// ... 에러 처리</span>
+<span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+<span class="token function">setLoading</span><span class="token punctuation">(</span><span class="token keyword">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 로딩 상태 종료</span>
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>설명:</strong></p>
+</li>
+<li>
+<p>사용자가 “분석 실행” 버튼을 누르면 <code>handleSubmit</code> 함수가 호출됩니다.</p>
+</li>
+<li>
+<p><code>setLoading(true)</code>로 상태를 변경하여 UI에 "분석 중…"이라는 텍스트와 함께 버튼을 비활성화시킵니다. (이를 <strong>조건부 렌더링</strong>이라 합니다.)</p>
+</li>
+<li>
+<p><code>FormData</code>는 파일을 포함한 데이터를 서버에 쉽게 보낼 수 있도록 도와주는 웹 표준 객체입니다. 여기에 <code>file</code>과 <code>lifetimeColumn</code> 상태 값을 담습니다.</p>
+</li>
+<li>
+<p><code>await axios.post(...)</code>: <code>axios</code>를 사용해 백엔드에 비동기 POST 요청을 보냅니다. <code>async/await</code> 문법 덕분에 비동기 코드를 동기 코드처럼 깔끔하게 작성할 수 있습니다. 앱은 서버의 응답을 기다리는 동안 멈추지 않고(non-blocking) 다른 사용자 입력을 받을 수 있습니다.</p>
+</li>
+</ul>
+<h4 id="단계-응답-처리-및-결과-렌더링"><strong>4단계: 응답 처리 및 결과 렌더링</strong></h4>
+<ul>
+<li><strong>코드 (<code>App.tsx</code>):</strong></li>
+</ul>
+<pre class=" language-typescript"><code class="prism  language-typescript">
+<span class="token comment">// ... try 블록 내부</span>
+<span class="token function">setResults</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// ...</span>
+<span class="token comment">// ... JSX 내부</span>
+<span class="token punctuation">{</span>results <span class="token operator">&amp;&amp;</span> <span class="token operator">&lt;</span>ResultsDisplay results<span class="token operator">=</span><span class="token punctuation">{</span>results<span class="token punctuation">}</span> <span class="token operator">/</span><span class="token operator">&gt;</span><span class="token punctuation">}</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>설명:</strong></p>
+</li>
+<li>
+<p>서버로부터 성공적인 응답(<code>response</code>)을 받으면, <code>setResults(response.data)</code>를 호출하여 <code>results</code> 상태를 서버가 보내준 JSON 데이터로 업데이트합니다.</p>
+</li>
+<li>
+<p><strong>React의 마법:</strong>  <code>results</code> 상태가 <code>null</code>에서 실제 데이터 객체로 변경되었기 때문에, React는 UI를 다시 렌더링합니다.</p>
+</li>
+<li>
+<p><code>{results &amp;&amp; &lt;ResultsDisplay ... /&gt;}</code>: 이 부분은 "만약 <code>results</code> 상태가 존재하면(truthy), <code>&lt;ResultsDisplay&gt;</code> 컴포넌트를 렌더링하라"는 의미의 조건부 렌더링입니다.</p>
+</li>
+<li>
+<p>이제 <code>ResultsDisplay</code> 컴포넌트가 화면에 나타나고, <code>results</code> 데이터를 props로 전달받습니다.</p>
+</li>
+</ul>
+<h4 id="단계-상세-결과-표시와-useeffect"><strong>5단계: 상세 결과 표시와 <code>useEffect</code></strong></h4>
+<ul>
+<li><strong>코드 (<code>ResultsDisplay.tsx</code>):</strong></li>
+</ul>
+<pre class=" language-typescript"><code class="prism  language-typescript">
+<span class="token keyword">const</span> ResultsDisplay<span class="token punctuation">:</span> React<span class="token punctuation">.</span>FC<span class="token operator">&lt;</span>ResultsDisplayProps<span class="token operator">&gt;</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">{</span> results <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> <span class="token punctuation">[</span>reportHtml<span class="token punctuation">,</span> setReportHtml<span class="token punctuation">]</span> <span class="token operator">=</span> useState<span class="token operator">&lt;</span><span class="token keyword">string</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+
+<span class="token function">useEffect</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>results<span class="token operator">?</span><span class="token punctuation">.</span>report_url<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+axios<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span>results<span class="token punctuation">.</span>report_url<span class="token punctuation">,</span> <span class="token punctuation">{</span> responseType<span class="token punctuation">:</span> <span class="token string">'text'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>response <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token comment">// ... 마크다운 텍스트 처리 ...</span>
+<span class="token function">setReportHtml</span><span class="token punctuation">(</span><span class="token function">marked</span><span class="token punctuation">(</span>processedText<span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token keyword">string</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>results<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// `results`가 변경될 때만 이 코드를 실행</span>
+  
+<span class="token keyword">return</span> <span class="token operator">&lt;</span>div dangerouslySetInnerHTML<span class="token operator">=</span><span class="token punctuation">{</span><span class="token punctuation">{</span> __html<span class="token punctuation">:</span> reportHtml <span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token operator">/</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+</code></pre>
+<ul>
+<li>
+<p><strong>설명:</strong></p>
+</li>
+<li>
+<p><code>useEffect</code>는 컴포넌트가 렌더링된 후에 특정 작업을 수행하고 싶을 때 사용합니다. 이를 <strong>Side Effect</strong> 처리라고 합니다.</p>
+</li>
+<li>
+<p><code>useEffect</code>의 두 번째 인자인 <code>[results]</code>는 "이 <code>useEffect</code> 안의 코드는 <code>results</code> props가 변경되었을 때만 다시 실행해라"는 의미입니다.</p>
+</li>
+<li>
+<p>따라서 <code>ResultsDisplay</code>가 처음 렌더링될 때, <code>results.report_url</code>로 다시 <code>axios.get</code> 요청을 보내 보고서 내용을 가져옵니다.</p>
+</li>
+<li>
+<p>가져온 Markdown 텍스트를 <code>marked</code>로 HTML로 변환하고, <code>setReportHtml</code>을 통해 <code>reportHtml</code> 상태를 업데이트합니다.</p>
+</li>
+<li>
+<p><code>reportHtml</code> 상태가 바뀌면 컴포넌트가 다시 렌더링되고, <code>dangerouslySetInnerHTML</code>을 통해 최종 HTML 보고서가 화면에 표시됩니다.</p>
+</li>
+</ul>
+<h3 id="결론">5. 결론</h3>
+<p>React와 FastAPI의 연동은 현대적인 웹 애플리케이션 개발의 표준적인 모습입니다.</p>
+<ul>
+<li>
+<p><strong>FastAPI (백엔드)</strong> 는 데이터 처리와 분석이라는 무거운 작업을 책임지는 안정적인 전문가 역할을 합니다.</p>
+</li>
+<li>
+<p><strong>React (프론트엔드)</strong> 는 컴포넌트 기반 구조와 상태 관리를 통해 사용자에게 빠르고 동적인 인터페이스를 제공하는 세련된 창구 역할을 합니다.</p>
+</li>
+</ul>
+<p>이 둘은 명확하게 역할을 분담하고 약속된 API(HTTP)를 통해 통신함으로써, 복잡한 애플리케이션도 체계적이고 효율적으로 개발할 수 있게 해줍니다.</p>
+</div>
+</body>
+
+</html>

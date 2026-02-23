@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Lab 6] AI 기반 신뢰성 분석 챗봇 에이전트 개발</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="lab-6-ai-기반-신뢰성-분석-챗봇-에이전트-개발">[Lab 6] AI 기반 신뢰성 분석 챗봇 에이전트 개발</h1>
+<h2 id="들어가며">0. 들어가며</h2>
+<p>이 실습을 통해 우리는 <strong>RAG(Retrieval-Augmented Generation, 검색 증강 생성)</strong> 라는 최신 AI 기술을 활용하여, 로컬 폴더에 저장된 신뢰성 보고서, FMEA 가이드라인 등과 같은 문서를 기반으로 질문에 답변하는 챗봇을 만들 것입니다.</p>
+<h3 id="학습-목표">학습 목표</h3>
+<ol>
+<li><strong>AI 에이전트의 핵심 개념 이해:</strong> RAG, VectorDB, LLM 등 AI 챗봇의 기본 구성 요소를 이해합니다.</li>
+<li><strong>AI에게 지시하는 법(Prompt Engineering) 학습:</strong> AI가 우리의 의도대로 작동하도록 명확한 지시를 내리는 프롬프트 설계 방법을 배웁니다.</li>
+<li><strong>Python 코드의 구조 파악:</strong> 전체 챗봇 시스템이 어떤 코드로 어떻게 움직이는지 그 구조를 파악합니다.</li>
+<li><strong>실제 챗봇 애플리케이션 실행 및 활용:</strong> 직접 챗봇을 실행하고, 성능을 체험하며, 활용 방안을 모색합니다.</li>
+</ol>
+<hr>
+<h2 id="장-프로젝트-개요-및-전체-아키텍처">1장: 프로젝트 개요 및 전체 아키텍처</h2>
+<p>우리가 만들 챗봇은 단순히 인터넷의 정보를 가져오는 것이 아니라, 우리가 제공하는 <strong>특정 문서들(‘지식 베이스’)</strong> 안에서만 정보를 찾아 답변합니다. 이는 답변의 신뢰도를 비약적으로 높여주며, 기업 내부의 민감한 데이터를 안전하게 활용할 수 있게 합니다.</p>
+<h3 id="시스템-작동-원리-high-level-architecture">1.1. 시스템 작동 원리 (High-Level Architecture)</h3>
+<p>전체 시스템의 작동 흐름을 간단한 다이어그램으로 표현하면 다음과 같습니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-1RhI0ciSFks0tsph" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="815.3125" style="max-width: 673.5703125px;" viewBox="0 0 673.5703125 815.3125"><style>#mermaid-svg-1RhI0ciSFks0tsph{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-1RhI0ciSFks0tsph .error-icon{fill:#552222;}#mermaid-svg-1RhI0ciSFks0tsph .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-1RhI0ciSFks0tsph .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-1RhI0ciSFks0tsph .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-1RhI0ciSFks0tsph .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-1RhI0ciSFks0tsph .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-1RhI0ciSFks0tsph .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-1RhI0ciSFks0tsph .marker{fill:#666;stroke:#666;}#mermaid-svg-1RhI0ciSFks0tsph .marker.cross{stroke:#666;}#mermaid-svg-1RhI0ciSFks0tsph svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-1RhI0ciSFks0tsph .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-1RhI0ciSFks0tsph .cluster-label text{fill:#333;}#mermaid-svg-1RhI0ciSFks0tsph .cluster-label span{color:#333;}#mermaid-svg-1RhI0ciSFks0tsph .label text,#mermaid-svg-1RhI0ciSFks0tsph span{fill:#000000;color:#000000;}#mermaid-svg-1RhI0ciSFks0tsph .node rect,#mermaid-svg-1RhI0ciSFks0tsph .node circle,#mermaid-svg-1RhI0ciSFks0tsph .node ellipse,#mermaid-svg-1RhI0ciSFks0tsph .node polygon,#mermaid-svg-1RhI0ciSFks0tsph .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-1RhI0ciSFks0tsph .node .label{text-align:center;}#mermaid-svg-1RhI0ciSFks0tsph .node.clickable{cursor:pointer;}#mermaid-svg-1RhI0ciSFks0tsph .arrowheadPath{fill:#333333;}#mermaid-svg-1RhI0ciSFks0tsph .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-1RhI0ciSFks0tsph .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-1RhI0ciSFks0tsph .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-1RhI0ciSFks0tsph .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-1RhI0ciSFks0tsph .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-1RhI0ciSFks0tsph .cluster text{fill:#333;}#mermaid-svg-1RhI0ciSFks0tsph .cluster span{color:#333;}#mermaid-svg-1RhI0ciSFks0tsph div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-1RhI0ciSFks0tsph:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-1RhI0ciSFks0tsph flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph1-3257" style="opacity: 1;" transform="translate(195.18359375,407.65625)"><rect width="374.3671875" height="799.3125" x="-187.18359375" y="-399.65625"></rect><g class="label" transform="translate(0, -385.65625)" id="mermaid-svg-1RhI0ciSFks0tsphText"><g transform="translate(-63.2734375,-13.359375)"><foreignObject width="126.546875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">챗봇 실행 (Online)</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-3258" style="opacity: 1;" transform="translate(533.96875,250.078125)"><rect width="263.203125" height="484.15625" x="-131.6015625" y="-242.078125"></rect><g class="label" transform="translate(0, -228.078125)" id="mermaid-svg-1RhI0ciSFks0tsphText"><g transform="translate(-64.8203125,-13.359375)"><foreignObject width="129.640625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사전 준비 (Offline)</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M533.96875,79.71875L533.96875,104.71875L533.96875,178.359375" marker-end="url(https://stackedit.io/app#arrowhead425)" style="fill:none"></path><defs><marker id="arrowhead425" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M533.96875,225.078125L533.96875,298.71875L533.96875,323.71875" marker-end="url(https://stackedit.io/app#arrowhead426)" style="fill:none"></path><defs><marker id="arrowhead426" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M533.96875,370.4375L533.96875,395.4375L533.96875,420.4375" marker-end="url(https://stackedit.io/app#arrowhead427)" style="fill:none"></path><defs><marker id="arrowhead427" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-F" style="opacity: 1;" id="L-E-F"><path class="path" d="M237.7578125,79.71875L237.7578125,104.71875L238.2578125,130.21875" marker-end="url(https://stackedit.io/app#arrowhead428)" style="fill:none"></path><defs><marker id="arrowhead428" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" style="opacity: 1;" id="L-F-G"><path class="path" d="M206.491486382713,242.452423882713L161.171875,298.71875L161.171875,323.71875" marker-end="url(https://stackedit.io/app#arrowhead429)" style="fill:none"></path><defs><marker id="arrowhead429" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-G LE-H" style="opacity: 1;" id="L-G-H"><path class="path" d="M161.171875,370.4375L161.171875,395.4375L161.171875,420.4375" marker-end="url(https://stackedit.io/app#arrowhead430)" style="fill:none"></path><defs><marker id="arrowhead430" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-H LE-I" style="opacity: 1;" id="L-H-I"><path class="path" d="M161.171875,467.15625L161.171875,492.15625L161.171875,517.15625L161.171875,542.15625" marker-end="url(https://stackedit.io/app#arrowhead431)" style="fill:none"></path><defs><marker id="arrowhead431" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-I LE-J" style="opacity: 1;" id="L-I-J"><path class="path" d="M161.171875,588.875L161.171875,613.875L161.171875,638.875" marker-end="url(https://stackedit.io/app#arrowhead432)" style="fill:none"></path><defs><marker id="arrowhead432" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-J LE-K" style="opacity: 1;" id="L-J-K"><path class="path" d="M161.171875,685.59375L161.171875,710.59375L200.76395900646204,735.59375" marker-end="url(https://stackedit.io/app#arrowhead433)" style="fill:none"></path><defs><marker id="arrowhead433" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-K" style="opacity: 1;" id="L-F-K"><path class="path" d="M270.024138617287,242.452423882713L314.34375,298.71875L314.34375,347.078125L314.34375,395.4375L314.34375,443.796875L314.34375,492.15625L314.34375,517.15625L314.34375,565.515625L314.34375,613.875L314.34375,662.234375L314.34375,710.59375L274.751665993538,735.59375" marker-end="url(https://stackedit.io/app#arrowhead434)" style="fill:none;stroke-width:2px;stroke-dasharray:3;"></path><defs><marker id="arrowhead434" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-F" class="edgeLabel L-LS-E' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-G-H" class="edgeLabel L-LS-G' L-LE-H"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-H-I" class="edgeLabel L-LS-H' L-LE-I"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-I-J" class="edgeLabel L-LS-I' L-LE-J"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-J-K" class="edgeLabel L-LS-J' L-LE-K"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-K" class="edgeLabel L-LS-F' L-LE-K"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-F-3242" transform="translate(237.7578125,201.71875)"><polygon points="72,0 144,-72 72,-144 0,-72" transform="translate(-72,72)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-46.640625,-13.359375)"><foreignObject width="93.28125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">RAG 에이전트</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E-3241" transform="translate(237.7578125,56.359375)"><rect rx="0" ry="0" x="-69.28125" y="-23.359375" width="138.5625" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-59.28125,-13.359375)"><foreignObject width="118.5625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사용자: 질문 입력</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-G-3244" transform="translate(161.171875,347.078125)"><rect rx="0" ry="0" x="-68.5234375" y="-23.359375" width="137.046875" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-58.5234375,-13.359375)"><foreignObject width="117.046875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">5. 질문 벡터 변환</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-H-3246" transform="translate(161.171875,443.796875)"><rect rx="0" ry="0" x="-118.171875" y="-23.359375" width="236.34375" height="46.71875" class="label-container" style="fill:#ccf;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-108.171875,-13.359375)"><foreignObject width="216.34375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">6. VectorDB에서 유사 문서 검색</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-I-3248" transform="translate(161.171875,565.515625)"><rect rx="0" ry="0" x="-82.4921875" y="-23.359375" width="164.984375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-72.4921875,-13.359375)"><foreignObject width="144.984375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">7. 검색된 문서 + 질문</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-J-3250" transform="translate(161.171875,662.234375)"><rect rx="0" ry="0" x="-106.796875" y="-23.359375" width="213.59375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-96.796875,-13.359375)"><foreignObject width="193.59375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">8. LLM에 전달하여 답변 생성</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-K-3252" transform="translate(237.7578125,758.953125)"><rect rx="0" ry="0" x="-81.046875" y="-23.359375" width="162.09375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-71.046875,-13.359375)"><foreignObject width="142.09375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">AI: 답변 및 출처 제공</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-3236" transform="translate(533.96875,201.71875)"><rect rx="0" ry="0" x="-58.7578125" y="-23.359375" width="117.515625" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-48.7578125,-13.359375)"><foreignObject width="97.515625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">2. 텍스트 분할</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-3235" transform="translate(533.96875,56.359375)"><rect rx="0" ry="0" x="-51.3984375" y="-23.359375" width="102.796875" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-41.3984375,-13.359375)"><foreignObject width="82.796875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. 문서 준비</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-3238" transform="translate(533.96875,347.078125)"><rect rx="0" ry="0" x="-96.6015625" y="-23.359375" width="193.203125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-86.6015625,-13.359375)"><foreignObject width="173.203125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. 벡터 변환(Embedding)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-3240" transform="translate(533.96875,443.796875)"><rect rx="0" ry="0" x="-69.1953125" y="-23.359375" width="138.390625" height="46.71875" class="label-container" style="fill:#f9f;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-59.1953125,-13.359375)"><foreignObject width="118.390625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. VectorDB 저장</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<p><strong>[흐름 설명]</strong></p>
+<ol>
+<li>
+<p><strong>사전 준비 단계 (데이터 학습):</strong></p>
+<ul>
+<li><code>1. 문서 준비</code>: 분석할 신뢰성 문서(<code>.md</code> 파일)를 <code>docs</code> 폴더에 준비합니다.</li>
+<li><code>2. 텍스트 분할</code>: 문서가 너무 길면 AI가 처리하기 어려우므로, 의미 있는 단위(예: 제목, 소제목 기준)로 잘게 나눕니다.</li>
+<li><code>3. 벡터 변환 (Embedding)</code>: AI가 이해할 수 있도록, 분할된 텍스트 조각들을 숫자의 배열(벡터)로 변환합니다. 이 과정을 '임베딩’이라고 합니다.</li>
+<li><code>4. VectorDB 저장</code>: 변환된 벡터 값들을 <code>faiss_index</code>라는 '벡터 데이터베이스’에 저장합니다. 이 DB는 텍스트의 의미적 유사성을 기준으로 데이터를 빠르게 찾을 수 있는 특수한 라이브러리와 같습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong>챗봇 실행 단계 (질문 및 답변):</strong></p>
+<ul>
+<li><code>5. 질문 벡터 변환</code>: 사용자의 질문 역시 같은 방식으로 벡터로 변환됩니다.</li>
+<li><code>6. 유사 문서 검색</code>: 질문 벡터와 가장 ‘가까운(유사한)’ 의미를 가진 텍스트 조각들을 VectorDB에서 신속하게 찾아냅니다.</li>
+<li><code>7. &amp; 8. 답변 생성</code>: 검색된 관련성 높은 텍스트 조각들(Context)과 사용자의 원본 질문을 함께 거대 언어 모델(LLM, 여기서는 Gemini)에 전달하며, "이 자료들을 바탕으로 질문에 답해줘"라고 요청합니다.</li>
+<li><code>AI 답변</code>: LLM은 주어진 자료에 근거하여 신뢰도 높은 답변을 생성하고, 어떤 문서를 참고했는지 '출처’를 함께 제시합니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="장-ai의-두뇌-설계---프롬프트-엔지니어링-1.prompts">2장: AI의 “두뇌” 설계 - 프롬프트 엔지니어링 (<code>1.Prompts/</code>)</h2>
+<p>AI가 아무리 뛰어나도, 우리가 무엇을 원하는지 명확하게 알려주지 않으면 좋은 결과를 얻을 수 없습니다. **프롬프트(Prompt)**란 바로 이 'AI에게 내리는 지시서’입니다. 이 프로젝트에서는 코드 개발에 앞서, 어떤 지시서(프롬프트)를 만들지 먼저 설계했습니다.</p>
+<h3 id="단계-rag-분석-코드-생성-프롬프트-설계">2.1. 1단계: RAG 분석 코드 생성 프롬프트 설계</h3>
+<ul>
+<li><strong>파일:</strong> <code>(Step.1) RAG분석 프롬프트 설계.md</code>, <code>(Step.2) RAG분석 프롬프트.md</code></li>
+<li><strong>목표:</strong> 위에서 설명한 '사전 준비 단계’와 '테스트’를 수행하는 Python 코드를 생성하도록 AI에게 요청할 프롬프트를 만드는 것입니다.</li>
+</ul>
+<p><strong>[주요 설계 내용]</strong></p>
+<ol>
+<li><strong>역할 부여 (Persona):</strong> AI에게 “너는 Python과 Langchain을 활용한 RAG 시스템 구축 전문가야” 라고 역할을 부여하여, 전문가 수준의 코드를 생성하도록 유도합니다.</li>
+<li><strong>과업 지시 (Task):</strong> <code>docs</code> 폴더의 마크다운 파일을 읽고, 헤더 기준으로 자르고, Gemini 모델로 임베딩하고, FAISS VectorDB로 저장 후 재사용하는 등, <strong>우리가 원하는 기능들을 매우 구체적이고 상세하게 지시</strong>합니다.</li>
+<li><strong>단계별 사고 유도 (Chain-of-Thought):</strong> “단계별로 생각해서(Let’s think step by step)” 코드를 짜도록 요구하여, AI가 스스로 논리적인 순서에 따라 체계적인 코드를 만들게 합니다.</li>
+<li><strong>출력 형식 지정 (Format):</strong> 최종 결과물로 하나의 Python 스크립트 파일과, 필요한 라이브러리 목록(<code>requirements.txt</code>)을 제공하도록 명시합니다.</li>
+</ol>
+<h3 id="단계-챗봇-서비스용-프롬프트-설계">2.2. 2단계: 챗봇 서비스용 프롬프트 설계</h3>
+<ul>
+<li><strong>파일:</strong> <code>(Step.3) 챗봇서비스 프롬프트 설계.md</code>, <code>(Step.4) 챗봇서비스 구현 프롬프트.md</code></li>
+<li><strong>목표:</strong> 위에서 만든 RAG 분석 기능을 기반으로, 사용자와 실제로 대화하는 Streamlit 웹 애플리케이션 코드를 생성할 프롬프트를 설계합니다.</li>
+</ul>
+<p><strong>[주요 설계 내용]</strong></p>
+<ol>
+<li><strong>더 구체적인 역할 부여:</strong> "소프트웨어 엔지니어"이자 "신뢰성 공학 데이터 분석 전문가"라는 이중 역할을 부여합니다. 코딩 실력과 도메인 지식을 모두 갖춘 답변을 요구하는 것입니다.</li>
+<li><strong>핵심 기능 구체화:</strong>
+<ul>
+<li><strong>UI:</strong> 채팅 형태의 인터페이스를 구현하도록 지시합니다.</li>
+<li><strong>페르소나 적용:</strong> 챗봇이 단순히 정보를 나열하는 게 아니라, "수십 년 경력의 신뢰성 공학 전문가"처럼 분석적이고 심층적인 답변을 하도록 상세한 행동 규칙이 담긴 시스템 프롬프트를 제공합니다.</li>
+<li><strong>대화 기억:</strong> 이전 대화 내용을 기억하고 다음 답변에 활용하도록 <code>st.session_state</code> 사용법을 구체적으로 지시합니다.</li>
+</ul>
+</li>
+<li><strong>성능 최적화 요구:</strong> Streamlit의 캐시 기능(<code>@st.cache_resource</code>)을 사용하라고 직접적으로 명시하여, 불필요한 모델 로딩을 막고 응답 속도를 높이는 전문가 수준의 코드를 요구합니다.</li>
+</ol>
+<blockquote>
+<p><strong>[별첨] 프롬프트 엔지니어링이란?</strong><br>
+원하는 결과를 얻기 위해 AI 모델(LLM)에 제공하는 입력(지시)을 설계하고 최적화하는 과정입니다. 좋은 프롬프트는 AI의 잠재력을 최대한으로 이끌어내며, 역할 부여(Persona), 명확한 과업(Task), 구체적인 형식(Format)을 지정하는 것이 핵심입니다.</p>
+</blockquote>
+<hr>
+<h2 id="장-ai의-몸통-구현---코드-분석-2.code_agent">3장: AI의 “몸통” 구현 - 코드 분석 (<code>2.Code_Agent/</code>)</h2>
+<p>이제 설계된 프롬프트를 바탕으로 생성된 실제 Python 코드들을 살펴보겠습니다.</p>
+<h3 id="지식의-원천-docs-폴더">3.1. 지식의 원천: <code>docs/</code> 폴더</h3>
+<p>이 폴더에는 우리 챗봇이 학습할 원본 문서들이 저장되어 있습니다.</p>
+<ul>
+<li><code>AIAGVDA_FMEA_Guide_Summary.md</code>: FMEA 가이드라인 요약</li>
+<li><code>failure_report-ballpen.md</code>: 볼펜 고장 분석 보고서</li>
+<li><code>failure_report-panormic_sunroof.md</code>: 파노라마 선루프 고장 분석 보고서</li>
+<li><code>failure_report-turbocharger.md</code>: 터보차저 고장 분석 보고서</li>
+</ul>
+<p>챗봇은 오직 이 파일들의 내용에만 근거하여 답변하게 됩니다.</p>
+<h3 id="ai의-기억-저장소-faiss_index-폴더">3.2. AI의 기억 저장소: <code>faiss_index/</code> 폴더</h3>
+<p>이 폴더는 챗봇의 핵심 '기억’이 저장되는 곳입니다. <code>docs/</code> 폴더의 문서들을 벡터로 변환하여 저장한 결과물입니다.</p>
+<ul>
+<li><code>index.faiss</code>: 텍스트에서 변환된 수많은 벡터(숫자 배열)들이 특수한 구조로 저장된 파일입니다. 이 구조 덕분에 매우 빠른 속도로 유사한 벡터를 검색할 수 있습니다.</li>
+<li><code>index.pkl</code>: 각 벡터가 원본 텍스트의 어느 부분에 해당하는지에 대한 매핑 정보가 담긴 파일입니다.</li>
+</ul>
+<blockquote>
+<p><strong>[별첨] Vector Database와 FAISS</strong><br>
+<strong>Vector Database</strong>는 텍스트, 이미지 등을 변환한 '벡터’를 저장, 관리, 검색하는 데 특화된 데이터베이스입니다. 단순히 키워드가 일치하는지를 넘어 '의미’가 유사한 데이터를 찾는 데 탁월합니다. **FAISS(Facebook AI Similarity Search)**는 이러한 벡터 검색을 매우 효율적으로 수행할 수 있도록 Facebook(Meta)에서 개발한 오픈소스 라이브러리입니다. 수백만, 수십억 개의 벡터 중에서도 가장 유사한 벡터를 순식간에 찾아낼 수 있습니다.</p>
+</blockquote>
+<h3 id="기억력-테스트-1.rag_vectordb_load_test.py">3.3. 기억력 테스트: <code>1.RAG_VectorDB_load_test.py</code></h3>
+<p>이 스크립트는 본격적인 챗봇 앱을 만들기 전, VectorDB가 제대로 생성되고 작동하는지 테스트하는 코드입니다.</p>
+<p><strong>[주요 코드 흐름]</strong></p>
+<ol>
+<li><strong><code>initialize_vectorstore</code> 함수:</strong>
+<ul>
+<li><code>faiss_index</code> 폴더가 <strong>이미 있으면</strong>, 새로 만들지 않고 기존 파일을 불러와 사용합니다. (효율성 극대화)</li>
+<li>폴더가 <strong>없으면</strong>, <code>docs</code> 폴더의 <code>.md</code> 파일들을 불러와(<code>DirectoryLoader</code>), 마크다운 헤더 기준으로 텍스트를 분할하고(<code>MarkdownHeaderTextSplitter</code>), Gemini 모델로 임베딩하여(<code>GoogleGenerativeAIEmbeddings</code>), 새로운 <code>faiss_index</code>를 생성하고 저장합니다.</li>
+</ul>
+</li>
+<li><strong><code>create_rag_chain</code> 함수:</strong>
+<ul>
+<li>초기화된 VectorDB를 기반으로 실제 RAG 파이프라인(체인)을 만듭니다.</li>
+<li>사용자 질문이 들어오면 관련 문서를 검색할 <code>retriever</code>를 정의합니다.</li>
+<li>LLM(Gemini)에게 전달할 프롬프트 템플릿을 정의합니다. (e.g., “주어진 문서를 바탕으로 답변하고, 출처를 명시해줘.”)</li>
+<li>이 모든 구성요소를 LangChain Expression Language(LCEL)라는 <code>|</code> (파이프) 기호로 연결하여 전체 데이터 흐름을 정의합니다.</li>
+</ul>
+</li>
+<li><strong><code>main</code> 함수:</strong>
+<ul>
+<li>위 함수들을 호출하여 RAG 체인을 생성한 뒤, "파노라마 썬루프의 누수관련 고장현상"과 같은 샘플 질문을 실행하여 답변이 잘 생성되는지 콘솔에서 확인합니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="최종-애플리케이션-app_v1.py">3.4. 최종 애플리케이션: <code>app_v1.py</code></h3>
+<p>이 스크립트가 바로 우리가 최종적으로 실행할 <strong>‘신뢰성 분석 전문가 챗봇’ 웹 애플리케이션</strong>입니다.</p>
+<blockquote>
+<p><strong>[별첨] Streamlit이란?</strong><br>
+<strong>Streamlit</strong>은 데이터 과학자와 엔지니어를 위한 Python 라이브러리로, 복잡한 웹 개발 지식 없이도 단 몇 줄의 코드만으로 인터랙티브한 웹 앱을 손쉽게 만들 수 있게 해줍니다. 데이터 시각화, 머신러닝 모델 데모, AI 챗봇 프로토타이핑에 널리 사용됩니다.</p>
+</blockquote>
+<p><strong>[주요 코드 구조]</strong></p>
+<ol>
+<li><strong><code>@st.cache_resource</code> 데코레이터:</strong> <code>get_rag_chain</code> 함수 위에 붙어있는 이 표시는 Streamlit에게 “이 함수의 결과물(RAG 체인)은 비싸니, 한 번만 실행하고 결과를 저장(캐싱)해뒀다가 계속 재사용해줘” 라고 알려주는 역할을 합니다. 덕분에 사용자가 질문할 때마다 모델과 DB를 새로 로드하는 비효율을 막을 수 있습니다.</li>
+<li><strong><code>get_rag_chain</code> 함수:</strong> <code>1.RAG_VectorDB_load_test.py</code>의 로직과 거의 동일하지만, 대화 기록(<code>chat_history</code>)을 처리하는 부분이 추가되고, 전문가 페르소나를 정의하는 상세한 시스템 프롬프트가 포함되어 있습니다.</li>
+<li><strong>UI 구성:</strong>
+<ul>
+<li><code>st.title("🤖 신뢰성 분석 전문가 챗봇")</code>: 웹 페이지의 제목을 설정합니다.</li>
+<li><code>st.session_state</code>: 사용자의 브라우저 세션 동안 대화 기록과 같은 데이터를 저장하는 공간입니다. <code>st.session_state.messages</code>에 사용자와 AI의 대화를 차곡차곡 기록하여, AI가 이전 대화의 맥락을 파악하는 데 사용합니다.</li>
+<li><code>st.chat_message</code> &amp; <code>st.chat_input</code>: 실제 채팅 UI를 구성하는 부분입니다. 이전 대화를 화면에 그려주고, 사용자가 새로운 질문을 입력할 수 있는 입력창을 만듭니다.</li>
+</ul>
+</li>
+<li><strong>사용자 입력 및 답변 생성:</strong>
+<ul>
+<li>사용자가 <code>st.chat_input</code>에 질문을 입력하면,</li>
+<li>캐싱된 <code>rag_chain</code>을 호출하여 답변 생성을 요청합니다. 이때 현재 질문뿐만 아니라 <code>st.session_state.messages</code>에 저장된 과거 대화 기록도 함께 전달합니다.</li>
+<li><code>st.write_stream</code>: AI가 답변을 생성하는 과정을 단어 하나하나씩 실시간으로 화면에 보여주는 기능으로, 사용자가 기다리는 지루함을 덜어줍니다.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="장-심화-학습---프롬프트-역설계-3.appendix_reverse_prompting">4장: 심화 학습 - 프롬프트 역설계 (<code>3.Appendix_reverse_prompting/</code>)</h2>
+<p>이 폴더는 이미 만들어진 코드를 보고, "어떤 프롬프트가 이 코드를 만들었을까?"를 역으로 추적해보는 ‘리버스 엔지니어링’ 과정을 담고 있습니다. 이는 좋은 프롬프트를 작성하는 능력을 기르는 데 매우 효과적인 훈련법입니다.</p>
+<ul>
+<li><strong>파일:</strong> <code># 이미 개발된 프롬프트와 코드를 분석하여 완성도 높은 프롬프트를 역설계.txt</code></li>
+</ul>
+<p><strong>[분석의 결론]</strong></p>
+<p>성공적인 코드 생성 AI 프롬프트는 단순히 "무엇을 만들라"고 지시하는 것을 넘어, 아래 요소들을 매우 구체적이고 상세하게 정의해야 합니다.</p>
+<ol>
+<li><strong>누가 (Persona):</strong> 명확한 전문가 역할을 부여한다.</li>
+<li><strong>무엇을 (Task):</strong> 목표하는 과업을 구체적으로 지시한다.</li>
+<li><strong>어떤 형태로 (Format):</strong> 원하는 결과물의 형식을 명시한다.</li>
+<li><strong>어떤 제약 조건과 절차를 지켜서 (Constraints &amp; Chain-of-Thought):</strong>
+<ul>
+<li><strong>핵심 기능 강조:</strong> (e.g., VectorDB 재사용)</li>
+<li><strong>특정 기술 스택 명시:</strong> (e.g., <code>MarkdownHeaderTextSplitter</code> 사용)</li>
+<li><strong>상세한 예시 제공:</strong> (e.g., 프롬프트 템플릿)</li>
+<li><strong>소프트웨어 공학 원칙 요구:</strong> (e.g., 모듈화, 캐싱, 예외 처리)</li>
+</ul>
+</li>
+</ol>
+<p>이러한 체계적인 접근 방식이 단순한 코드 조각이 아닌, 완성도 높고 확장 가능한 애플리케이션을 만드는 비결입니다.</p>
+<hr>
+<h2 id="장-프로젝트-실행하기">5장: 프로젝트 실행하기</h2>
+<p>이제 직접 챗봇을 실행해볼 시간입니다. 아래 순서대로 따라주세요.</p>
+<h3 id="단계-환경-설정">5.1. 1단계: 환경 설정</h3>
+<p>프로젝트의 가장 상위 폴더(<code>Lab6_RAG_Chatbot_Agent</code>)에 <code>.env</code> 라는 이름의 파일을 만들고, 아래 내용을 채워넣어 주세요. Google AI Studio에서 발급받은 본인의 API 키를 사용해야 합니다.</p>
+<pre><code>GOOGLE_API_KEY="여기에_발급받은_API_키를_붙여넣으세요"
+</code></pre>
+<h3 id="단계-필요-라이브러리-설치">5.2. 2단계: 필요 라이브러리 설치</h3>
+<p>터미널(Windows)이나 명령 프롬프트(Mac/Linux)를 열고, 현재 프로젝트 폴더로 이동한 뒤 아래 명령어를 실행하여 챗봇 구동에 필요한 모든 라이브러리를 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> streamlit python-dotenv langchain langchain-core langchain-google-genai langchain-community faiss-cpu unstructured
+</code></pre>
+<p><em>참고: <code>faiss-cpu</code>는 CPU 환경용 라이브러리입니다. GPU가 있다면 <code>faiss-gpu</code>를 설치하여 더 빠른 속도를 경험할 수 있습니다.</em></p>
+<h3 id="단계-챗봇-애플리케이션-실행">5.3. 3단계: 챗봇 애플리케이션 실행</h3>
+<p>모든 준비가 끝났습니다. 터미널에 아래 명령어를 입력하여 Streamlit 앱을 실행하세요.</p>
+<pre class=" language-bash"><code class="prism  language-bash">streamlit run 2.Code_Agent/app_v1.py
+</code></pre>
+<p>명령어를 실행하면 잠시 후 웹 브라우저에 새로운 탭이 열리면서 "신뢰성 분석 전문가 챗봇"이 여러분을 맞이할 것입니다.</p>
+<hr>
+<h2 id="결론-및-다음-단계">6. 결론 및 다음 단계</h2>
+<p>축하합니다! 여러분은 이제 자신만의 기술 문서를 학습한 AI 챗봇 에이전트를 성공적으로 구축하고 실행했습니다.</p>
+<p>본 실습을 통해 우리는 다음을 배웠습니다.</p>
+<ul>
+<li><strong>RAG 아키텍처</strong>를 통해 어떻게 신뢰도 높은 답변을 생성하는지</li>
+<li>AI의 행동을 설계하는 <strong>프롬프트 엔지니어링</strong>의 중요성</li>
+<li><strong>Python, LangChain, Streamlit</strong>을 사용하여 아이디어를 실제 애플리케이션으로 구현하는 방법</li>
+</ul>
+<p>이제 여러분의 차례입니다. <code>docs</code> 폴더에 여러분이 분석하고 싶은 다른 문서들을 추가하고, <code>1.RAG_VectorDB_load_test.py</code>를 실행하여 <code>faiss_index</code>를 업데이트한 뒤, 챗봇이 어떻게 반응하는지 테스트해보세요. 여러분의 전문 분야 지식을 담은 강력한 AI 어시스턴트를 만들어 무한한 가능성을 탐험해보시길 바랍니다.</p>
+</div>
+</body>
+
+</html>

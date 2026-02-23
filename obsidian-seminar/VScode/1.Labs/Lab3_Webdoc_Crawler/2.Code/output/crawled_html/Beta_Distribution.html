@@ -1,0 +1,275 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="beta-distribution">
+<h1>Beta_Distribution<a class="headerlink" href="#beta-distribution" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Distributions.</span></span><span class="sig-name descname"><span class="pre">Beta_Distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution" title="Link to this definition"></a></dt>
+<dd><p>Beta probability distribution. Creates a probability distribution object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float, int</em>) – Shape parameter 1. Must be &gt; 0</p></li>
+<li><p><strong>beta</strong> (<em>float, int</em>) – Shape parameter 2. Must be &gt; 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – ‘Beta’</p></li>
+<li><p><strong>name2</strong> (<em>‘str</em>) – ‘Beta_2P’</p></li>
+<li><p><strong>param_title_long</strong> (<em>str</em>) – ‘Beta Distribution (α=5,β=2)’</p></li>
+<li><p><strong>param_title</strong> (<em>str</em>) – ‘α=5,β=2’</p></li>
+<li><p><strong>parameters</strong> (<em>list</em>) – [alpha,beta]</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>)</p></li>
+<li><p><strong>beta</strong> (<em>float</em>)</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>)</p></li>
+<li><p><strong>mean</strong> (<em>float</em>)</p></li>
+<li><p><strong>variance</strong> (<em>float</em>)</p></li>
+<li><p><strong>standard_deviation</strong> (<em>float</em>)</p></li>
+<li><p><strong>skewness</strong> (<em>float</em>)</p></li>
+<li><p><strong>kurtosis</strong> (<em>float</em>)</p></li>
+<li><p><strong>excess_kurtosis</strong> (<em>float</em>)</p></li>
+<li><p><strong>median</strong> (<em>float</em>)</p></li>
+<li><p><strong>mode</strong> (<em>float</em>)</p></li>
+<li><p><strong>b5</strong> (<em>float</em>)</p></li>
+<li><p><strong>b95</strong> (<em>float</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>kwargs are not accepted</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.CDF">
+<span class="sig-name descname"><span class="pre">CDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.CDF" title="Link to this definition"></a></dt>
+<dd><p>Plots the CDF (cumulative distribution function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default).</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.CHF">
+<span class="sig-name descname"><span class="pre">CHF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.CHF" title="Link to this definition"></a></dt>
+<dd><p>Plots the CHF (cumulative hazard function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default).</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.HF">
+<span class="sig-name descname"><span class="pre">HF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.HF" title="Link to this definition"></a></dt>
+<dd><p>Plots the HF (hazard function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default).</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.PDF">
+<span class="sig-name descname"><span class="pre">PDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.PDF" title="Link to this definition"></a></dt>
+<dd><p>Plots the PDF (probability density function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default).</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.SF">
+<span class="sig-name descname"><span class="pre">SF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.SF" title="Link to this definition"></a></dt>
+<dd><p>Plots the SF (survival function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default).</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.inverse_SF">
+<span class="sig-name descname"><span class="pre">inverse_SF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.inverse_SF" title="Link to this definition"></a></dt>
+<dd><p>Inverse survival function calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>float, list, array</em>) – Quantile to be calculated. Must be between 0 and 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>float, array</em>) – The inverse of the SF at q.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.mean_residual_life">
+<span class="sig-name descname"><span class="pre">mean_residual_life</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.mean_residual_life" title="Link to this definition"></a></dt>
+<dd><p>Mean Residual Life calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>int, float</em>) – Time (x-value) at which mean residual life is to be evaluated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>MRL</strong> (<em>float</em>) – The mean residual life</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+in a single figure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xvals</strong> (<em>list, array, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown. No need to use plt.show().
+If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters. No plotting keywords are
+accepted.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.quantile">
+<span class="sig-name descname"><span class="pre">quantile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.quantile" title="Link to this definition"></a></dt>
+<dd><p>Quantile calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>float, list, array</em>) – Quantile to be calculated. Must be between 0 and 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>float, array</em>) – The inverse of the CDF at q. This is the probability that a random
+variable from the distribution is &lt; q</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.random_samples">
+<span class="sig-name descname"><span class="pre">random_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.random_samples" title="Link to this definition"></a></dt>
+<dd><p>Draws random samples from the probability distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_samples</strong> (<em>int</em>) – The number of samples to be drawn. Must be greater than 0.</p></li>
+<li><p><strong>seed</strong> (<em>int, optional</em>) – The random seed passed to numpy. Default = None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> (<em>array</em>) – The random samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is the same as rvs in scipy.stats</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Beta_Distribution.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Beta_Distribution.stats" title="Link to this definition"></a></dt>
+<dd><p>Descriptive statistics of the probability distribution.
+These are the same as the statistics shown using .plot() but printed to
+the console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

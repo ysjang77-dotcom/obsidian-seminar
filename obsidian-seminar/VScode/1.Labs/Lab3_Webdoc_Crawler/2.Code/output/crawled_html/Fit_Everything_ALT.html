@@ -1,0 +1,124 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fit-everything-alt">
+<h1>Fit_Everything_ALT<a class="headerlink" href="#fit-everything-alt" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.ALT_fitters.Fit_Everything_ALT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.ALT_fitters.</span></span><span class="sig-name descname"><span class="pre">Fit_Everything_ALT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_best_distribution_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BIC'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.ALT_fitters.Fit_Everything_ALT" title="Link to this definition"></a></dt>
+<dd><p>This function will fit all available ALT models for the data you enter,
+which may include right censored data.</p>
+<p>ALT models are either single stress (Exponential, Eyring, Power) or dual
+stress (Dual_Exponential, Power_Exponential, Dual_Power).</p>
+<p>Depending on the data you enter (ie. whether failure_stress_2 is provided),
+the applicable set of ALT models will be fitted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data.</p></li>
+<li><p><strong>failure_stress_1</strong> (<em>array, list, optional</em>) – The corresponding stresses (such as temperature or voltage) at which
+each failure occurred. This must match the length of failures as each
+failure is tied to a failure stress. Alternative keyword of
+failure_stress is accepted in place of failure_stress_1.</p></li>
+<li><p><strong>failure_stress_2</strong> (<em>array, list, optional</em>) – The corresponding stresses (such as temperature or voltage) at which
+each failure occurred. This must match the length of failures as each
+failure is tied to a failure stress. Optional input. Providing this will
+trigger the use of dual stress models. Leaving this empty will trigger
+the use of single stress models.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored failure times. Optional input.</p></li>
+<li><p><strong>right_censored_stress_1</strong> (<em>array, list, optional</em>) – The corresponding stresses (such as temperature or voltage) at which
+each right_censored data point was obtained. This must match the length
+of right_censored as each right_censored value is tied to a
+right_censored stress. Conditionally optional input. This must be
+provided if right_censored is provided. Alternative keyword of
+right_censored_stress is accepted in place of right_censored_stress_1.</p></li>
+<li><p><strong>right_censored_stress_2</strong> (<em>array, list, optional</em>) – The corresponding stresses (such as temperature or voltage) at which
+each right_censored data point was obtained. This must match the length
+of right_censored as each right_censored value is tied to a
+right_censored stress. Conditionally optional input. This must be
+provided if failure_stress_2 is provided.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>int, float, list, array, optional</em>) – The use level stress at which you want to know the mean life. Optional
+input. This must be a list or array [stress_1,stress_2] if
+failure_stress_2 is provided and you want to know the mean life.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – True/False. Default is True. Prints the results to the console.</p></li>
+<li><p><strong>show_probability_plot</strong> (<em>bool, optional</em>) – True/False. Default is True. Provides a probability plot of each of the
+fitted ALT model.</p></li>
+<li><p><strong>show_best_distribution_probability_plot</strong> (<em>bool, optional</em>) – True/False. Defaults to True. Provides a probability plot in a new
+figure of the best ALT model.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – Confidence interval for estimating confidence limits on parameters. Must
+be between 0 and 1. Default is 0.95 for 95% CI.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – The optimization algorithm used to find the solution. Must be either
+‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, or ‘powell’. Specifying the optimizer
+will result in that optimizer being used. To use all of these specify
+‘best’ and the best result will be returned. The default behaviour is to
+try each optimizer in order (‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, and
+‘powell’) and stop once one of the optimizers finds a solution. If the
+optimizer fails, the initial guess will be returned.
+For more detail see the
+<a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>sort_by</strong> (<em>str, optional</em>) – Goodness of fit test to sort results by. Must be ‘BIC’,’AICc’, or
+‘Log-likelihood’. Default is ‘BIC’.</p></li>
+<li><p><strong>exclude</strong> (<em>list, array, optional</em>) – A list or array of strings specifying which distributions to exclude.
+Default is None. Options are: Weibull_Exponential, Weibull_Eyring,
+Weibull_Power, Weibull_Dual_Exponential, Weibull_Power_Exponential,
+Weibull_Dual_Power, Lognormal_Exponential, Lognormal_Eyring,
+Lognormal_Power, Lognormal_Dual_Exponential,
+Lognormal_Power_Exponential, Lognormal_Dual_Power, Normal_Exponential,
+Normal_Eyring, Normal_Power, Normal_Dual_Exponential,
+Normal_Power_Exponential, Normal_Dual_Power, Exponential_Exponential,
+Exponential_Eyring, Exponential_Power, Exponential_Dual_Exponential,
+Exponential_Power_Exponential, Exponential_Dual_Power</p></li>
+<li><p><strong>kwargs</strong> – Accepts failure_stress and right_censored_stress as alternative keywords
+to failure_stress_1 and right_censored_stress_1. This is used to provide
+consistency with the other functions in ALT_Fitters which also accept
+failure_stress and right_censored_stress.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>results</strong> (<em>dataframe</em>) – The dataframe of results. Fitted parameters in this dataframe may be
+accessed by name. See below example.</p></li>
+<li><p><strong>best_model_name</strong> (<em>str</em>) – The name of the best fitting ALT model. E.g. ‘Weibull_Exponential’. See
+above list for exclude.</p></li>
+<li><p><strong>best_model_at_use_stress</strong> (<em>object</em>) – A distribution object created based on the parameters of the best
+fitting ALT model at the use stress. This is only provided if the
+use_level_stress is provided. This is because use_level_stress is
+required to find the scale parameter.</p></li>
+<li><p><strong>parameters and goodness of fit results</strong> (<em>float</em>) – This is provided for each fitted model. For example, the
+Weibull_Exponential model values are Weibull_Exponential_a,
+Weibull_Exponential_b, Weibull_Exponential_beta,
+Weibull_Exponential_BIC, Weibull_Exponential_AICc,
+Weibull_Exponential_loglik</p></li>
+<li><p><strong>excluded_models</strong> (<em>list</em>) – A list of the models which were excluded. This will always include at
+least half the models since only single stress OR dual stress can be
+fitted depending on the data.</p></li>
+<li><p><strong>probability_plot</strong> (<em>object</em>) – The figure handle from the probability plot (only provided if
+show_probability_plot is True).</p></li>
+<li><p><strong>best_distribution_probability_plot</strong> (<em>object</em>) – The figure handle from the best distribution probability plot (only
+provided if show_best_distribution_probability_plot is True).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>From the results, the models are sorted based on their goodness of fit test
+results, where the smaller the goodness of fit value, the better the fit of
+the model to the data.</p>
+<p>Example Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">failures</span> <span class="o">=</span> <span class="p">[</span><span class="mi">619</span><span class="p">,</span> <span class="mi">417</span><span class="p">,</span> <span class="mi">173</span><span class="p">,</span> <span class="mi">161</span><span class="p">,</span> <span class="mi">1016</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="mi">1131</span><span class="p">,</span> <span class="mi">1883</span><span class="p">,</span> <span class="mi">2413</span><span class="p">,</span> <span class="mi">3105</span><span class="p">,</span> <span class="mi">2492</span><span class="p">]</span>
+<span class="n">failure_stresses</span> <span class="o">=</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">350</span><span class="p">]</span>
+<span class="n">right_censored</span> <span class="o">=</span> <span class="p">[</span><span class="mi">29</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">1341</span><span class="p">]</span>
+<span class="n">right_censored_stresses</span> <span class="o">=</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">350</span><span class="p">]</span>
+<span class="n">use_level_stress</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">Fit_Everything_ALT</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span><span class="n">failure_stress_1</span><span class="o">=</span><span class="n">failure_stresses</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress_1</span><span class="o">=</span><span class="n">right_censored_stresses</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="n">use_level_stress</span><span class="p">)</span>
+
+<span class="c1"># To extract the parameters of the Weibull_Exponential model from the results dataframe, you may access the parameters by name:</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Weibull Exponential beta ='</span><span class="p">,</span><span class="n">output</span><span class="o">.</span><span class="n">Weibull_Exponential_beta</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Weibull</span> <span class="n">Exponential</span> <span class="n">beta</span> <span class="o">=</span> <span class="mf">3.0807072337386123</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

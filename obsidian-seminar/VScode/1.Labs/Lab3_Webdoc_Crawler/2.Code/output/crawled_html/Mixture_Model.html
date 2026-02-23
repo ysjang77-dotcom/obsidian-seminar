@@ -1,0 +1,307 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="mixture-model">
+<h1>Mixture_Model<a class="headerlink" href="#mixture-model" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Distributions.</span></span><span class="sig-name descname"><span class="pre">Mixture_Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distributions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proportions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model" title="Link to this definition"></a></dt>
+<dd><p>The mixture model is used to create a distribution that contains parts from
+multiple distributions. This allows for a more complex model to be
+constructed as the sum of other distributions, each multiplied by a
+proportion (where the proportions sum to 1). The model is obtained using the
+sum of the cumulative distribution functions:</p>
+<p><span class="math notranslate nohighlight">\(CDF_{total} = (CDF_1 × p_1) + (CDF_2 × p_2) + (CDF_3 × p_3) + ... + (CDF_n × p_n)\)</span></p>
+<p>The output API is similar to the other probability distributions (Weibull,
+Normal, etc.) as shown below.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distributions</strong> (<em>list, array</em>) – List or array of probability distribution objects used to construct the
+model.</p></li>
+<li><p><strong>proportions</strong> (<em>list, array</em>) – List or array of floats specifying how much of each distribution to
+add to the mixture. The sum of proportions must always be 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – ‘Mixture’</p></li>
+<li><p><strong>name2</strong> (<em>str</em>) – ‘Mixture using 3 distributions’. The exact name depends on the number of
+distributions used.</p></li>
+<li><p><strong>mean</strong> (<em>float</em>)</p></li>
+<li><p><strong>variance</strong> (<em>float</em>)</p></li>
+<li><p><strong>standard_deviation</strong> (<em>float</em>)</p></li>
+<li><p><strong>skewness</strong> (<em>float</em>)</p></li>
+<li><p><strong>kurtosis</strong> (<em>float</em>)</p></li>
+<li><p><strong>excess_kurtosis</strong> (<em>float</em>)</p></li>
+<li><p><strong>median</strong> (<em>float</em>)</p></li>
+<li><p><strong>mode</strong> (<em>float</em>)</p></li>
+<li><p><strong>b5</strong> (<em>float</em>)</p></li>
+<li><p><strong>b95</strong> (<em>float</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>An equivalent form of this model is to sum the PDF. SF is obtained as 1-CDF.
+Note that you cannot simply sum the HF or CHF as this method would be
+equivalent to the competing risks model. In this way, we see the mixture
+model will always lie somewhere between the constituent models.</p>
+<p>This model should be used when a data set cannot be modelled by a single
+distribution, as evidenced by the shape of the PDF, CDF or probability plot
+(points do not form a straight line). Unlike the competing risks model, this
+model requires the proportions to be supplied.</p>
+<p>As this process is additive for the survival function, and may accept many
+distributions of different types, the mathematical formulation quickly gets
+complex. For this reason, the algorithm combines the models numerically
+ather than empirically so there are no simple formulas for many of the
+descriptive statistics (mean, median, etc.). Also, the accuracy of the model
+is dependent on xvals. If the xvals array is small (&lt;100 values) then the
+answer will be ‘blocky’ and inaccurate. The variable xvals is only accepted
+for PDF, CDF, SF, HF, CHF. The other methods (like random samples) use the
+default xvals for maximum accuracy. The default number of values generated
+when xvals is not given is 1000. Consider this carefully when specifying
+xvals in order to avoid inaccuracies in the results.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.CDF">
+<span class="sig-name descname"><span class="pre">CDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.CDF" title="Link to this definition"></a></dt>
+<dd><p>Plots the CDF (cumulative distribution function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>plot_components</strong> (<em>bool</em>) – Option to plot the components of the model. True or False. Default = False.</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default) and
+len(xvals) &gt;= 2.</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.CHF">
+<span class="sig-name descname"><span class="pre">CHF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.CHF" title="Link to this definition"></a></dt>
+<dd><p>Plots the CHF (cumulative hazard function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>plot_components</strong> (<em>bool</em>) – Option to plot the components of the model. True or False. Default = False.</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default) and
+len(xvals) &gt;= 2.</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.HF">
+<span class="sig-name descname"><span class="pre">HF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.HF" title="Link to this definition"></a></dt>
+<dd><p>Plots the HF (hazard function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>plot_components</strong> (<em>bool</em>) – Option to plot the components of the model. True or False. Default = False.</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default) and
+len(xvals) &gt;= 2.</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.PDF">
+<span class="sig-name descname"><span class="pre">PDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.PDF" title="Link to this definition"></a></dt>
+<dd><p>Plots the PDF (probability density function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>plot_components</strong> (<em>bool</em>) – Option to plot the components of the model. True or False. Default = False.</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default) and
+len(xvals) &gt;= 2.</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.SF">
+<span class="sig-name descname"><span class="pre">SF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.SF" title="Link to this definition"></a></dt>
+<dd><p>Plots the SF (survival function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>plot_components</strong> (<em>bool</em>) – Option to plot the components of the model. True or False. Default = False.</p></li>
+<li><p><strong>xvals</strong> (<em>array, list, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib
+(e.g. color, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>yvals</strong> (<em>array, float</em>) – The y-values of the plot</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown if show_plot is True (which it is by default) and
+len(xvals) &gt;= 2.</p>
+<p>If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.inverse_SF">
+<span class="sig-name descname"><span class="pre">inverse_SF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.inverse_SF" title="Link to this definition"></a></dt>
+<dd><p>Inverse survival function calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>float, list, array</em>) – Quantile to be calculated. Must be between 0 and 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>float, array</em>) – The inverse of the SF at q.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.mean_residual_life">
+<span class="sig-name descname"><span class="pre">mean_residual_life</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.mean_residual_life" title="Link to this definition"></a></dt>
+<dd><p>Mean Residual Life calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>int, float</em>) – Time (x-value) at which mean residual life is to be evaluated</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>MRL</strong> (<em>float</em>) – The mean residual life</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+in a single figure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xvals</strong> (<em>list, array, optional</em>) – x-values for plotting</p></li>
+<li><p><strong>xmin</strong> (<em>int, float, optional</em>) – minimum x-value for plotting</p></li>
+<li><p><strong>xmax</strong> (<em>int, float, optional</em>) – maximum x-value for plotting</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The plot will be shown. No need to use plt.show().
+If xvals is specified, it will be used. If xvals is not specified but
+xmin and/or xmax are specified then an array with 200 elements will be
+created using these limits. If nothing is specified then the range will
+be based on the distribution’s parameters. No plotting keywords are
+accepted.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.quantile">
+<span class="sig-name descname"><span class="pre">quantile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.quantile" title="Link to this definition"></a></dt>
+<dd><p>Quantile calculator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>q</strong> (<em>float, list, array</em>) – Quantile to be calculated. Must be between 0 and 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>float, array</em>) – The inverse of the CDF at q. This is the probability that a random
+variable from the distribution is &lt; q</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.random_samples">
+<span class="sig-name descname"><span class="pre">random_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_of_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.random_samples" title="Link to this definition"></a></dt>
+<dd><p>Draws random samples from the probability distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_samples</strong> (<em>int</em>) – The number of samples to be drawn. Must be greater than 0.</p></li>
+<li><p><strong>seed</strong> (<em>int, optional</em>) – The random seed passed to numpy. Default = None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> (<em>array</em>) – The random samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is the same as rvs in scipy.stats</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Distributions.Mixture_Model.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Distributions.Mixture_Model.stats" title="Link to this definition"></a></dt>
+<dd><p>Descriptive statistics of the probability distribution.
+These are the same as the statistics shown using .plot() but printed to
+the console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

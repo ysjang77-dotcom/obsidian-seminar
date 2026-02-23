@@ -1,0 +1,78 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="nelson-aalen">
+<h1>Nelson-Aalen<a class="headerlink" href="#nelson-aalen" title="Link to this heading"></a></h1>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Nonparametric/NelsonAalen.html">API reference</a>.</p>
+</div>
+<p>The Nelson-Aalen estimator provides a method to estimate the hazard function of a population without assuming that the data comes from a particular distribution. From the hazard function, the Nelson-Aalen method obtains the cumulative hazard function, which is then used to obtain the survival function. Due to the lack of parameters required in this model, it is a non-parametric method of obtaining the survival function. As with the Kaplan-Meier estimator, once we have the survival function (SF), then we also have the cumulative hazard function (CHF) and the cumulative distribution function (CDF). It is not possible to obtain a useful version of the probability density function (PDF) or hazard function (HF). While the hazard function is obtained directly by the Nelson-Aalen method, it is a useless function on its own as it is a very spikey plot due to the non-continuous nature of the hazard. It is only when we smooth the results out using the cumulative hazard function that we obtain some utility from the results.</p>
+<p>The Nelson-Aalen estimator is very similar in result (but quite different in method) to the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Kaplan-Meier.html">Kaplan-Meier estimator</a> and <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Rank%20Adjustment.html">Rank Adjustment estimator</a>. While none of the three have been proven to be more accurate than the others, the Kaplan-Meier estimator is generally more popular as a non-parametric means of estimating the SF. Confidence intervals are provided using the <a class="reference external" href="https://support.minitab.com/en-us/minitab/18/help-and-how-to/modeling-statistics/reliability/how-to/nonparametric-distribution-analysis-right-censoring/methods-and-formulas/estimation-methods/#confidence-intervals">Greenwood method</a> with Normal approximation.</p>
+<p>The Nelson-Aalen estimator can be used with both complete and right censored data. This function can be accessed from <cite>reliability.Nonparametric.NelsonAalen</cite> as shown in the examples below.</p>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the example below, we will compare the results from the Nelson-Aalen estimator with the results from the Kaplan-Meier estimator and Rank Adjustment estimator. We will also extract the column of point estimates from the results and print these for each method in a dataframe.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Nonparametric</span><span class="w"> </span><span class="kn">import</span> <span class="n">KaplanMeier</span><span class="p">,</span> <span class="n">NelsonAalen</span><span class="p">,</span> <span class="n">RankAdjustment</span>
+  <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+  <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+  <span class="n">failures</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5248</span><span class="p">,</span> <span class="mi">7454</span><span class="p">,</span> <span class="mi">16890</span><span class="p">,</span> <span class="mi">17200</span><span class="p">,</span> <span class="mi">38700</span><span class="p">,</span> <span class="mi">45000</span><span class="p">,</span> <span class="mi">49390</span><span class="p">,</span> <span class="mi">69040</span><span class="p">,</span> <span class="mi">72280</span><span class="p">,</span> <span class="mi">131900</span><span class="p">]</span>
+  <span class="n">censored</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3961</span><span class="p">,</span> <span class="mi">4007</span><span class="p">,</span> <span class="mi">4734</span><span class="p">,</span> <span class="mi">6054</span><span class="p">,</span> <span class="mi">7298</span><span class="p">,</span> <span class="mi">10190</span><span class="p">,</span> <span class="mi">23060</span><span class="p">,</span> <span class="mi">27160</span><span class="p">,</span> <span class="mi">28690</span><span class="p">,</span> <span class="mi">37100</span><span class="p">,</span> <span class="mi">40060</span><span class="p">,</span> <span class="mi">45670</span><span class="p">,</span> <span class="mi">53000</span><span class="p">,</span> <span class="mi">67000</span><span class="p">,</span> <span class="mi">69630</span><span class="p">,</span> <span class="mi">77350</span><span class="p">,</span> <span class="mi">78470</span><span class="p">,</span> <span class="mi">91680</span><span class="p">,</span> <span class="mi">105700</span><span class="p">,</span> <span class="mi">106300</span><span class="p">,</span> <span class="mi">150400</span><span class="p">]</span>
+  <span class="n">KM</span> <span class="o">=</span> <span class="n">KaplanMeier</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">censored</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Kaplan-Meier'</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+  <span class="n">NA</span> <span class="o">=</span> <span class="n">NelsonAalen</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">censored</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Nelson-Aalen'</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+  <span class="n">RA</span> <span class="o">=</span> <span class="n">RankAdjustment</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">failures</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">censored</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Rank Adjustment'</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+  <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Comparison of Kaplan-Meier, Nelson-Aalen, and Rank Adjustment</span><span class="se">\n</span><span class="s1">with 95% CI bounds'</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+  <span class="c1"># print a table of the SF estimates for each method</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'Kaplan-Meier'</span><span class="p">:</span> <span class="n">KM</span><span class="o">.</span><span class="n">KM</span><span class="p">,</span> <span class="s1">'Nelson-Aalen'</span><span class="p">:</span> <span class="n">NA</span><span class="o">.</span><span class="n">NA</span><span class="p">,</span> <span class="s1">'Rank Adjustment'</span><span class="p">:</span> <span class="n">RA</span><span class="o">.</span><span class="n">RA</span><span class="p">}</span>
+  <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Kaplan-Meier'</span><span class="p">,</span> <span class="s1">'Nelson-Aalen'</span><span class="p">,</span> <span class="s1">'Rank Adjustment'</span><span class="p">])</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">    Kaplan-Meier  Nelson-Aalen  Rank Adjustment</span>
+<span class="sd">0       1.000000      1.000000         1.000000</span>
+<span class="sd">1       1.000000      1.000000         1.000000</span>
+<span class="sd">2       1.000000      1.000000         1.000000</span>
+<span class="sd">3       0.964286      0.964916         0.974412</span>
+<span class="sd">4       0.964286      0.964916         0.974412</span>
+<span class="sd">5       0.964286      0.964916         0.974412</span>
+<span class="sd">6       0.925714      0.927081         0.936568</span>
+<span class="sd">7       0.925714      0.927081         0.936568</span>
+<span class="sd">8       0.885466      0.887637         0.897146</span>
+<span class="sd">9       0.845217      0.848193         0.857724</span>
+<span class="sd">10      0.845217      0.848193         0.857724</span>
+<span class="sd">11      0.845217      0.848193         0.857724</span>
+<span class="sd">12      0.845217      0.848193         0.857724</span>
+<span class="sd">13      0.845217      0.848193         0.857724</span>
+<span class="sd">14      0.795499      0.799738         0.809542</span>
+<span class="sd">15      0.795499      0.799738         0.809542</span>
+<span class="sd">16      0.742465      0.748161         0.758348</span>
+<span class="sd">17      0.742465      0.748161         0.758348</span>
+<span class="sd">18      0.685353      0.692768         0.703498</span>
+<span class="sd">19      0.685353      0.692768         0.703498</span>
+<span class="sd">20      0.685353      0.692768         0.703498</span>
+<span class="sd">21      0.616817      0.626842         0.638675</span>
+<span class="sd">22      0.616817      0.626842         0.638675</span>
+<span class="sd">23      0.539715      0.553186         0.566650</span>
+<span class="sd">24      0.539715      0.553186         0.566650</span>
+<span class="sd">25      0.539715      0.553186         0.566650</span>
+<span class="sd">26      0.539715      0.553186         0.566650</span>
+<span class="sd">27      0.539715      0.553186         0.566650</span>
+<span class="sd">28      0.539715      0.553186         0.566650</span>
+<span class="sd">29      0.269858      0.335524         0.374582</span>
+<span class="sd">30      0.269858      0.335524         0.374582</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/KMvsNAvsRA.png" src="_images/KMvsNAvsRA.png"/>
+<p>Further examples are provided in the documentation for the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Kaplan-Meier.html">Kaplan-Meier estimator</a> as this function is written to work exactly the same way as the Nelson-Aalen estimator.</p>
+</section>
+</section>
+</div>
+</div>

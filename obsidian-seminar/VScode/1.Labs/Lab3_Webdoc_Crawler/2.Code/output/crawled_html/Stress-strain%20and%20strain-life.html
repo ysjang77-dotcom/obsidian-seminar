@@ -1,0 +1,151 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="stress-strain-and-strain-life">
+<h1>Stress-strain and strain-life<a class="headerlink" href="#stress-strain-and-strain-life" title="Link to this heading"></a></h1>
+<p>In the strain-life method of fatigue analysis, the elastic and plastic deformation of the material is used to determine how many cycles the material will last before failure. In this context, failure is defined as the formation of a small crack (typically 1mm) so the geometry of the material does not need to be considered provided the material peoperties have been accurately measured using a stress-strain test. This section of the documentation describes three functions which are useful in strain-life analysis. The first of these is useful to fit the stress-strain and strain-life models to available data, thereby providing the material properties. The second function is a diagram of the relationship between stress and strain during cyclic fatigue which shows the hysteresis loop and finds the min and max stress and strain. The third function produces the strain-life diagram and the equations for this diagram are used for calculating the number of cycles to failure. Further detail is available below for each of the respective functions.</p>
+<p>The equations used for stress-strain and strain life are:</p>
+<p><span class="math notranslate nohighlight">\(\text{Ramberg-Osgood equation:} \hspace{41mm} \varepsilon_{tot} = \underbrace{\frac{\sigma}{E}}_{\text{elastic}} + \underbrace{\left(\frac{\sigma}{K}\right)^{\frac{1}{n}}}_{\text{plastic}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Hysteresis curve equation:} \hspace{43mm} \Delta\varepsilon = \underbrace{\frac{\Delta\sigma}{E}}_{\text{elastic}} + \underbrace{2\left(\frac{\Delta\sigma}{2K}\right)^{\frac{1}{n}}}_{\text{plastic}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Coffin-Manson equation:} \hspace{46mm} \varepsilon_{tot} = \underbrace{\frac{\sigma_f}{E}\left(2N_f\right)^b}_{\text{elastic}} + \underbrace{\varepsilon_f\left(2N_f\right)^c}_{\text{plastic}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Morrow Mean Stress Correction:} \hspace{30mm} \varepsilon_{tot} = \underbrace{\frac{\sigma_f-\sigma_m}{E}\left(2N_f\right)^b}_{\text{elastic}} + \underbrace{\varepsilon_f\left(2N_f\right)^c}_{\text{plastic}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Modified Morrow Mean Stress Correction:} \hspace{10mm} \varepsilon_{tot} = \underbrace{\frac{\sigma_f-\sigma_m}{E}\left(2N_f\right)^b}_{\text{elastic}} + \underbrace{\varepsilon_f\left(\frac{\sigma_f-\sigma_m}{\sigma_f}\right)^{\frac{c}{b}}\left(2N_f\right)^c}_{\text{plastic}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Smith-Watson-Topper Mean Stress Correction:} \hspace{2mm} \varepsilon_{tot} = \underbrace{\frac{\sigma_f^2}{\sigma_{max}E}\left(2N_f\right)^{2b}}_{\text{elastic}} + \underbrace{\frac{\sigma_f\varepsilon_f}{\sigma_{max}}\left(2N_f\right)^{b+c}}_{\text{plastic}}\)</span></p>
+<section id="stress-strain-and-strain-life-parameter-estimation">
+<h2>Stress-Strain and Strain-Life parameter estimation<a class="headerlink" href="#stress-strain-and-strain-life-parameter-estimation" title="Link to this heading"></a></h2>
+<p>The function <cite>stress_strain_life_parameters_from_data</cite> will use stress and strain data to calculate the stress-strain parameters (K, n) from the Ramberg-Osgood relationship.
+If cycles is provided it will also produce the strain-life parameters (sigma_f, epsilon_f, b, c) from the Coffin-Manson equation.
+You cannot find the strain-life parameters without stress as we must use stress to find elastic strain.
+Note that if you already have the parameters K, n, sigma_f, epsilon_f, b, c, then you can use the functions ‘stress_strain_diagram’ or ‘strain_life_diagram’ as described below.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/stress_strain_life_parameters_from_data.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the example below, we provide data from a fatigue test including stress, strain, and cycles to failure. We must also provide the modulus of elasticity (E) for the material. All other options are left as default values. The plots shown below are provided and the results are printed to the console.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">stress_strain_life_parameters_from_data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">strain_data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.006</span><span class="p">,</span> <span class="mf">0.0035</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">]</span>
+<span class="n">stress_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">650</span><span class="p">,</span> <span class="mi">625</span><span class="p">,</span> <span class="mi">555</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">395</span><span class="p">,</span> <span class="mi">330</span><span class="p">]</span>
+<span class="n">cycles_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">1100</span><span class="p">,</span> <span class="mi">4600</span><span class="p">,</span> <span class="mi">26000</span><span class="p">,</span> <span class="mi">560000</span><span class="p">]</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">stress_strain_life_parameters_from_data</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="n">stress_data</span><span class="p">,</span> <span class="n">strain</span><span class="o">=</span><span class="n">strain_data</span><span class="p">,</span><span class="n">cycles</span><span class="o">=</span><span class="n">cycles_data</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="mi">216000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from stress_strain_life_parameters_from_data:</span>
+<span class="sd">K (cyclic strength coefficient): 1462.4649152172044</span>
+<span class="sd">n (strain hardening exponent): 0.19810419512368083</span>
+<span class="sd">sigma_f (fatigue strength coefficient): 1097.405402055844</span>
+<span class="sd">epsilon_f (fatigue strain coefficient): 0.23664541556833998</span>
+<span class="sd">b (elastic strain exponent): -0.08898339316495743</span>
+<span class="sd">c (plastic strain exponent): -0.4501077996416115</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/stress_strain_diagram_fitting.png" src="_images/stress_strain_diagram_fitting.png"/>
+<img alt="_images/stress_life_diagram_fitting.png" src="_images/stress_life_diagram_fitting.png"/>
+</section>
+<section id="stress-strain-diagram">
+<h2>Stress-Strain diagram<a class="headerlink" href="#stress-strain-diagram" title="Link to this heading"></a></h2>
+<p>The function <cite>stress_strain_diagram</cite> is used to visualize how the stress and strain vary with successive load cycles as described by the hysteresis curve equation. Due to residual tensile and compressive stresses, the stress and strain in the material does not unload in the same way that it loads. This results in a hysteresis loop being formed and this is the basis for crack propagation in the material leading to fatigue failure. The size of the hysteresis loop increases for higher strains. Fatigue tests are typically strain controlled; that is they are subjected to a specified amount of strain throughout the test, typically in a sinusoidal pattern. Fatigue tests may also be stress controlled, whereby the material is subjected to a specified amount of stress. This function accepts either input (max_stress or max_strain) and will find the corresponding stress or strain as required. If you do not specify min_stress or min_strain then it is assumed to be negative of the maximum value.</p>
+<p>The cyclic loading sequence defaults to begin with tension, but can be changed using initial_load_direction=’compression’. If your test begins with compression it is important to specify this as the residual stresses in the material from the initial loading will affect the results for the first reversal. This difference is caused by the Bauschinger effect. Only the initial loading and the first two reversals are plotted. For most materials the shape of the hysteresis loop will change over many hundreds of cycles as a result of fatigue hardening (also known as work-hardening) or fatigue-softening. More on this process is available in the <a class="reference external" href="https://www.efatigue.com/training/Chapter_5.pdf">eFatigue training documents</a>.</p>
+<p>Note that if you do not have the parameters K, n, but you do have stress and strain data then you can use the function ‘stress_strain_life_parameters_from_data’. This will be shown in the first example below.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/stress_strain_diagram.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In the example below, we are using the same data from the first example, but this time, we will store the calculated parameters in an object named ‘params’. Then we can specify the calculated parameters to the stress_strain_diagram function. The hysteresis loop generated is for a strain-controlled fatigue test where the strain goes from -0.006 to +0.006.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">stress_strain_life_parameters_from_data</span><span class="p">,</span> <span class="n">stress_strain_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">strain_data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.006</span><span class="p">,</span> <span class="mf">0.0035</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">]</span>
+<span class="n">stress_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">650</span><span class="p">,</span> <span class="mi">625</span><span class="p">,</span> <span class="mi">555</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">395</span><span class="p">,</span> <span class="mi">330</span><span class="p">]</span>
+<span class="n">cycles_data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">1100</span><span class="p">,</span> <span class="mi">4600</span><span class="p">,</span> <span class="mi">26000</span><span class="p">,</span> <span class="mi">560000</span><span class="p">]</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">stress_strain_life_parameters_from_data</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="n">stress_data</span><span class="p">,</span> <span class="n">strain</span><span class="o">=</span><span class="n">strain_data</span><span class="p">,</span> <span class="n">cycles</span><span class="o">=</span><span class="n">cycles_data</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="mi">216000</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">stress_strain_diagram</span><span class="p">(</span><span class="n">E</span> <span class="o">=</span> <span class="mi">216000</span><span class="p">,</span><span class="n">n</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">max_strain</span><span class="o">=</span><span class="mf">0.006</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from stress_strain_diagram:</span>
+<span class="sd">Max stress: 483.8581623940648</span>
+<span class="sd">Min stress: -483.8581623940648</span>
+<span class="sd">Max strain: 0.006</span>
+<span class="sd">Min strain: -0.006</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/stress_strain_hysteresis.png" src="_images/stress_strain_hysteresis.png"/>
+</section>
+<section id="example-3">
+<h2>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h2>
+<p>In this example, we will use the stress_strain_diagram to visualise the effects of residual stresses for a material subjected to non-zero mean stress. The material parameters (K and n) are already known so we do not need to obtain them from any data. We specify the max_stress is 378 MPa and the min_stress is -321 MPa. We will do this for two scenarios; initial tensile load, and initial compressive load. Upon inspection of the results we see for the initial tensile load, the min_stress in the material is actually -328.893 MPa which exceeds the min_stress we specified in our test. When we have an initial compressive load, the max_stress is 385.893 MPa which exceeds the max_stress we specified in our test. These results are not an error and are caused by the residual stresses in the material that were formed during the first loading cycle. In the case of an initial tensile load, when the material was pulled apart in tension by an external force, the material pulls back but due to plastic deformation, these internal forces in the material are not entirely removed, such that when the first compressive load peaks, the material’s internal stresses add to the external compressive forces. This phenomenon is important in load sequence effects for variable amplitude fatigue.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">stress_strain_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Tension first'</span><span class="p">)</span>
+<span class="n">stress_strain_diagram</span><span class="p">(</span><span class="n">E</span><span class="o">=</span><span class="mi">210000</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1200</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">max_stress</span><span class="o">=</span><span class="mi">378</span><span class="p">,</span><span class="n">min_stress</span><span class="o">=-</span><span class="mi">321</span><span class="p">,</span><span class="n">initial_load_direction</span><span class="o">=</span><span class="s1">'tension'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Cyclic loading - tension first'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Compression first'</span><span class="p">)</span>
+<span class="n">stress_strain_diagram</span><span class="p">(</span><span class="n">E</span><span class="o">=</span><span class="mi">210000</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1200</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">max_stress</span><span class="o">=</span><span class="mi">378</span><span class="p">,</span><span class="n">min_stress</span><span class="o">=-</span><span class="mi">321</span><span class="p">,</span><span class="n">initial_load_direction</span><span class="o">=</span><span class="s1">'compression'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Cyclic loading - compression first'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Tension first</span>
+<span class="sd">Results from stress_strain_diagram:</span>
+<span class="sd">Max stress: 378.0</span>
+<span class="sd">Min stress: -328.89311218003513</span>
+<span class="sd">Max strain: 0.004901364196875</span>
+<span class="sd">Min strain: -0.0028982508530831477</span>
+
+<span class="sd">Compression first</span>
+<span class="sd">Results from stress_strain_diagram:</span>
+<span class="sd">Max stress: 385.89311218003513</span>
+<span class="sd">Min stress: -321.0</span>
+<span class="sd">Max strain: 0.004901364196875</span>
+<span class="sd">Min strain: -0.0028982508530831477</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/hysteresis_tension_compression.png" src="_images/hysteresis_tension_compression.png"/>
+</section>
+<section id="strain-life-diagram">
+<h2>Strain-Life diagram<a class="headerlink" href="#strain-life-diagram" title="Link to this heading"></a></h2>
+<p>The function <cite>strain_life_diagram</cite> provides a visual representation of the Coffin-Manson relationship between strain and life. In this equation, strain is split into elastic strain and plastic strain which are shown on the plot as straight lines (on a log-log scale), and life is represented by reversals (with 2 reversals per cycle). The total strain amplitude is used to determine the fatigue life by solving the Coffin-Manson equation. When a min_stress or min_strain is specified that results in a non-zero mean stress, there are several mean stress correction methods that are available. These are ‘morrow’, ‘modified_morrow’ (also known as Manson-Halford) , and ‘SWT’ (Smith-Watson-Topper). The default method is ‘SWT’ but can be changed using the options described below. The equation used is displayed in the legend of the plot. Also shown on the plot is the life of the material at the specified strain amplitude, and the transition life (2Nt) for which the material failure transitions from being dominated by plastic strain to elastic strain.</p>
+<p>Note that if you do not have the parameters sigma_f, epsilon_f, b, c, but you do have stress, strain, and cycles data then you can use the function <cite>stress_strain_life_parameters_from_data</cite>.</p>
+<p>The residual stress in a material subjected to non-zero mean stress (as shown in the previous example) are not considered in this analysis, and the specified max and min values for stress or strain are taken as the true values to which the material is subjected.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/strain_life_diagram.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-4">
+<h2>Example 4<a class="headerlink" href="#example-4" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">strain_life_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">strain_life_diagram</span><span class="p">(</span><span class="n">E</span><span class="o">=</span><span class="mi">210000</span><span class="p">,</span> <span class="n">sigma_f</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">epsilon_f</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="n">c</span><span class="o">=-</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1200</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">max_strain</span><span class="o">=</span><span class="mf">0.0049</span><span class="p">,</span> <span class="n">min_strain</span><span class="o">=-</span><span class="mf">0.0029</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from strain_life_diagram:</span>
+<span class="sd">Failure will occur in 13771.39 cycles (27542.78 reversals).</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/strain_life_diagram1.png" src="_images/strain_life_diagram1.png"/>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 23-33</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

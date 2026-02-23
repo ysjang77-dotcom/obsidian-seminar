@@ -1,0 +1,108 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="mean-cumulative-function">
+<h1>Mean cumulative function<a class="headerlink" href="#mean-cumulative-function" title="Link to this heading"></a></h1>
+<p>The Mean Cumulative Function (MCF) is a cumulative history function that shows the cumulative number of recurrences of an event, such as repairs over time. In the context of repairs over time, the value of the MCF can be thought of as the average number of repairs that each system will have undergone after a certain time. It is only applicable to repairable systems and assumes that each event (repair) is identical. For the non-parametric MCF it does not assume that each system’s MCF is identical, but this assumption is made for the parametric MCF.</p>
+<p>The shape of the MCF is a key indicator that shows whether the systems are improving, worsening, or staying the same over time. If the MCF is concave down (appearing to level out) then the system is improving. A straight line (constant increase) indicates it is staying the same. Concave up (getting steeper) shows the system is worsening as repairs are required more frequently as time progresses.</p>
+<p>Obtaining the MCF from failure times is an inherently non-parametric process (similar to Kaplan-Meier), but once the values are obtained, a model can be fitted to obtain the parametric estimate of the MCF. Each of these two approaches is described below as they are performed by seperate functions within reliability.Repairable_systems.</p>
+<p>Note that in some textbooks and academic papers the Mean Cumulative Function is also referred to as the Cumulative Intensity Function (CIF). These are two names for the same thing. If the shape of your MCF is more of an S than a single smooth curve, you may have a change in operating condition or in the repair effectiveness factor. This can be dealt with by splitting the MCF into segments, however, such models are more complex and are generally only found in academic <a class="reference external" href="http://www.math.wm.edu/~leemis/1991mgmtsci.pdf">literature</a>.</p>
+<section id="non-parametric-mcf">
+<h2>Non-parametric MCF<a class="headerlink" href="#non-parametric-mcf" title="Link to this heading"></a></h2>
+<p>The non-parametric estimate of the MCF provides both the estimate of the MCF and the confidence bounds at a particular time. The procedure to obtain the non-parametric MCF is outlined <a class="reference external" href="http://reliawiki.org/index.php/Recurrent_Event_Data_Analysis#Example:_Mean_Cumulative_Function">here</a>. The confidence bounds are the one-sided bounds as this was chosen to align with the method used by Reliasoft.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Repairable_systems/MCF_nonparametric.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>The following example is taken from an <a class="reference external" href="https://www.reliawiki.com/index.php/Recurrent_Event_Data_Analysis#Example:_Mean_Cumulative_Function">example</a> provided by Reliasoft. The failure times and retirement times (retirement time is indicated by +) of 5 systems are:</p>
+<img alt="_images/MCF_data.png" src="_images/MCF_data.png"/>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCF_nonparametric</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">28</span><span class="p">]]</span>
+<span class="n">MCF_nonparametric</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Mean Cumulative Function results (95% CI):</span>
+<span class="sd">state  time MCF_lower     MCF MCF_upper variance</span>
+<span class="sd">    F     5 0.0459299     0.2  0.870893    0.032</span>
+<span class="sd">    F     6   0.14134     0.4   1.13202    0.064</span>
+<span class="sd">    F    10  0.256603     0.6   1.40294    0.096</span>
+<span class="sd">    F    12  0.383374     0.8   1.66939    0.128</span>
+<span class="sd">    F    13  0.517916       1   1.93081     0.16</span>
+<span class="sd">    F    13  0.658169     1.2   2.18789    0.192</span>
+<span class="sd">    F    15  0.802848     1.4   2.44131    0.224</span>
+<span class="sd">    F    15  0.951092     1.6   2.69164    0.256</span>
+<span class="sd">    F    16   1.10229     1.8   2.93935    0.288</span>
+<span class="sd">    F    17   1.25598       2   3.18478     0.32</span>
+<span class="sd">    C    17</span>
+<span class="sd">    C    19</span>
+<span class="sd">    F    20   1.49896 2.33333   3.63215 0.394074</span>
+<span class="sd">    F    22   1.74856 2.66667   4.06684 0.468148</span>
+<span class="sd">    C    24</span>
+<span class="sd">    F    25   2.12259 3.16667   4.72431 0.593148</span>
+<span class="sd">    F    25    2.5071 3.66667   5.36255 0.718148</span>
+<span class="sd">    C    26</span>
+<span class="sd">    C    28</span>
+
+
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/MCF_nonparametric.png" src="_images/MCF_nonparametric.png"/>
+</section>
+<section id="parametric-mcf">
+<h2>Parametric MCF<a class="headerlink" href="#parametric-mcf" title="Link to this heading"></a></h2>
+<p>The estimates of the parametric MCF are obtained using MCF_nonparametric as this is the procedure required to obtain the points for the plot. We use these points to fit a Non-Homogeneous Poisson Process (NHPP) parametric model of the form:</p>
+<p><span class="math notranslate nohighlight">\(MCF(t) = (\frac{t}{\alpha})^{\beta}\)</span></p>
+<p>You may notice that this looks identical to the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20supported%20distributions.html#weibull-distribution">Weibull CHF</a>, but despite this similarity, they are entirely different functions and the alpha and beta parameters from the MCF cannot be applied to a Weibull distribution for fitting the repair times or repair interarrival times.</p>
+<p>The purpose of fitting a parametric model is to obtain the shape parameter (β) which indicates the long term health of the system/s. If the MCF is concave down (β&lt;1) then the system is improving. A straight line (β=1) indicates it is staying the same. Concave up (β&gt;1) shows the system is worsening as repairs are required more frequently as time progresses.</p>
+<p>Many methods exist for fitting the model to the data. Within reliability, <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html">scipy.optimize.curve_fit</a> is used which returns the covariance matrix and allows for the confidence intervals to be calculated using the appropriate <a class="reference external" href="https://support.minitab.com/en-us/minitab/18/help-and-how-to/modeling-statistics/reliability/how-to/parametric-growth-curve/methods-and-formulas/mean-cumulative-function-mcf-and-failure-rate-rocof/">formulas</a>.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Repairable_systems/MCF_parametric.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>The following example uses the same data as the MCF_nonparametric example provided above. From the output we can clearly see that the system is degrading over time as repairs are needed more frequently.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCF_parametric</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">28</span><span class="p">]]</span>
+<span class="n">MCF_parametric</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Mean Cumulative Function Parametric Model (95% CI):</span>
+<span class="sd">MCF = (t/α)^β</span>
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         11.9806        0.401372   11.2192   12.7937</span>
+<span class="sd">     Beta         1.67362       0.0946537   1.49802   1.86981</span>
+
+<span class="sd">Since Beta is greater than 1, the system repair rate is WORSENING over time.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/MCF_parametric.png" src="_images/MCF_parametric.png"/>
+</section>
+<section id="example-3">
+<h2>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h2>
+<p>The parametric model that is fitted to the MCF is not always an appropriate model. The example below shows data from a collection of systems, some of which are improving and some are worsening. The net effect is an S-shaped MCF. The power model used by MCF_parametric is not able to accurately follow an S-shaped dataset. In this case, the MCF_nonparametric model is more appropriate, though there are some other parametric models (discussed in the first paragraph) which may be useful to model this dataset.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCF_parametric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCF_2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">times</span> <span class="o">=</span> <span class="n">MCF_2</span><span class="p">()</span><span class="o">.</span><span class="n">times</span>
+<span class="n">MCF_parametric</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">times</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/MCF_parametric_badfit.png" src="_images/MCF_parametric_badfit.png"/>
+</section>
+</section>
+</div>
+</div>

@@ -1,0 +1,70 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fr-to-xcn">
+<h1>FR_to_XCN<a class="headerlink" href="#fr-to-xcn" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Convert_data.FR_to_XCN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Convert_data.</span></span><span class="sig-name descname"><span class="pre">FR_to_XCN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">censor_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'C'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.FR_to_XCN" title="Link to this definition"></a></dt>
+<dd><p>Converts data from FR format to XCN format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure times</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored times</p></li>
+<li><p><strong>censor_code</strong> (<em>str, int, optional</em>) – The code to use for the censored items. Default is ‘C’</p></li>
+<li><p><strong>failure_code</strong> (<em>str, int, optional</em>) – The code to use for the failed items. Default is ‘F’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – The event times</p></li>
+<li><p><strong>C</strong> (<em>array</em>) – The censor codes</p></li>
+<li><p><strong>N</strong> (<em>array</em>) – The number of events at each event time</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">XCN</span> <span class="o">=</span> <span class="n">FR_to_XCN</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">right_censored</span><span class="o">=</span><span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">XCN</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">XCN</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="s1">'F'</span> <span class="s1">'F'</span> <span class="s1">'F'</span> <span class="s1">'C'</span> <span class="s1">'C'</span> <span class="s1">'C'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">XCN</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">XCN</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="n">Data</span> <span class="p">(</span><span class="n">XCN</span> <span class="nb">format</span><span class="p">)</span>
+       <span class="n">event</span> <span class="n">time</span> <span class="n">censor</span> <span class="n">code</span>  <span class="n">number</span> <span class="n">of</span> <span class="n">events</span>
+                <span class="mi">1</span>           <span class="n">F</span>                 <span class="mi">2</span>
+                <span class="mi">2</span>           <span class="n">F</span>                 <span class="mi">2</span>
+                <span class="mi">3</span>           <span class="n">F</span>                 <span class="mi">1</span>
+                <span class="mi">7</span>           <span class="n">C</span>                 <span class="mi">1</span>
+                <span class="mi">8</span>           <span class="n">C</span>                 <span class="mi">2</span>
+                <span class="mi">9</span>           <span class="n">C</span>                 <span class="mi">4</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Convert_data.FR_to_XCN.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.FR_to_XCN.print" title="Link to this definition"></a></dt>
+<dd><p>This will print a dataframe of the data in XCN format to the console</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Convert_data.FR_to_XCN.write_to_xlsx">
+<span class="sig-name descname"><span class="pre">write_to_xlsx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.FR_to_XCN.write_to_xlsx" title="Link to this definition"></a></dt>
+<dd><p>This will export the data in XCN format to an xlsx file at the specified path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The file path of the xlsx file to be written</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments passed directly to pandas</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

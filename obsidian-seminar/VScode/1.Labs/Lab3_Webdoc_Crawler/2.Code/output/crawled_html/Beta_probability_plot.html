@@ -1,0 +1,58 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="beta-probability-plot">
+<h1>Beta_probability_plot<a class="headerlink" href="#beta-probability-plot" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Probability_plotting.Beta_probability_plot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Probability_plotting.</span></span><span class="sig-name descname"><span class="pre">Beta_probability_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__fitted_dist_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_fitted_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_scatter_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Probability_plotting.Beta_probability_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a probability plot on Beta scaled probability paper so that the
+CDF of the distribution appears linear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data. Must have at least 2 elements.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data. Optional input. Default = None.</p></li>
+<li><p><strong>show_fitted_distribution</strong> (<em>bool, optional</em>) – If True, the fitted distribution will be plotted on the probability
+plot. Defaults = True.</p></li>
+<li><p><strong>show_scatter_points</strong> (<em>bool, optional</em>) – If True, the plot will include the scatter points from the failure</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is False which will
+result in no downsampling. This functionality makes plotting faster when
+there are very large numbers of points. It only affects the scatterplot
+not the calculations.
+times. Defaults = True.</p></li>
+<li><p><strong>a</strong> (<em>float, int, optional</em>) – The heuristic constant for plotting positions of the form
+(k-a)/(n+1-2a). Default = 0.3 which is the median rank method (same as
+the default in Minitab). For more heuristics, see:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics">https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics</a></p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence interval for the bounds. Must be between 0 and 1.
+Optional input. Default = 0.95 for 95% CI.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib (e.g. color,
+label, linestyle).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>figure</strong> (<em>object</em>) – The figure handle of the probability plot is returned as an object</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>There is a hidden parameter called __fitted_dist_params which is used to
+specify the parameters of the distribution that has already been fitted.
+Passing a distribution object to this parameter will bypass the fitting
+process and use the parameters of the distribution provided. When this is
+done the minimum length of failures can be 1. The distribution object must
+contain the SE and Cov of the parameters so it needs to be generated by the
+Fitters module.</p>
+<p>Both parameters of a Beta Distribution affect the axes scaling such that
+when two different Beta Distributions are plotted on the same Beta
+probability paper, one of them will always appear curved.</p>
+<p>If your plot does not appear automatically, use plt.show() to show it.</p>
+<p>Confidence intervals are not included for the Beta distribution.</p>
+</dd></dl>
+</section>
+</div>
+</div>

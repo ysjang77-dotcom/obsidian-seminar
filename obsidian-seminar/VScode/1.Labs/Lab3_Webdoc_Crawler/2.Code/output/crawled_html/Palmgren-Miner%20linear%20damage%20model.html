@@ -1,0 +1,33 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="palmgren-miner-linear-damage-model">
+<h1>Palmgren-Miner linear damage model<a class="headerlink" href="#palmgren-miner-linear-damage-model" title="Link to this heading"></a></h1>
+<p>The function <cite>palmgren_miner_linear_damage</cite> uses the Palmgren-Miner linear damage hypothesis to find the outputs listed below.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/palmgren_miner_linear_damage.html">API reference</a>.</p>
+</div>
+<p>In the following example, we consider a scenario in which ball bearings fail after 50000 hrs, 6500 hrs, and 1000 hrs, after being subjected to a stress of 1kN, 2kN, and 4kN respectively. If each load cycle involves 40 mins at 1kN, 15 mins at 2kN, and 5 mins at 4kN, how long will the ball bearings last?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">palmgren_miner_linear_damage</span>
+<span class="n">palmgren_miner_linear_damage</span><span class="p">(</span><span class="n">rated_life</span><span class="o">=</span><span class="p">[</span><span class="mi">50000</span><span class="p">,</span><span class="mi">6500</span><span class="p">,</span><span class="mi">1000</span><span class="p">],</span> <span class="n">time_at_stress</span><span class="o">=</span><span class="p">[</span><span class="mi">40</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span> <span class="mi">15</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span> <span class="mi">5</span><span class="o">/</span><span class="mi">60</span><span class="p">],</span> <span class="n">stress</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="sd">'''</span>
+<span class="sd">Palmgren-Miner Linear Damage Model results:</span>
+<span class="sd">Each load cycle uses 0.01351 % of the components life.</span>
+<span class="sd">The service life of the component is 7400.37951 load cycles.</span>
+<span class="sd">The amount of damage caused at each stress level is:</span>
+<span class="sd">Stress =  1 , Damage fraction = 9.86717 %.</span>
+<span class="sd">Stress =  2 , Damage fraction = 28.463 %.</span>
+<span class="sd">Stress =  4 , Damage fraction = 61.66983 %.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 33-37</p></li>
+</ul>
+</section>
+</div>
+</div>

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "marked": "^16.1.2",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/marked": "^5.0.2"
+  }
+}

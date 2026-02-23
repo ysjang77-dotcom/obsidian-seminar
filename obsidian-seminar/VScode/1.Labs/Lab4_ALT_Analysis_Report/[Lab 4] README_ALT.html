@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Lab 4] 가속수명시험(ALT) 분석 및 보고서 작성</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="lab-4-가속수명시험alt-분석-및-보고서-작성"><strong>[Lab 4] 가속수명시험(ALT) 분석 및 보고서 작성</strong></h1>
+<h3 id="과정-소개"><strong>과정 소개</strong></h3>
+<p>이번 실습(Lab)의 목표는 복잡하고 전문적인 지식이 필요했던 <strong>가속수명시험(Accelerated Life Test, ALT)</strong> 데이터 분석 과정을, 강력한 AI 도구와 AI 에이전트를 활용하여 누구나 쉽게 수행할 수 있도록 체험하는 것입니다. 과거에는 통계 전문가나 신뢰성 엔지니어가 복잡한 소프트웨어를 사용해야 했지만, 이제는 AI와의 대화를 통해 분석 코드를 만들고, 결과를 해석하며, 최종 보고서까지 작성할 수 있습니다.</p>
+<hr>
+<h3 id="chapter-1-전체-실습-과정-개요-the-big-picture"><strong>CHAPTER 1: 전체 실습 과정 개요 (The Big Picture)</strong></h3>
+<p>우리가 진행할 실습은 크게 4개의 단계로 이루어집니다. 마치 요리사가 레시피를 구상하고(프롬프트 설계), 재료를 손질하여(데이터 준비), 요리를 하고(코드 실행), 마지막에 예쁘게 플레이팅(보고서 작성)하는 것과 같습니다.</p>
+<p>아래는 우리가 거쳐갈 전체 과정의 흐름도입니다. 각 단계가 어떻게 연결되는지 눈으로 확인해 보세요.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-xCvwS7m8HvnzM7sX" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1345.0625" style="max-width: 401px;" viewBox="0 0 401 1345.0625"><style>#mermaid-svg-xCvwS7m8HvnzM7sX{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-xCvwS7m8HvnzM7sX .error-icon{fill:#552222;}#mermaid-svg-xCvwS7m8HvnzM7sX .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-xCvwS7m8HvnzM7sX .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-xCvwS7m8HvnzM7sX .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-xCvwS7m8HvnzM7sX .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-xCvwS7m8HvnzM7sX .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-xCvwS7m8HvnzM7sX .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-xCvwS7m8HvnzM7sX .marker{fill:#666;stroke:#666;}#mermaid-svg-xCvwS7m8HvnzM7sX .marker.cross{stroke:#666;}#mermaid-svg-xCvwS7m8HvnzM7sX svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-xCvwS7m8HvnzM7sX .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-xCvwS7m8HvnzM7sX .cluster-label text{fill:#333;}#mermaid-svg-xCvwS7m8HvnzM7sX .cluster-label span{color:#333;}#mermaid-svg-xCvwS7m8HvnzM7sX .label text,#mermaid-svg-xCvwS7m8HvnzM7sX span{fill:#000000;color:#000000;}#mermaid-svg-xCvwS7m8HvnzM7sX .node rect,#mermaid-svg-xCvwS7m8HvnzM7sX .node circle,#mermaid-svg-xCvwS7m8HvnzM7sX .node ellipse,#mermaid-svg-xCvwS7m8HvnzM7sX .node polygon,#mermaid-svg-xCvwS7m8HvnzM7sX .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-xCvwS7m8HvnzM7sX .node .label{text-align:center;}#mermaid-svg-xCvwS7m8HvnzM7sX .node.clickable{cursor:pointer;}#mermaid-svg-xCvwS7m8HvnzM7sX .arrowheadPath{fill:#333333;}#mermaid-svg-xCvwS7m8HvnzM7sX .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-xCvwS7m8HvnzM7sX .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-xCvwS7m8HvnzM7sX .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-xCvwS7m8HvnzM7sX .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-xCvwS7m8HvnzM7sX .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-xCvwS7m8HvnzM7sX .cluster text{fill:#333;}#mermaid-svg-xCvwS7m8HvnzM7sX .cluster span{color:#333;}#mermaid-svg-xCvwS7m8HvnzM7sX div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-xCvwS7m8HvnzM7sX:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-xCvwS7m8HvnzM7sX flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph2-2058" style="opacity: 1;" transform="translate(200.5,1151.90625)"><rect width="378.609375" height="370.3125" x="-189.3046875" y="-185.15625"></rect><g class="label" transform="translate(0, -171.15625)" id="mermaid-svg-xCvwS7m8HvnzM7sXText"><g transform="translate(-88.5625,-13.359375)"><foreignObject width="177.125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Phase 3: 분석 보고서 작성</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph1-2059" style="opacity: 1;" transform="translate(200.5,731.59375)"><rect width="337.359375" height="370.3125" x="-168.6796875" y="-185.15625"></rect><g class="label" transform="translate(0, -171.15625)" id="mermaid-svg-xCvwS7m8HvnzM7sXText"><g transform="translate(-97.4765625,-13.359375)"><foreignObject width="194.953125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Phase 2: AI와 함께 코드 개발</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-2060" style="opacity: 1;" transform="translate(200.5,252.21875)"><rect width="385" height="488.4375" x="-192.5" y="-244.21875"></rect><g class="label" transform="translate(0, -230.21875)" id="mermaid-svg-xCvwS7m8HvnzM7sXText"><g transform="translate(-81.1953125,-13.359375)"><foreignObject width="162.390625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Phase 1: 분석 전략 수립</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M200.5,106.4375L200.5,131.4375L201,156.9375" marker-end="url(https://stackedit.io/app#arrowhead264)" style="fill:none"></path><defs><marker id="arrowhead264" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M201,471.9375L200.5,496.4375L200.5,521.4375L200.5,546.4375L200.5,571.4375" marker-end="url(https://stackedit.io/app#arrowhead265)" style="fill:none"></path><defs><marker id="arrowhead265" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M200.5,644.875L200.5,669.875L200.5,694.875" marker-end="url(https://stackedit.io/app#arrowhead266)" style="fill:none"></path><defs><marker id="arrowhead266" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-E" style="opacity: 1;" id="L-D-E"><path class="path" d="M200.5,768.3125L200.5,793.3125L200.5,818.3125" marker-end="url(https://stackedit.io/app#arrowhead267)" style="fill:none"></path><defs><marker id="arrowhead267" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-F" style="opacity: 1;" id="L-E-F"><path class="path" d="M200.5,891.75L200.5,916.75L200.5,941.75L200.5,966.75L200.5,991.75" marker-end="url(https://stackedit.io/app#arrowhead268)" style="fill:none"></path><defs><marker id="arrowhead268" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" style="opacity: 1;" id="L-F-G"><path class="path" d="M200.5,1065.1875L200.5,1090.1875L200.5,1115.1875" marker-end="url(https://stackedit.io/app#arrowhead269)" style="fill:none"></path><defs><marker id="arrowhead269" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-G LE-H" style="opacity: 1;" id="L-G-H"><path class="path" d="M200.5,1188.625L200.5,1213.625L200.5,1238.625" marker-end="url(https://stackedit.io/app#arrowhead270)" style="fill:none"></path><defs><marker id="arrowhead270" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-E" class="edgeLabel L-LS-D' L-LE-E"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-F" class="edgeLabel L-LS-E' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-G-H" class="edgeLabel L-LS-G' L-LE-H"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-F-2045" transform="translate(200.5,1028.46875)"><rect rx="0" ry="0" x="-154.3046875" y="-36.71875" width="308.609375" height="73.4375" class="label-container" style="fill:#C8E6C9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-144.3046875,-26.71875)"><foreignObject width="288.609375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">6. 결과물을 기반으로 보고서 프롬프트 설계<br>(3.Prompt_Report 폴더)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-G-2047" transform="translate(200.5,1151.90625)"><rect rx="0" ry="0" x="-146.953125" y="-36.71875" width="293.90625" height="73.4375" class="label-container" style="fill:#C8E6C9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-136.953125,-26.71875)"><foreignObject width="273.90625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">7. AI에게 분석 보고서 생성 요청<br>((Step.2) 분석보고서 작성 프롬프트.md)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-H-2049" transform="translate(200.5,1275.34375)"><rect rx="0" ry="0" x="-143.5546875" y="-36.71875" width="287.109375" height="73.4375" class="label-container" style="fill:#C8E6C9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-133.5546875,-26.71875)"><foreignObject width="267.109375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">8. AI가 생성한 최종 보고서 검토 및 완성<br>((Step.3) ...보고서.md)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-2039" transform="translate(200.5,608.15625)"><rect rx="0" ry="0" x="-128.953125" y="-36.71875" width="257.90625" height="73.4375" class="label-container" style="fill:#D1C4E9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-118.953125,-26.71875)"><foreignObject width="237.90625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. AI가 Python 분석 코드 초안 생성<br>(alt_analysis_v1.py)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-2041" transform="translate(200.5,731.59375)"><rect rx="0" ry="0" x="-130.21875" y="-36.71875" width="260.4375" height="73.4375" class="label-container" style="fill:#D1C4E9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-120.21875,-26.71875)"><foreignObject width="240.4375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. 코드 실행, 디버깅 및 기능 고도화<br>(v1 -&gt; v2 -&gt; v3)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E-2043" transform="translate(200.5,855.03125)"><rect rx="0" ry="0" x="-133.6796875" y="-36.71875" width="267.359375" height="73.4375" class="label-container" style="fill:#D1C4E9;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-123.6796875,-26.71875)"><foreignObject width="247.359375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">5. 최종 분석 결과물(표, 그래프) 확보<br>(results 폴더)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-2037" transform="translate(200.5,313.9375)"><polygon points="157.5,0 315,-157.5 157.5,-315 0,-157.5" transform="translate(-157.5,157.5)" class="label-container" style="fill:#E3F2FD;stroke:#333;stroke-width:2px;"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-128.28125,-26.71875)"><foreignObject width="256.5625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">2. AI에게 분석 코드 생성 요청<br>(2.ALT_Prompt_for_Generation.md)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-2036" transform="translate(200.5,69.71875)"><rect rx="0" ry="0" x="-110.1484375" y="-36.71875" width="220.296875" height="73.4375" class="label-container" style="fill:#E3F2FD;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-100.1484375,-26.71875)"><foreignObject width="200.296875" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. 목표 정의 및 컨텍스트 제공<br>(1.Prompt(ALT) 폴더)</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<hr>
+<h3 id="chapter-2-가속수명시험alt-프롬프트-설계-및-생성"><strong>CHAPTER 2: 가속수명시험(ALT) 프롬프트 설계 및 생성</strong></h3>
+<p>AI에게 일을 시키려면, “무엇을”, “어떻게” 해달라고 명확하게 요청해야 합니다. 이 요청서를 **프롬프트(Prompt)**라고 부릅니다. 좋은 프롬프트는 AI를 유능한 전문가로 만들지만, 나쁜 프롬프트는 AI를 길 잃은 초보자로 만듭니다.</p>
+<p>이 단계에서는 <code>1.Prompt(ALT)</code> 폴더의 파일들을 통해 어떻게 전문적인 분석을 위한 명확한 프롬프트를 만드는지 배웁니다.</p>
+<h4 id="개요"><strong>1. 개요</strong></h4>
+<ul>
+<li><strong>목표:</strong> AI가 '가속수명시험 데이터 분석 전문가’의 역할을 수행하도록, 분석에 필요한 모든 배경지식, 데이터 정보, 분석 절차, 원하는 결과 형태를 담은 명확한 지시서(프롬프트)를 만드는 것.</li>
+<li><strong>핵심:</strong> "내가 원하는 게 정확히 이거야"라고 AI에게 명확히 알려주는 과정입니다.</li>
+</ul>
+<h4 id="구체적인-내용-1.promptalt-폴더"><strong>2. 구체적인 내용 (<code>1.Prompt(ALT)</code> 폴더)</strong></h4>
+<ul>
+<li>
+<p><strong><code>0.ALT Context 1.md</code>, <code>0.ALT Context 2.md</code> (배경지식 제공)</strong></p>
+<ul>
+<li><strong>내용:</strong> 가속수명시험(ALT)이 무엇인지, 왜 하는지, 어떤 통계 모델(와이블, 로그노멀 분포 등)과 가속 모델(아레니우스, 아이링 모델 등)이 사용되는지에 대한 이론적 배경지식이 담겨 있습니다.</li>
+<li><strong>목적:</strong> 사람도 특정 분야의 일을 하려면 관련 지식을 공부해야 하듯, AI에게 전문적인 분석을 맡기기 전에 "교과서"를 읽게 하는 것과 같습니다. 이 컨텍스트를 통해 AI는 단순 코더가 아닌, 신뢰성 공학 지식을 갖춘 분석가로서 생각하게 됩니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>1.ALT_Prompt_Design.md</code> (프롬프트 설계도)</strong></p>
+<ul>
+<li><strong>내용:</strong> 좋은 프롬프트를 만들기 위한 구조적인 설계도입니다. 보통 다음과 같은 요소로 구성됩니다.
+<ul>
+<li><strong>Persona (역할):</strong> AI에게 "너는 최고의 신뢰성 데이터 분석 전문가야"라고 역할을 부여합니다.</li>
+<li><strong>Task (과업):</strong> “엑셀 데이터를 읽고, 통계 분석을 수행하고, 결과를 시각화하는 Python 코드를 만들어줘” 와 같이 구체적인 임무를 부여합니다.</li>
+<li><strong>Context (맥락):</strong> 위에서 설명한 ALT 배경지식과 우리가 분석할 데이터(<code>ALT_Chip_temperature.xlsx</code>)의 정보를 제공합니다.</li>
+<li><strong>Format (결과 형식):</strong> “결과는 Jupyter Notebook(.ipynb) 파일로 만들어줘” 와 같이 원하는 결과물의 형태를 지정합니다.</li>
+</ul>
+</li>
+<li><strong>목적:</strong> 체계적으로 프롬프트를 설계하여, 빠뜨리는 내용 없이 AI에게 명확한 지시를 내리기 위함입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>2.ALT_Prompt_for_Generation.md</code> (최종 실행 프롬프트)</strong></p>
+<ul>
+<li><strong>내용:</strong> 위의 모든 내용을 종합하여 AI에게 최종적으로 전달하는 완성된 프롬프트입니다. 이 파일을 복사하여 생성형 AI(예: Gemini, ChatGPT)에 붙여넣으면, AI가 이 지시를 바탕으로 코드를 생성하기 시작합니다.</li>
+<li><strong>목적:</strong> AI가 작업을 수행할 수 있도록 최종 명령을 전달하는 단계입니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="chapter-3-ai와-함께-코드-개발-및-수정하기"><strong>CHAPTER 3: AI와 함께 코드 개발 및 수정하기</strong></h3>
+<p>이제 AI가 만들어준 코드를 직접 실행해보고, 원하는 방향으로 개선해나가는 과정입니다. 코딩 경험이 없어도 괜찮습니다. AI와 대화하며 코드를 고쳐나가는 과정을 체험하는 것이 중요합니다.</p>
+<p>이 단계에서는 <code>2.Code(ALT)</code> 폴더의 파일들을 중심으로 학습합니다.</p>
+<h4 id="개요-1"><strong>1. 개요</strong></h4>
+<ul>
+<li><strong>목표:</strong> AI가 생성한 초기 코드를 바탕으로, 실제 데이터를 분석하고 원하는 결과를 얻을 때까지 코드를 실행, 테스트, 수정하는 반복적인 개발 과정을 이해합니다.</li>
+<li><strong>핵심:</strong> 코딩은 한 번에 완벽하게 짜는 것이 아니라, 계속해서 테스트하고 고쳐나가는 과정(Iterative Development)임을 이해하는 것입니다.</li>
+</ul>
+<h4 id="구체적인-내용-2.codealt-폴더"><strong>2. 구체적인 내용 (<code>2.Code(ALT)</code> 폴더)</strong></h4>
+<ul>
+<li>
+<p><strong><code>ALT_Chip_temperature.xlsx</code> (입력 데이터)</strong></p>
+<ul>
+<li><strong>내용:</strong> 이번 실습에서 분석할 '반도체 칩의 온도 스트레스에 따른 수명 데이터’가 담긴 엑셀 파일입니다. 특정 온도(Stress)에서 각 샘플이 언제 고장났는지(Failure Time) 기록되어 있습니다.</li>
+<li><strong>의미:</strong> 모든 분석의 시작점이 되는 원재료입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>alt_analysis_v1.ipynb</code>, <code>alt_analysis_v2.ipynb</code>, <code>alt_analysis_v3.ipynb</code> (코드 개발 과정)</strong></p>
+<ul>
+<li><strong>v1 (초기 버전):</strong> AI가 처음 생성해준 코드일 가능성이 높습니다. 데이터를 불러오고, 기본적인 통계량을 계산하는 등의 기초적인 기능이 담겨 있습니다.</li>
+<li><strong>v2 (개선 버전):</strong> v1을 실행해 본 후, “그래프를 더 예쁘게 그려줘” 또는 “다른 통계 모델도 추가해줘” 와 같은 추가 요청을 통해 개선된 버전입니다.</li>
+<li><strong>v3 (최종 버전):</strong> 여러 번의 수정을 거쳐 분석 절차를 완성하고, 결과를 체계적으로 정리하는 기능까지 포함된 최종 코드입니다. <code>alt_analysis_v3_onestop.html</code> 파일은 이 코드를 실행한 결과 전체를 하나의 웹페이지로 저장한 것입니다.</li>
+<li><strong>목적:</strong> <code>v1</code> -&gt; <code>v2</code> -&gt; <code>v3</code>로 발전하는 과정을 통해, AI와 협업하여 소프트웨어를 점진적으로 완성해나가는 실제 개발 프로세스를 체험할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>results</code> (결과물 폴더)</strong></p>
+<ul>
+<li><strong>내용:</strong> 최종 코드를 실행하여 얻어진 모든 분석 결과(데이터 파일, 그래프 이미지 등)가 저장되는 공간입니다.</li>
+<li><strong>주요 파일 설명:</strong>
+<ul>
+<li><code>step1_data_summary.csv</code>: 데이터의 기초 통계 요약.</li>
+<li><code>step2_distribution_fitting_results.csv</code>: 어떤 통계 분포가 우리 데이터에 가장 적합한지 분석한 결과.</li>
+<li><code>step3_confidence_ellipse_plot.png</code>: 분석 결과가 통계적으로 얼마나 신뢰할 수 있는지 보여주는 타원형 그래프.</li>
+<li><code>step4_best_alt_life_stress_plot.png</code>: 스트레스 수준에 따른 제품의 수명을 예측하는 가장 중요한 결과 그래프.</li>
+<li><code>step5_reliability_prediction.csv</code>: 정상 사용 조건에서 제품의 기대 수명과 신뢰도를 예측한 최종 결과표.</li>
+</ul>
+</li>
+<li><strong>목적:</strong> 이 결과물들은 다음 장에서 AI를 통해 최종 보고서를 작성할 때 핵심 재료로 사용됩니다.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="chapter-4-ai를-활용한-분석-보고서-생성"><strong>CHAPTER 4: AI를 활용한 분석 보고서 생성</strong></h3>
+<p>이제 복잡한 숫자와 그래프로 가득한 분석 결과를, 누가 봐도 이해하기 쉬운 전문적인 보고서로 만드는 마지막 단계입니다.</p>
+<p>이 단계에서는 <code>3.Prompt_Report(ALT_report)</code> 폴더의 파일들을 사용합니다.</p>
+<h4 id="개요-2"><strong>1. 개요</strong></h4>
+<ul>
+<li><strong>목표:</strong> <code>results</code> 폴더에 저장된 분석 결과물(표, 그래프)을 AI에게 제공하고, 전문가 수준의 “가속수명시험 분석 결과 보고서” 초안을 자동으로 생성하게 합니다.</li>
+<li><strong>핵심:</strong> 데이터를 해석하고, 스토리를 부여하여 가치 있는 정보로 만드는 과정입니다.</li>
+</ul>
+<h4 id="구체적인-내용-3.prompt_reportalt_report-폴더"><strong>2. 구체적인 내용 (<code>3.Prompt_Report(ALT_report)</code> 폴더)</strong></h4>
+<ul>
+<li>
+<p><strong><code>(Step.1) 분석보고서 작성 프롬프트 설계.md</code></strong></p>
+<ul>
+<li><strong>내용:</strong> 어떤 구조와 내용으로 보고서를 쓸지에 대한 설계도입니다. “서론, 분석 방법, 분석 결과, 결론 순서로 작성해줘. 각 분석 결과 그래프를 설명하고, 최종적으로 이 제품의 예상 수명은 얼마인지 명확히 제시해줘” 와 같이 보고서의 뼈대를 설계합니다.</li>
+<li><strong>목적:</strong> 사람이 보고서 목차를 짜는 것과 같이, AI가 체계적인 글을 쓸 수 있도록 가이드라인을 제공합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>(Step.2) 분석보고서 작성 프롬프트.md</code></strong></p>
+<ul>
+<li><strong>내용:</strong> 위 설계도를 바탕으로, <code>results</code> 폴더의 핵심 결과(예: <code>step5_reliability_prediction.csv</code>의 내용, 주요 그래프 설명)를 포함하여 작성한 최종 보고서 생성용 프롬프트입니다.</li>
+<li><strong>목적:</strong> 보고서 작성에 필요한 모든 재료와 지시사항을 AI에게 한 번에 전달하기 위함입니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>(Step.3) 가속수명시험 분석 결과 보고서.md</code></strong></p>
+<ul>
+<li><strong>내용:</strong> AI가 위의 프롬프트를 바탕으로 생성한 최종 보고서 초안입니다. 서론부터 결론까지, 분석 과정과 결과를 논리적으로 설명하는 글로 구성되어 있습니다.</li>
+<li><strong>목적:</strong> 거의 완성된 보고서를 얻음으로써, 사용자는 내용의 사실관계만 확인하고 약간의 수정만 거치면 되므로 보고서 작성 시간을 획기적으로 단축할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>(Step.4) Follow up Q&amp;A.md</code></strong></p>
+<ul>
+<li><strong>내용:</strong> AI가 생성한 보고서 초안에 대해 “이 부분은 좀 더 쉽게 설명해줘” 또는 “이 분석 결과가 의미하는 바를 한 문장으로 요약해줘” 와 같이 추가적인 질문과 답변을 통해 보고서를 다듬어가는 과정을 기록한 문서입니다.</li>
+<li><strong>목적:</strong> AI와의 상호작용을 통해 결과물을 더욱 완벽하게 만들어나가는 과정을 보여줍니다.</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

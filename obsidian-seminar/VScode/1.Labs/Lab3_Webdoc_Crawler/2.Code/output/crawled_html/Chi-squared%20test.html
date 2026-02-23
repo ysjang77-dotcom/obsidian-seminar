@@ -1,0 +1,37 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="chi-squared-test">
+<h1>Chi-squared test<a class="headerlink" href="#chi-squared-test" title="Link to this heading"></a></h1>
+<p>The Chi-squared test is a statistical test for goodness of fit to determine whether we can accept or reject the hypothesis that the data is from the specified distribution at the specified level of significance. This method is not a means of comparing distributions (which can be done with AICc, BIC, and AD), but instead allows us to accept or reject a hypothesis that data come from a distribution. Note that the result is sensitive to the bins. For this reason, it is recommended to leave bins as the default value.</p>
+<p>The procedure for the test involves comparing the fitted CDF (from a hypothesised distribution) against the empirical CDF (from a cumulative histogram of the data). As with all histograms, the exact shape of the histogram depends on the bins. The difference between the fitted CDF and the empirical CDF is used to find the chi-squared statistic. The specified level of significance (analogous to confidence level), the number of parameters in the hypothesised distribution, and the number of data points is used to obtain the chi-squared critical value from the chi-squared distribution. By comparing the chi-squared statistic with the chi-squared critical value, we can determine whether the hypothesis (that the data are from the specified distribution) should be rejected or accepted. The acceptance criteria is when the the chi-squared statistic is below the critical value.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Reliability_testing/chi2test.html">API reference</a>.</p>
+</div>
+<p>In the example below we import a dataset called mileage which contains 100 values that appear to be normally distributed. Using the function chi2test we can determine whether we should accept the hypothesis that the data are from a Normal distribution with parameters mu=30011 and sigma=10472. This example is based on Example 2.31 (page 63) of Reliability Engineering and Risk Analysis (listed in <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Recommended%20resources.html">recommended resources</a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">mileage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Normal_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2test</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">mileage</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Normal_Distribution</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mi">30011</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">10472</span><span class="p">)</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13417</span><span class="p">,</span> <span class="mi">18104</span><span class="p">,</span> <span class="mi">22791</span><span class="p">,</span> <span class="mi">27478</span><span class="p">,</span> <span class="mi">32165</span><span class="p">,</span> <span class="mi">36852</span><span class="p">,</span> <span class="mi">41539</span><span class="p">,</span> <span class="mi">46226</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span> <span class="c1">#it is not necessary to specify the bins and leaving them unspecified is usually best</span>
+<span class="n">chi2test</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Chi-squared test:</span>
+<span class="sd">Chi-squared statistic: 3.1294947845652</span>
+<span class="sd">Chi-squared critical value: 12.591587243743977</span>
+<span class="sd">At the 0.05 significance level, we can ACCEPT the hypothesis that the data comes from a Normal Distribution (μ=30011,σ=10472)</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/chi2test.png" src="_images/chi2test.png"/>
+</section>
+</div>
+</div>

@@ -1,0 +1,52 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="creep">
+<h1>Creep<a class="headerlink" href="#creep" title="Link to this heading"></a></h1>
+<p>Creep is the progressive accumulation of plastic strain in a component under stress at an elevated temperature over a period of time. All creep modelling requires data that is unique to the material undergoing creep since all materials behave differently. This data may be stress, temperature, and time to failure data, or it may be material constants which are derived from the former. This secion of reliability contains two functions to determine time to failure due to creep. These functions are <cite>creep_rupture_curves</cite> and <cite>creep_failure_time</cite>. Creep is generally modelled using the <a class="reference external" href="https://en.wikipedia.org/wiki/Larson%E2%80%93Miller_relation">Larson-Miller</a> relation or the Manson-Haferd relation.</p>
+<p>The function <cite>creep_rupture_curves</cite> plots the creep rupture curves for a given set of creep data. The function also fits the lines of best fit to each temperature. The time to failure for a given temperature can be found by specifying stress_trace and temp_trace.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/creep_rupture_curves.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the following example (taken from example 2.16 of Probabilistic Physics of Failure Approach to Reliability (2017)), we provide creep data in the form of temperatures, stresses, and times to failure in order to obtain the creep rupture curves. We also are interested in the time to failure of a component at a stress of 70 and a temperature of 1100.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">creep_rupture_curves</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">TEMP</span> <span class="o">=</span> <span class="p">[</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1350</span><span class="p">,</span><span class="mi">1350</span><span class="p">,</span><span class="mi">1350</span><span class="p">]</span>
+<span class="n">STRESS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span><span class="mi">82</span><span class="p">,</span><span class="mi">78</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">68</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">56</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mf">60.5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">TTF</span> <span class="o">=</span> <span class="p">[</span><span class="mi">37</span><span class="p">,</span><span class="mi">975</span><span class="p">,</span><span class="mi">3581</span><span class="p">,</span><span class="mi">9878</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">213</span><span class="p">,</span><span class="mi">1493</span><span class="p">,</span><span class="mi">2491</span><span class="p">,</span><span class="mi">5108</span><span class="p">,</span><span class="mi">7390</span><span class="p">,</span><span class="mi">10447</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">167</span><span class="p">,</span><span class="mi">615</span><span class="p">,</span><span class="mi">2220</span><span class="p">,</span><span class="mi">6637</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">331</span><span class="p">,</span><span class="mf">3.7</span><span class="p">,</span><span class="mf">8.9</span><span class="p">,</span><span class="mf">31.8</span><span class="p">]</span>
+<span class="n">creep_rupture_curves</span><span class="p">(</span><span class="n">temp_array</span><span class="o">=</span><span class="n">TEMP</span><span class="p">,</span> <span class="n">stress_array</span><span class="o">=</span><span class="n">STRESS</span><span class="p">,</span> <span class="n">TTF_array</span><span class="o">=</span><span class="n">TTF</span><span class="p">,</span> <span class="n">stress_trace</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">temp_trace</span><span class="o">=</span><span class="mi">1100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/creep_rupture_curves.png" src="_images/creep_rupture_curves.png"/>
+<p>The function <cite>creep_failure_time</cite> uses the Larson-Miller relation to find the time to failure due to creep. The method uses a known failure time (time_low) at a lower failure temperature (temp_low) to find the unknown failure time at the higher temperature (temp_high). This relation requires the input temperatures in Fahrenheit. To convert Celsius to Fahrenheit use <span class="math notranslate nohighlight">\(F = C\times(9/5)+32\)</span>. Also note that the conversion between Fahrenheit and Rankine used in this calculation is <span class="math notranslate nohighlight">\(R = F+459.67\)</span>.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/creep_failure_time.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In the following example (which follows on from the previous example), we will use the Larson-Miller relation to find the time to failure due to creep at 1100°F for a component which we know fails at 9878 hours when subjected to the same stress at 900°F.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">creep_failure_time</span>
+<span class="n">creep_failure_time</span><span class="p">(</span><span class="n">temp_low</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span><span class="n">temp_high</span><span class="o">=</span><span class="mi">1100</span><span class="p">,</span><span class="n">time_low</span><span class="o">=</span><span class="mi">9878</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from creep_failure_time:</span>
+<span class="sd">The time to failure at a temperature of 1100 °F is 8.27520045913433</span>
+<span class="sd">The Larson-Miller parameter was found to be 32624.83162890552</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 81-90</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

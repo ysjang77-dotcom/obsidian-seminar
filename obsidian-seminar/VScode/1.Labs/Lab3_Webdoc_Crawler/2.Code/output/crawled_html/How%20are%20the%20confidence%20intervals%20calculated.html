@@ -1,0 +1,245 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="how-are-the-confidence-intervals-calculated">
+<h1>How are the confidence intervals calculated<a class="headerlink" href="#how-are-the-confidence-intervals-calculated" title="Link to this heading"></a></h1>
+<p>There are confidence intervals on the model parameters, and confidence intervals on the plots. This document explains how both are calculated.
+The confidence intervals on the plots use the confidence intervals on the model parameters in the procedure that is explained in the second section of this document.
+Before reading this document, you should have a reasonable understanding of how <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20does%20Maximum%20Likelihood%20Estimation%20work.html">Maximum Likelihood Estimation (MLE) works</a> and also understand <a class="reference external" href="https://en.wikipedia.org/wiki/Partial_derivative">what partial derivatives are</a> and <a class="reference external" href="https://www.derivative-calculator.net/">how to calculate them</a>.</p>
+<section id="confidence-intervals-on-the-parameters">
+<h2>Confidence intervals on the parameters<a class="headerlink" href="#confidence-intervals-on-the-parameters" title="Link to this heading"></a></h2>
+<p>Once the model parameters have been found (whether by Least Squares Estimation or Maximum Likelihood Estimation), we can use these parameters along with the data and the log-likelihood function, to calculate the hessian matrix.
+We can use autograd.differential_operators.hessian to calculate the hessian matrix, which is a square matrix of partial derivatives.
+The inverse of the hessian matrix gives us the covariance matrix, which contains the numbers we need for finding the confidence intervals.
+The covariance matrix is a matrix containing the variance of the parameters along the diagonal, and the covariance of the parameters outside of the diagonal.
+The size of the covariance matrix will match the number of parameters.
+For the Weibull Distribution (with parameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>), the covariance matrix looks like this:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix}
+Var(\alpha) &amp; Cov(\alpha,\beta)\\
+Cov(\alpha,\beta) &amp; Var(\beta)
+\end{bmatrix}\end{split}\]</div>
+<p>To find the confidence intervals on the parameters, we need the parameters, the standard error <span class="math notranslate nohighlight">\(\left(\sqrt{variance}\right)\)</span>, and the desired confidence interval. For this example, we will use the default of 95% confidence (two sided).
+The formulas for the confidence intervals on the parameters have two forms, depending on whether they are strictly positive (like <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are for the Weibull Distribution) or unbounded (like <span class="math notranslate nohighlight">\(\mu\)</span> is for the Normal Distribution).</p>
+<p>For strictly positive parameters, the formula is:</p>
+<p><span class="math notranslate nohighlight">\(X_{lower} = \hat{X} . {\rm e}^{-Z.\frac{\hat{X}_{SE}}{\hat{X}}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(X_{upper} = \hat{X} . {\rm e}^{+Z.\frac{\hat{X}_{SE}}{\hat{X}}}\)</span></p>
+<p>For unbounded parameters (which can be positive or negative), the formula is:</p>
+<p><span class="math notranslate nohighlight">\(X_{lower} = \hat{X} - Z.\hat{X}_{SE}\)</span></p>
+<p><span class="math notranslate nohighlight">\(X_{upper} = \hat{X} + Z.\hat{X}_{SE}\)</span></p>
+<p>Where:</p>
+<ul class="simple">
+<li><p>Z = Standard Normal Distribution Quantile of <span class="math notranslate nohighlight">\(\frac{1 - CI}{2}\)</span>. This can be calculated using <code class="docutils literal notranslate"><span class="pre">-scipy.stats.norm.ppf((1</span> <span class="pre">-</span> <span class="pre">CI)</span> <span class="pre">/</span> <span class="pre">2)</span></code>. For CI = 0.95, Z = 1.95996. If finding a 1 sided interval, don’t divide by 2 in the formula.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{X}_{SE}\)</span> = The standard error <span class="math notranslate nohighlight">\(\left(\sqrt{Var(\hat{X})}\right)\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(X_{lower}\)</span> = The lower confidence bound on the parameter based on the specified confidence interval (CI).</p></li>
+<li><p><span class="math notranslate nohighlight">\(X_{upper}\)</span> = The upper confidence bound on the parameter based on the specified confidence interval (CI).</p></li>
+</ul>
+<p>If you would like to calculate these values yourself, you can check your result with <cite>reliability</cite> like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">CI</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">43</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="n">CI</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">Z</span> <span class="o">=</span> <span class="o">-</span><span class="n">ss</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">CI</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Z ='</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'alpha ='</span><span class="p">,</span><span class="n">fit</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'alpha_SE ='</span><span class="p">,</span><span class="n">fit</span><span class="o">.</span><span class="n">alpha_SE</span><span class="p">)</span>
+<span class="n">alpha_upper</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">Z</span> <span class="o">*</span> <span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">alpha_SE</span> <span class="o">/</span> <span class="n">fit</span><span class="o">.</span><span class="n">alpha</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'alpha_upper from formula ='</span><span class="p">,</span><span class="n">alpha_upper</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'alpha_upper from Fitter ='</span><span class="p">,</span><span class="n">fit</span><span class="o">.</span><span class="n">alpha_upper</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Z = 1.2815515655446004</span>
+<span class="sd">alpha = 55.842280377094696</span>
+<span class="sd">alpha_SE = 9.098820692892856</span>
+<span class="sd">alpha_upper from formula = 68.8096875640737</span>
+<span class="sd">alpha_upper from Fitter = 68.8096875640737</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p>There are a few exceptions to the above formulas for confidence intervals on the parameters. For three parameter distributions (such as Weibull_3P), the mathematics somewhat breaks down, requiring a minor modification.
+The bounds for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are calculated using the Weibull_2P log-likelihood function and the bounds on <span class="math notranslate nohighlight">\(\gamma\)</span> are calculated using the Weibull_3P log-likelihood function.
+This method is used by <cite>reliability</cite> and reliasoft’s Weibull++ software.</p>
+<p>In the case of the Exponential Distribution, the covariance matrix is a 1 x 1 matrix containing just <span class="math notranslate nohighlight">\(Var(\lambda)\)</span>.
+The upper and lower bounds on <span class="math notranslate nohighlight">\(\lambda\)</span> are found using the formula above for strictly positive parameters.</p>
+<p>Some matrices are non-invertable due to their values. While rare, if it occurs for the hessian matrix, it means that the inverse of the hessian matrix cannot be calculated so the covariance matrix is not able to be obtained.
+In such cases, a warning will be printed by <cite>reliability</cite>, the standard errors will be set to 0 and the upper and lower bounds of the parameters will match the parameters.</p>
+</section>
+<section id="confidence-intervals-on-the-plots">
+<h2>Confidence intervals on the plots<a class="headerlink" href="#confidence-intervals-on-the-plots" title="Link to this heading"></a></h2>
+<p>The confidence intervals on the plots (usually called confidence bounds) are available for the CDF, SF, and CHF. It is not possible to calculate confidence intervals for the PDF or HF.
+There are two types of confidence bounds, these are bounds on time (Type I) and bounds on reliability (Type II). Depending on the amount of data, these bounds may be almost the same (for large sample sizes) or quite different (for small sample sizes).
+The following example shows the differences in these bounds for the CDF, SF, and CHF.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">43</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'time'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'time'</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'CDF'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'time'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'time'</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'SF'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CHF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'time'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'time'</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CHF</span><span class="p">(</span><span class="n">CI_type</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'reliability'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'CHF'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/CI_example1.png" src="_images/CI_example1.png"/>
+<p>For larger values of CI (the default is 0.95), the distance between the solid line and the confidence bounds will increase.</p>
+<p>Due to the relationship between the CDF, SF, and CHF, we only need to calculate the confidence bounds on the SF and we can use a few simple <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20supported%20distributions.html#relationships-between-the-five-functions">transformations</a> to obtain the bounds for the CDF and CHF.</p>
+<section id="bounds-on-time">
+<h3>Bounds on time<a class="headerlink" href="#bounds-on-time" title="Link to this heading"></a></h3>
+<p>The formulas for the confidence bounds on time (T) for the Weibull Distribution can be obtained as follows:</p>
+<p>Begin with the equation for the SF: <span class="math notranslate nohighlight">\(\qquad R = {\rm e}^{-(\frac{T}{\alpha })^ \beta }\)</span></p>
+<p>Linearize the equation: <span class="math notranslate nohighlight">\(\qquad ln(-ln(R)) = \beta.(\ln(T)-ln(\alpha))\)</span></p>
+<p>Rearrange to make T the subject: <span class="math notranslate nohighlight">\(\qquad ln(T) = \frac{1}{\beta}ln(-ln(R))+ln(\alpha)\)</span></p>
+<p>Substitute <span class="math notranslate nohighlight">\(u = ln(T)\)</span>: <span class="math notranslate nohighlight">\(\qquad u = \frac{1}{\beta}ln(-ln(R))+ln(\alpha)\)</span></p>
+<p>The upper and lower bounds on <span class="math notranslate nohighlight">\(u\)</span> are:</p>
+<p><span class="math notranslate nohighlight">\(u_U = \hat{u} + Z.\sqrt{Var(\hat{u})}\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(u_L = \hat{u} - Z.\sqrt{Var(\hat{u})}\)</span>.</p>
+<p>You’ll notice that this is the same formula for the bounds on the parameters (when unbounded) provided in the previous section. The formula for Z is also listed in the previous section.</p>
+<p>Here’s the tricky part. We need to find <span class="math notranslate nohighlight">\(Var(\hat{u})\)</span>. The formula for this comes from something called the <a class="reference external" href="https://en.wikipedia.org/wiki/Delta_method#Alternative_form">Delta Method</a> which states that:</p>
+<p><span class="math notranslate nohighlight">\(\operatorname{Var} \left(h_r \right) = \sum_i \left( \frac{\partial h_r}{\partial B_i} \right)^2 \operatorname{Var}\left( B_i \right) +  \sum_i \sum_{j \neq i} \left( \frac{ \partial h_r }{ \partial B_i } \right) \left( \frac{ \partial h_r }{ \partial B_j } \right) \operatorname{Cov}\left( B_i, B_j \right)\)</span></p>
+<p>Applying this to <span class="math notranslate nohighlight">\(u = \frac{1}{\beta}ln(-ln(R))+ln(\alpha)\)</span> gives:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\operatorname{Var} \left(u \right) &amp; = \left( \frac{\partial u}{\partial \beta} \right)^2 \operatorname{Var}\left( \beta \right)\\
+                                   &amp; + \left( \frac{\partial u}{\partial \alpha} \right)^2 \operatorname{Var}\left( \alpha \right)\\
+                                   &amp; + 2\left( \frac{ \partial u }{ \partial \beta } \right) \left( \frac{ \partial u }{ \partial \alpha } \right) \operatorname{Cov}\left( \alpha, \beta \right)\\
+                                   &amp; = \left( -\frac{1}{\beta^2} ln(-ln(R)) \right)^2 \operatorname{Var}\left( \beta \right)\\
+                                   &amp; + \left( \frac{1}{\alpha} \right)^2 \operatorname{Var} \left( \alpha \right)\\
+                                   &amp; + 2 \left( -\frac{1}{\beta^2} ln(-ln(R)) \right) \left( \frac{1}{\alpha} \right) \operatorname{Cov} \left( \alpha, \beta \right)\\
+                                   &amp; = \frac{1}{\beta^4} \left( ln(-ln(R)) \right)^2 \operatorname{Var}\left( \beta \right)\\
+                                   &amp; + \frac{1}{\alpha^2} \operatorname{Var} \left( \alpha \right)\\
+                                   &amp; + 2 \left(-\frac{1}{\beta^2} \right) \left(\frac{ln(-ln(R))}{\alpha} \right) \operatorname{Cov} \left(\alpha, \beta \right)
+\end{align}\end{split}\]</div>
+<p>Since we made the substitution <span class="math notranslate nohighlight">\(u = ln(T)\)</span>, we can obtain the upper and lower bounds on <span class="math notranslate nohighlight">\(T\)</span> using the reverse of this substitution:</p>
+<p><span class="math notranslate nohighlight">\(T_U = {\rm exp}(u_U)\)</span></p>
+<p><span class="math notranslate nohighlight">\(T_L = {\rm exp}(u_L)\)</span></p>
+<p>The result we have produced will accept a value from the SF (a reliability between 0 and 1) and output the corresponding upper and lower times.
+It tells us that we can be 95% certain that the system reliability (R) will be reached somewhere between <span class="math notranslate nohighlight">\(T_L\)</span> and <span class="math notranslate nohighlight">\(T_U\)</span> (if CI=0.95).</p>
+</section>
+<section id="bounds-on-reliability">
+<h3>Bounds on reliability<a class="headerlink" href="#bounds-on-reliability" title="Link to this heading"></a></h3>
+<p>Beginning with the linearized equation for the SF: <span class="math notranslate nohighlight">\(\qquad ln(-ln(R)) = \beta.(\ln(T)-ln(\alpha))\)</span></p>
+<p>We make <span class="math notranslate nohighlight">\(R\)</span> the subject, which it already is (yay!) so no rearranging needed.</p>
+<p>Now substitute <span class="math notranslate nohighlight">\(u = ln(-ln(R))\)</span>: <span class="math notranslate nohighlight">\(\qquad u = \beta.(\ln(T)-ln(\alpha))\)</span></p>
+<p>As with the bounds on time, the bounds on reliability in terms of <span class="math notranslate nohighlight">\(u\)</span> are:</p>
+<p><span class="math notranslate nohighlight">\(u_U = \hat{u} + Z.\sqrt{Var(\hat{u})}\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(u_L = \hat{u} - Z.\sqrt{Var(\hat{u})}\)</span>.</p>
+<p>This time we have a different formula for <span class="math notranslate nohighlight">\(\operatorname{Var} \left(u \right)\)</span>. Using the delta method on <span class="math notranslate nohighlight">\(u = \beta.(\ln(T)-ln(\alpha))\)</span> we can derive the following expression:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\operatorname{Var} \left(u \right) &amp; = \left( \frac{\partial u}{\partial \beta} \right)^2 \operatorname{Var}\left( \beta \right)\\
+                                   &amp; + \left( \frac{\partial u}{\partial \alpha} \right)^2 \operatorname{Var}\left( \alpha \right)\\
+                                   &amp; + 2\left( \frac{ \partial u }{ \partial \beta } \right) \left( \frac{ \partial u }{ \partial \alpha } \right) \operatorname{Cov}\left( \alpha, \beta \right)\\
+                                   &amp; = \left(ln(T) - ln(\alpha) \right)^2 \operatorname{Var}\left( \beta \right)\\
+                                   &amp; + \left(-\frac{\beta}{\alpha} \right)^2 \operatorname{Var}\left( \alpha \right)\\
+                                   &amp; + 2 \left(ln(T)-ln(\alpha) \right) \left(-\frac{\beta}{\alpha} \right) \operatorname{Cov} \left(\alpha, \beta \right)
+\end{align}\end{split}\]</div>
+<p>Once we have the full expression for <span class="math notranslate nohighlight">\(u\)</span> we need to make the reverse substitution:</p>
+<p><span class="math notranslate nohighlight">\(R_U = {\rm exp}\left(-{\rm exp}\left(u_U\right)\right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(R_L = {\rm exp}\left(-{\rm exp}\left(u_L\right)\right)\)</span></p>
+<p>The result we have produced will accept any time value (T) and will output the bounds on reliability (R) between 0 and 1 at that corresponding time.
+It tells us that we can be 95% certain that the reliability of the system lies between <span class="math notranslate nohighlight">\(R_L\)</span> and <span class="math notranslate nohighlight">\(R_U\)</span> (if CI=0.95) at the specified time.</p>
+</section>
+<section id="how-are-the-confidence-bounds-calculated-using-python">
+<h3>How are the confidence bounds calculated using Python<a class="headerlink" href="#how-are-the-confidence-bounds-calculated-using-python" title="Link to this heading"></a></h3>
+<p>The above derivations are tedious and become extremely difficult for more complicated equations (such as the Gamma Distribution).
+Within <cite>reliability</cite> the linearized forms of the SF (in terms of time and reliability) are specified, and then the partial derivatives are calculated using autograd.jacobian.
+In code (for bounds on time) it looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># weibull SF rearranged for t with v = ln(t)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">v</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">anp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">anp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="p">))</span> <span class="o">+</span> <span class="n">anp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+<span class="n">dv_da</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># derivative w.r.t. alpha</span>
+<span class="n">dv_db</span> <span class="o">=</span> <span class="n">jacobian</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># derivative w.r.t. beta</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">var_v</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>  <span class="c1"># u is reliability</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">dv_da</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_SE</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="n">dv_db</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_SE</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dv_da</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">dv_db</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Cov_alpha_beta</span>
+    <span class="p">)</span>
+
+<span class="c1"># v is ln(t) and Y is reliability</span>
+<span class="n">v_lower</span> <span class="o">=</span> <span class="n">v</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">Z</span> <span class="o">*</span> <span class="p">(</span><span class="n">var_v</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">v_upper</span> <span class="o">=</span> <span class="n">v</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="p">(</span><span class="n">var_v</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># transform back from v = ln(t)</span>
+<span class="n">t_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">v_lower</span><span class="p">)</span>
+<span class="n">t_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">v_upper</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There are several other challenges to getting Python to do this correctly, such as where to incorporate <span class="math notranslate nohighlight">\(\gamma\)</span> for location shifted distributions, how to distribute the points so they look smooth, how to correct for things (like reversals in the bounds) that are mathematically correct but practically (in the world of reliability engineering) incorrect, and how to correctly transform the bounds on the SF to get the bounds on the CDF or CHF.
+Some distributions (such as the Gamma Distribution) are particularly difficult and require a slightly different method to that which is explained above.</p>
+</section>
+<section id="how-can-i-extract-the-confidence-bounds-from-the-plot">
+<h3>How can I extract the confidence bounds from the plot<a class="headerlink" href="#how-can-i-extract-the-confidence-bounds-from-the-plot" title="Link to this heading"></a></h3>
+<p>For bounds on time, this can be done using the quantiles option in the fitter as shown below in option 1.
+Alternatively, once we have the fitted distribution object, we can extract values from bounds on time or reliability directly from the CDF, SF, or CHF. This is shown below in option 2.
+Multiple examples of the second method are provided in the document on <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Working%20with%20fitted%20distributions.html">working with fitted distributions</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">43</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>
+
+<span class="c1"># option 1 using quantiles argument</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">quantiles</span><span class="p">[</span><span class="s1">'Lower Estimate'</span><span class="p">]</span>
+<span class="n">point</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">quantiles</span><span class="p">[</span><span class="s1">'Point Estimate'</span><span class="p">]</span>
+<span class="n">upper</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">quantiles</span><span class="p">[</span><span class="s1">'Upper Estimate'</span><span class="p">]</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">()</span>
+
+<span class="c1"># option 2 extracting values directly from the CDF</span>
+<span class="n">lower2</span><span class="p">,</span> <span class="n">point2</span><span class="p">,</span> <span class="n">upper2</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">CDF</span><span class="p">(</span><span class="n">CI_y</span><span class="o">=</span><span class="n">q</span><span class="p">,</span><span class="n">show_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'purple'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">upper</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lower2</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">point2</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'lime'</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">upper2</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'yellow'</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/CI_example2.png" src="_images/CI_example2.png"/>
+<p>Lastly, for bounds on either time or reliability, the <code class="docutils literal notranslate"><span class="pre">Other_functions.crosshairs</span></code> function provides an interactive set of crosshairs which can be used to find the values using the mouse.
+A demo of how this works is shown <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Crosshairs.html">here</a>.</p>
+</section>
+<section id="further-reading">
+<h3>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading"></a></h3>
+<p>More information and formulas are available in the following references from weibull.com, reliawiki and reliasoft:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://web.archive.org/web/20210516070558/https://www.weibull.com/hotwire/issue17/relbasics17.htm">Differences Between Type I (Time) and Type II (Reliability) Confidence Bounds</a></p></li>
+<li><p><a class="reference external" href="https://www.reliawiki.com/index.php/Confidence_Bounds">Confidence Bounds</a></p></li>
+<li><p><a class="reference external" href="https://help.reliasoft.com/reference/life_data_analysis/lda/confidence_bounds.html#FisherMatrixConfidenceBounds">The Weibull Distribution</a></p></li>
+</ul>
+</section>
+</section>
+</section>
+</div>
+</div>

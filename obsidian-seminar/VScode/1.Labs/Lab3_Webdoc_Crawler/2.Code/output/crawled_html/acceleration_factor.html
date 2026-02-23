@@ -1,0 +1,41 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="acceleration-factor">
+<h1>acceleration_factor<a class="headerlink" href="#acceleration-factor" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.acceleration_factor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">acceleration_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_use</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_acc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ea</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.acceleration_factor" title="Link to this definition"></a></dt>
+<dd><p>This function uses the Arrhenius model for Acceleration factor to determine
+the relationship between temperature and reaction rate.</p>
+<p>Please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Acceleration%20factor.html">online documentation</a> for more details and formulas.</p>
+<p>This function accepts T_use as a mandatory input and the user may specify
+any two of the three other variables, and the third variable will be found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T_use</strong> (<em>float, int</em>) – Temperature of usage (Celsius)</p></li>
+<li><p><strong>T_acc</strong> (<em>float, int, optional</em>) – Temperature of acceleration (Celsius)</p></li>
+<li><p><strong>Ea</strong> (<em>float, int, optional</em>) – Activation energy (eV)</p></li>
+<li><p><strong>AF</strong> (<em>float, int, optional</em>) – Acceleration factor</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Default is True. If True the results will be printed to the console.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>AF</strong> (<em>float</em>) – Acceleration Factor</p></li>
+<li><p><strong>T_acc</strong> (<em>float</em>) – Accelerated temperature</p></li>
+<li><p><strong>T_use</strong> (<em>float</em>) – Use temperature</p></li>
+<li><p><strong>Ea</strong> (<em>float</em>) – Activation energy (eV)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Two of the three optional inputs must be specified and the third one will be
+found.</p>
+</dd></dl>
+</section>
+</div>
+</div>

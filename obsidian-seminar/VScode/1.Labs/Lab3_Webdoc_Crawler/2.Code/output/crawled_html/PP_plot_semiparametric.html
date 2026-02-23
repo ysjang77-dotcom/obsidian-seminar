@@ -1,0 +1,56 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="pp-plot-semiparametric">
+<h1>PP_plot_semiparametric<a class="headerlink" href="#pp-plot-semiparametric" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Probability_plotting.PP_plot_semiparametric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Probability_plotting.</span></span><span class="sig-name descname"><span class="pre">PP_plot_semiparametric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_data_failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_data_right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_diagonal_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Probability_plotting.PP_plot_semiparametric" title="Link to this definition"></a></dt>
+<dd><p>A PP plot (probability-probability plot) consists of plotting the CDF of one
+distribution against the CDF of another distribution. If we have both
+distributions we can use the function PP_plot_parametric. This function is
+for when we want to compare a fitted distribution to an empirical
+distribution for a given set of data. If the fitted distribution is a good
+fit the PP plot will lie on the diagonal line. The main purpose of this type
+of plot is to assess the goodness of fit in a graphical way. To create a
+semi-parametric PP plot, we must provide the failure data and the method
+(‘KM’ for Kaplan-Meier, ‘NA’ for Nelson-Aalen, ‘RA’ for Rank Adjustment) to
+estimate the empirical CDF, and we must also provide the parametric
+distribution for the parametric CDF. The failure times are the limiting
+values here so the parametric CDF is only calculated at the failure times
+since that is the result from the empirical CDF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_data_failures</strong> (<em>array, list</em>) – The failure times.</p></li>
+<li><p><strong>X_data_right_censored</strong> (<em>array, list, optional</em>) – The right censored failure times. Optional input.</p></li>
+<li><p><strong>Y_dist</strong> (<em>object</em>) – A probability distribution created using the
+reliability.Distributions module. The CDF of this distribution will be
+plotted along the Y-axis.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – Must be ‘KM’, ‘NA’, or ‘RA’ for Kaplan-Meier, Nelson-Aalen, and Rank
+Adjustment respectively. Default = ‘KM’.</p></li>
+<li><p><strong>show_diagonal_line</strong> (<em>bool</em>) – Default = True. If True the diagonal line will be shown on the plot.</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is False which will
+result in no downsampling. This functionality makes plotting faster when
+there are very large numbers of points. It only affects the scatterplot
+not the calculations.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib (e.g. color,
+label, linestyle).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>figure</strong> (<em>object</em>) – The figure handle of the PP plot is returned as an object</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The empirical CDF also accepts X_data_right_censored just as Kaplan-Meier,
+Nelson-Aalen, and Rank Adjustment will also accept right censored data.</p>
+<p>If your plot does not appear automatically, use plt.show() to show it.</p>
+</dd></dl>
+</section>
+</div>
+</div>

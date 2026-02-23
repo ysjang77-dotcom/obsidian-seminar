@@ -1,0 +1,62 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="optimizers">
+<h1>Optimizers<a class="headerlink" href="#optimizers" title="Link to this heading"></a></h1>
+<section id="what-is-an-optimizer">
+<h2>What is an optimizer?<a class="headerlink" href="#what-is-an-optimizer" title="Link to this heading"></a></h2>
+<p>An optimizer is an algorithm that uses two primary inputs; a target function and an initial guess. The optimizer’s job is to figure out which input to the target function will minimise the output of the target function.</p>
+<p>Within <cite>reliability</cite>, the <cite>Fitters</cite> and <cite>ALT_Fitters</cite> modules rely heavily on optimizers to find the parameters of the distribution that will minimize the log-likelihood function for the given data set. This process is fundamental to the Maximum Likelihood Estimation (MLE) method of fitting a probability distribution.</p>
+<p>There are four optimizers supported by <cite>reliability</cite>. These are “TNC”, “L-BFGS-B”, “nelder-mead”, and “powell”. All of these optimizers are bound constrained, meaning that the functions within <cite>reliability</cite> will specify the bounds of the parameters (such as making the parameters greater than zero) and the optimizer will find the optimal solution that is within these bounds. These four optimizers are provided by <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">scipy</a>.</p>
+<p>The optimizer can be specified as a string using the “optimizer” argument. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">12</span><span class="p">],</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">'TNC'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The optimizer that was used is always reported by each of the functions in <cite>Fitters</cite> and <cite>ALT_Fitters</cite>. An example of this is shown below on the third line of the output. In the case of <cite>Fit_Everything</cite> and <cite>Fit_Everything_ALT</cite>, the optimizer used for each distribution or model is provided in the table of results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">'''</span>
+<span class="s1">Results from Fit_Weibull_2P (95% CI):</span>
+<span class="s1">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="s1">Optimizer: TNC</span>
+<span class="s1">Failures / Right censored: 3/0 (0</span><span class="si">% r</span><span class="s1">ight censored)</span>
+
+<span class="s1">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="s1">    Alpha         7.16845         3.33674    2.8788     17.85</span>
+<span class="s1">     Beta         1.29924        0.650074  0.487295   3.46408</span>
+
+<span class="s1">Goodness of fit             Value</span>
+<span class="s1"> Log-likelihood          -8.56608</span>
+<span class="s1">           AICc Insufficient data</span>
+<span class="s1">            BIC           19.3294</span>
+<span class="s1">             AD           3.72489</span>
+</pre></div>
+</div>
+</section>
+<section id="why-do-we-need-different-optimizers">
+<h2>Why do we need different optimizers?<a class="headerlink" href="#why-do-we-need-different-optimizers" title="Link to this heading"></a></h2>
+<p>Each optimizer has various strengths and weaknesses because they work in different ways. Often they will arrive at the same result. Sometimes they will arrive at different results, either because of the very shallow gradient near the minimum, or the non-global minimum they have found. Sometimes they will fail entirely.</p>
+<p>There is no single best optimizer for fitting probability distributions so a few options are provided as described below.</p>
+</section>
+<section id="which-optimizer-should-i-pick">
+<h2>Which optimizer should I pick?<a class="headerlink" href="#which-optimizer-should-i-pick" title="Link to this heading"></a></h2>
+<p>You don’t really need to worry about picking an optimizer as the default choice is usually sufficient. If you do want to select your optimizer, you have four to choose from. Most importantly, you should be aware of what the optimizer is doing (minimizing the negative log-likelihood equation by varying the parameters) and understand that optimizers aren’t all the same which can cause different results. If you really need to know the best optimizer then select “best”, otherwise you can just leave the default as None.</p>
+<p>There are three behaviours within reliability with respect to the choice of optimizer. These depend on whether the user has specified a specific optimizer (“TNC”, “L-BFGS-B”, “nelder-mead”, “powell”), specified all optimizers (“all” or “best”), or not specified anything (None).</p>
+<p>In the case of a specific optimizer being specified, it will be used. If it fails, then the initial guess will be returned with a warning.</p>
+<img alt="_images/optimizer_specific.PNG" src="_images/optimizer_specific.PNG"/>
+<p>In the case of “best” or “all” being specified, all four of the optimizers will be tried. The results from the best one (based on the lowest log-likelihood it finds) will be returned.</p>
+<img alt="_images/optimizer_best.PNG" src="_images/optimizer_best.PNG"/>
+<p>In the case of no optimizer being specified, they will be tried in order of “TNC”, “L-BFGS-B”, “nelder-mead”, “powell”. Once one of them succeeds, the results will be returned and no further optimizers will be run.</p>
+<img alt="_images/optimizer_default.PNG" src="_images/optimizer_default.PNG"/>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For large sample sizes (above 10000) it will take considerable time to run multiple optimizers. In particular, “nelder-mead” and “powell” are much slower than “TNC” and “L-BFGS-B”. For this reason, <cite>reliability</cite> does not try multiple optimizers unless told to or if the default did not succeed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are some rare occasions when the optimizer finds a result (and reports it succeeded) but another optimizer may find a better result. If you always want to be sure that the best result has been found, specify “best” or “all” for the optimizer, and be prepared to wait longer for it to compute if you have a large amount of data. The typical difference between the results of different optimizers which succeeded is very small (around 1e-8 for the log-likelihood) but this is not always the case as the number of parameters in the model increase.</p>
+</div>
+</section>
+</section>
+</div>
+</div>

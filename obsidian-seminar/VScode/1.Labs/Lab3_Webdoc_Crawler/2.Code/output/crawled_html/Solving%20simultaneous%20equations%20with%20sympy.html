@@ -1,0 +1,74 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="solving-simultaneous-equations-with-sympy">
+<h1>Solving simultaneous equations with sympy<a class="headerlink" href="#solving-simultaneous-equations-with-sympy" title="Link to this heading"></a></h1>
+<p>This document is a tutorial for how to use the Python module <cite>sympy</cite> to solve simultaneous equations. Since sympy does this so well, there is no need to implement it within <cite>reliability</cite>, but users may find this tutorial helpful as problems involving physics of failure will often require the solution of simultaneous equations. <cite>sympy</cite> is not installed by default when you install <cite>reliability</cite> so users following this tutorial will need to ensure <cite>sympy</cite> is installed on their machine. The following three examples should be sufficient to illustrate how to use <cite>sympy</cite> for solving simultaneous equations. Further examples are available in the <a class="reference external" href="https://docs.sympy.org/latest/modules/solvers/solvers.html">sympy documentation</a>.</p>
+<p><strong>Example 1</strong></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 1:} \hspace{11mm} x + y = 5\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 2:} \hspace{11mm} x^2 + y^2 = 17\)</span></p>
+<p>Solving with sympy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">'x,y'</span><span class="p">)</span>
+<span class="n">eq1</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">eq2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">solve</span><span class="p">([</span><span class="n">eq1</span><span class="p">,</span><span class="n">eq2</span><span class="p">],(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">[(1, 4), (4, 1)] #these are the solutions for x,y. There are 2 solutions because the equations represent a line passing through a circle.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p><strong>Example 2</strong></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 1:} \hspace{11mm} a1000000^b = 119.54907\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 2:} \hspace{11mm} a1000^b = 405\)</span></p>
+<p>Solving with sympy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+<span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">'a,b'</span><span class="p">)</span>
+<span class="n">eq1</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="mi">1000000</span><span class="o">**</span><span class="n">b</span><span class="p">,</span><span class="mf">119.54907</span><span class="p">)</span>
+<span class="n">eq2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="mi">1000</span><span class="o">**</span><span class="n">b</span><span class="p">,</span><span class="mi">405</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">solve</span><span class="p">([</span><span class="n">eq1</span><span class="p">,</span><span class="n">eq2</span><span class="p">],(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">[(1372.03074854535, -0.176636273742481)] #these are the solutions for a,b</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p><strong>Example 3</strong></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 1:} \hspace{11mm} 2x^2 +y + z = 1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 2:} \hspace{11mm} x + 2y + z = c_1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{Eqn 3:} \hspace{11mm} -2x + y = -z\)</span></p>
+<p>The actual solution to the above set of equations is:</p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} x = -\frac{1}{2}+\frac{\sqrt{3}}{2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} y = c_1 - \frac{3\sqrt{3}}{2}+\frac{3}{2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} z = -c_1 - \frac{5}{2}+\frac{5\sqrt{3}}{2}\)</span></p>
+<p>and a second solution:</p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} x = -\frac{1}{2}-\frac{\sqrt{3}}{2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} y = c_1 + \frac{3\sqrt{3}}{2}+\frac{3}{2}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{21mm} z = -c_1 - \frac{5}{2}-\frac{5\sqrt{3}}{2}\)</span></p>
+<p>Solving with sympy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s1">'x,y,z'</span><span class="p">)</span>
+<span class="n">c1</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">'c1'</span><span class="p">)</span>
+<span class="n">eq1</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">eq2</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="p">,</span><span class="n">c1</span><span class="p">)</span>
+<span class="n">eq3</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span><span class="o">-</span><span class="n">z</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">solve</span><span class="p">([</span><span class="n">eq1</span><span class="p">,</span><span class="n">eq2</span><span class="p">,</span><span class="n">eq3</span><span class="p">],(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">[(-1/2 + sqrt(3)/2, c1 - 3*sqrt(3)/2 + 3/2, -c1 - 5/2 + 5*sqrt(3)/2), (-sqrt(3)/2 - 1/2, c1 + 3/2 + 3*sqrt(3)/2, -c1 - 5*sqrt(3)/2 - 5/2)]</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using an iPython notebook, the display abilities are much better than the command line interface, so you can simply add sym.init_printing() after the import line and your equations should be displayed nicely.</p>
+</div>
+<p>A special thanks to Brigham Young University for offering <a class="reference external" href="https://apmonitor.com/che263/index.php/Main/PythonSolveEquations">this tutorial</a>.</p>
+</section>
+</div>
+</div>

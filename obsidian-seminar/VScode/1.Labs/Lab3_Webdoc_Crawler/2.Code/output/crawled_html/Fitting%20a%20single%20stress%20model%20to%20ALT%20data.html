@@ -1,0 +1,137 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="fitting-a-single-stress-model-to-alt-data">
+<h1>Fitting a single stress model to ALT data<a class="headerlink" href="#fitting-a-single-stress-model-to-alt-data" title="Link to this heading"></a></h1>
+<p>Before reading this section it is recommended that readers are familiar with the concepts of <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Fitting%20a%20specific%20distribution%20to%20data.html">fitting probability distributions</a>, <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Probability%20plots.html">probability plotting</a>, and have an understanding of <a class="reference external" href="https://reliability.readthedocs.io/en/latest/What%20is%20Accelerated%20Life%20Testing.html">what accelerated life testing (ALT) involves</a>.</p>
+<p>The module <cite>reliability.ALT_fitters</cite> contains 24 <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20ALT%20models.html">ALT models</a>; 12 of these models are for single stress and 12 are for dual stress. This section details the single stress models, though the process for <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Fitting%20a%20dual%20stress%20model%20to%20ALT%20data.html">fitting dual-stress models</a> is similar. The decision to use a single stress or dual stress model depends entirely on your data. If your data only has one stress that is being changed then you will use a single stress model.</p>
+<p>The following single stress models are available within ALT_fitters:</p>
+<ul class="simple">
+<li><p>Fit_Weibull_Exponential</p></li>
+<li><p>Fit_Weibull_Eyring</p></li>
+<li><p>Fit_Weibull_Power</p></li>
+<li><p>Fit_Lognormal_Exponential</p></li>
+<li><p>Fit_Lognormal_Eyring</p></li>
+<li><p>Fit_Lognormal_Power</p></li>
+<li><p>Fit_Normal_Exponential</p></li>
+<li><p>Fit_Normal_Eyring</p></li>
+<li><p>Fit_Normal_Power</p></li>
+<li><p>Fit_Exponential_Exponential</p></li>
+<li><p>Fit_Exponential_Eyring</p></li>
+<li><p>Fit_Exponential_Power</p></li>
+</ul>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/ALT_fitters.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the following example, we will fit the Weibull-Power model to an ALT dataset obtained from a fatigue test. This dataset can be found in <cite>reliability.Datasets</cite>. We want to know the mean life at the use level stress of 60 so the parameter use_level_stress is specified. All other values are left as defaults and the results and plot are shown.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_Power</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALT_load2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">Fit_Weibull_Power</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_load2</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress</span><span class="o">=</span><span class="n">ALT_load2</span><span class="p">()</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_load2</span><span class="p">()</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress</span><span class="o">=</span><span class="n">ALT_load2</span><span class="p">()</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_Power (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 13/5 (27.77778% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI   Upper CI</span>
+<span class="sd">        a          393440          508989   31166.6 4.9667e+06</span>
+<span class="sd">        n        -1.41476        0.242371   -1.8898  -0.939725</span>
+<span class="sd">     beta         3.01934        0.716268   1.89664    4.80662</span>
+
+<span class="sd"> stress  original alpha  original beta  new alpha  common beta beta change  acceleration factor</span>
+<span class="sd">    300         116.174        3.01009    123.123      3.01934      +0.31%              9.74714</span>
+<span class="sd">    200         240.182        3.57635    218.507      3.01934     -15.57%              5.49224</span>
+<span class="sd">    100          557.42         2.6792    582.575      3.01934      +12.7%              2.05998</span>
+
+<span class="sd"> Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -76.8542</span>
+<span class="sd">           AICc  161.423</span>
+<span class="sd">            BIC  162.379</span>
+
+<span class="sd">At the use level stress of 60, the mean life is 1071.96438</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/Weibull_power_probplot.png" src="_images/Weibull_power_probplot.png"/>
+<img alt="_images/Weibull_power_lifestress.png" src="_images/Weibull_power_lifestress.png"/>
+<p>In the results above we see 3 tables of results; the fitted parameters (along with their confidence bounds) dataframe, the change of parameters dataframe, and the goodness of fit dataframe. For the change of parameters dataframe the “original alpha” and “original beta” are the fitted values for the Weibull_2P distribution that is fitted to the data at each stress (shown on the probability plot by the dashed lines). The “new alpha” and “new beta” are from the Weibull_Power model. The beta change is extremely important as it allows us to identify whether the fitted ALT model is appropriate at each stress level. A beta change of over 50% will trigger a warning to be printed informing the user that the failure mode may be changing across different stresses, or that the model is inappropriate for the data. The acceleration factor column will only be returned if the use level stress is provided since acceleration factor is a comparison of the life at the higher stress vs the use stress.</p>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In this second example we will fit the Exponential-Eyring model. Instead of using an existing dataset we will create our own data using the function make_ALT_data. Since the Exponential_1P distribution has only 1 parameter (Lambda), the function fits a Weibull_2P distribution and then compares the change of parameters of the Weibull alpha and beta with the Exponential 1/Lambda (obtained from the life-stress model) and the shape parameter of 1 (since a Weibull distrbution with beta=1 is equivalent to the Exponential distribution). This provides similar functionality for examining the change of parameters as we find with the models for all the other distributions (Weibull, Lognormal, and Normal).</p>
+<p>The results show that the fitted parameters agree well with the parameters we used to generate the data, as does the mean life at the use stress. This accuracy improves with more data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_ALT_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Exponential_Eyring</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">use_level_stress</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">ALT_data</span> <span class="o">=</span> <span class="n">make_ALT_data</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s1">'Exponential'</span><span class="p">,</span><span class="n">life_stress_model</span><span class="o">=</span><span class="s1">'Eyring'</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span><span class="n">c</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span><span class="n">stress_1</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">350</span><span class="p">],</span><span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">fraction_censored</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">use_level_stress</span><span class="o">=</span><span class="n">use_level_stress</span><span class="p">)</span>
+<span class="n">Fit_Exponential_Eyring</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="n">use_level_stress</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The mean life at use stress of the true model is:'</span><span class="p">,</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">mean_life_at_use_stress</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Exponential_Eyring (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Optimizer: TNC</span>
+<span class="sd">Failures / Right censored: 240/60 (20% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">        a         1428.47         178.875   1077.88   1779.06</span>
+<span class="sd">        c        -10.2599        0.443394  -11.1289  -9.39085</span>
+
+<span class="sd"> stress  weibull alpha  weibull beta  new 1/Lambda  common shape shape change  acceleration factor</span>
+<span class="sd">    500        1034.22      0.981495       994.473             1       +1.89%              11.1948</span>
+<span class="sd">    400        2149.92      0.877218       2539.17             1       +14.0%              4.38449</span>
+<span class="sd">    350        5251.88       1.07081       4833.32             1       -6.61%              2.30337</span>
+
+<span class="sd"> Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -2098.01</span>
+<span class="sd">           AICc  4200.06</span>
+<span class="sd">            BIC  4207.42</span>
+
+<span class="sd">At the use level stress of 300, the mean life is 11132.94095</span>
+
+<span class="sd">The mean life at use stress of the true model is: 10896.724574907037</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/Exponential_Eyring_probability_plot.png" src="_images/Exponential_Eyring_probability_plot.png"/>
+<img alt="_images/Exponential_Eyring_lifestress.png" src="_images/Exponential_Eyring_lifestress.png"/>
+</section>
+<section id="example-3">
+<h2>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h2>
+<p>In this third example, we will look at how to customise the labels on the plots. Two of the outputs returned are the axes handles for the probability plot and the life-stress plot. These handles can be used to set certain values such as xlabel, ylabel, title, legend title, etc. For simplicity in this example the printing of results and the probability plot are turned off so the only output is the life-stress plot.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_ALT_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Normal_Exponential</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">ALT_data</span> <span class="o">=</span> <span class="n">make_ALT_data</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">,</span><span class="n">life_stress_model</span><span class="o">=</span><span class="s1">'Exponential'</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">stress_1</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">350</span><span class="p">],</span><span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">fraction_censored</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># the results and probability plot have been turned off so we just get the life-stress plot</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Fit_Normal_Exponential</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># customize the life-stress plot labels</span>
+<span class="n">model</span><span class="o">.</span><span class="n">life_stress_plot</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Load (kg)'</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">life_stress_plot</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Life ('000 cycles)"</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">life_stress_plot</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Life-stress plot from fatigue test'</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">life_stress_plot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">'Life-stress and failures:'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/Normal_Exponential_lifestress.png" src="_images/Normal_Exponential_lifestress.png"/>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 136-168</p></li>
+<li><p>Accelerated Life Testing Data Analysis Reference - ReliaWiki, Reliawiki.com, 2019. [<a class="reference external" href="http://reliawiki.com/index.php/Accelerated_Life_Testing_Data_Analysis_Reference">Online</a>].</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

@@ -1,0 +1,80 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="xcn-to-fnrn">
+<h1>XCN_to_FNRN<a class="headerlink" href="#xcn-to-fnrn" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Convert_data.XCN_to_FNRN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Convert_data.</span></span><span class="sig-name descname"><span class="pre">XCN_to_FNRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">censor_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.XCN_to_FNRN" title="Link to this definition"></a></dt>
+<dd><p>Converts data from XCN format to FNRN format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>list, array</em>) – The failure or right_censored time.</p></li>
+<li><p><strong>C</strong> (<em>list, array</em>) – The censoring code for each X. The default censor codes that will be
+recognised (not case sensitive) as right censored values are are R,
+‘RC’, ‘RIGHT CENS’, ‘RIGHT CENSORED’, ‘C’, ‘CENSORED’, ‘CENS’, ‘S’,
+‘SUSP’, ‘SUSPENSION’, ‘SUSPENDED’, ‘UF’, ‘UNFAILED’, ‘UNFAIL’, ‘NF’,
+‘NO FAIL’, ‘NO FAILURE’, ‘NOT FAILED’, 1. The default failure codes that
+will be recognised (not case sensitive) as failures are ‘F’, ‘FAIL’,
+‘FAILED’, ‘FAILURE’, 0.</p></li>
+<li><p><strong>N</strong> (<em>list, array, optional</em>) – The quantity for each X. If omitted all items are assumed to have
+quantity (N) of 1.</p></li>
+<li><p><strong>censor_code</strong> (<em>str, int, optional</em>) – The censor code you have used if it does not appear in the defaults
+listed above.</p></li>
+<li><p><strong>failure_code</strong> (<em>str, int, optional</em>) – The failure code you have used if it does not appear in the defaults
+listed above.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>failures</strong> (<em>array</em>) – failure times</p></li>
+<li><p><strong>num_failures</strong> (<em>array</em>) – the number of failures for each failure time</p></li>
+<li><p><strong>right_censored</strong> (<em>array</em>) – right censored times</p></li>
+<li><p><strong>num_right_censored</strong> (<em>array</em>) – the number of right censored for each right censored time</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FNRN</span> <span class="o">=</span> <span class="n">XCN_to_FNRN</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="n">C</span><span class="o">=</span><span class="p">[</span><span class="s1">'f'</span><span class="p">,</span><span class="s1">'f'</span><span class="p">,</span><span class="s1">'f'</span><span class="p">,</span><span class="s1">'c'</span><span class="p">,</span><span class="s1">'c'</span><span class="p">,</span><span class="s1">'c'</span><span class="p">],</span> <span class="n">N</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">FNRN</span><span class="o">.</span><span class="n">failures</span><span class="p">)</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">FNRN</span><span class="o">.</span><span class="n">num_failures</span><span class="p">)</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">FNRN</span><span class="o">.</span><span class="n">right_censored</span><span class="p">)</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">FNRN</span><span class="o">.</span><span class="n">num_right_censored</span><span class="p">)</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">FNRN</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+   <span class="o">&gt;&gt;&gt;</span> <span class="n">Data</span> <span class="p">(</span><span class="n">FNRN</span> <span class="nb">format</span><span class="p">)</span>
+       <span class="n">failures</span>  <span class="n">number</span> <span class="n">of</span> <span class="n">failures</span>  <span class="n">right</span> <span class="n">censored</span>  <span class="n">number</span> <span class="n">of</span> <span class="n">right</span> <span class="n">censored</span>
+              <span class="mi">1</span>                   <span class="mi">1</span>               <span class="mi">7</span>                         <span class="mi">3</span>
+              <span class="mi">2</span>                   <span class="mi">2</span>               <span class="mi">8</span>                         <span class="mi">2</span>
+              <span class="mi">3</span>                   <span class="mi">2</span>               <span class="mi">9</span>                         <span class="mi">1</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Convert_data.XCN_to_FNRN.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.XCN_to_FNRN.print" title="Link to this definition"></a></dt>
+<dd><p>This will print a dataframe of the data in FNRN format to the console</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Convert_data.XCN_to_FNRN.write_to_xlsx">
+<span class="sig-name descname"><span class="pre">write_to_xlsx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Convert_data.XCN_to_FNRN.write_to_xlsx" title="Link to this definition"></a></dt>
+<dd><p>This will export the data in FNRN format to an xlsx file at the specified path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The file path of the xlsx file to be written</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments passed directly to pandas</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

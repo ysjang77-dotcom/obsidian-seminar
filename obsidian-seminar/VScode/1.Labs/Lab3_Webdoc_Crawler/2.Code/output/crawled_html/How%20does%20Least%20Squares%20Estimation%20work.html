@@ -1,0 +1,258 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="how-does-least-squares-estimation-work">
+<h1>How does Least Squares Estimation work<a class="headerlink" href="#how-does-least-squares-estimation-work" title="Link to this heading"></a></h1>
+<p>Least Squares Estimation is a method of fitting a probability distribution to a set of data.
+It works by transforming the CDF (by linearizing the equation) and then using least squares estimation to find the parameters of the line of best fit for the linearized data.
+We then perform the reverse transform (un-linearizing the linearized CDF) to obtain the parameters of the probability distribution which we were interested in fitting.</p>
+<p>Least Squares Estimation (henceforth referred to as Least Squares) is also known as the method of probability plotting because we can either transform the data or transform the plot in order to get a straight line.
+Transforming the plot results in a probability plot, hence the name “method of probability plotting”.
+There is not really any plotting necessary as it can all be done with equations, but when plotted the equations provide an excellent visual illustration of the process.</p>
+<p>In addition to Least Squares, there are several other methods to obtain the parameters of a probability distribution including Maximum Likelihood Estimation (MLE), Method of Moments, Mean Square Error, and Maximum Product of Spacings Estimation.
+The most popular methods are Least Squares and MLE which are both implemented in <cite>reliability</cite>.
+Users seeking to use the other methods listed will find them as part of the <a class="reference external" href="https://surpyval.readthedocs.io/en/latest/Parametric%20Estimation.html">Surpyval</a> library.</p>
+<section id="the-least-squares-algorithm">
+<h2>The least squares algorithm<a class="headerlink" href="#the-least-squares-algorithm" title="Link to this heading"></a></h2>
+<p>We can either transform the data (using the same transform required to linearize the CDF) or we can transform the plot (into a probability plot).
+The probability plotting method involves special <a class="reference external" href="https://www.weibull.com/GPaper/">probability paper</a>, the line of best fit is typically done by hand, and the process of extracting the parameters is very rough.
+Many decades ago, when computers were not readily available, the probability plotting method was the most popular way to estimate distribution parameters.
+All probability plots that software presents to you are done by transforming the data and displaying the result on the probability plot.
+The explainations that follow all involve transformation of the data and examples with Excel and Python to find the line of best fit.</p>
+<p>The least squares algorithm is as follows:</p>
+<ol class="arabic simple">
+<li><p>Obtain the plotting positions (y-values) for a given dataset (x-values).</p></li>
+<li><p>Transform the x and y plotting positions based on the transformations necessary to linearize the CDF (described below).</p></li>
+<li><p>Use simple linear regression to fit a line (see the section below on RRX and RRY) and extract the parameters of the line.</p></li>
+<li><p>Convert the parameters of the fitted line to the parameters of the probability distribution using the inverse transform for the CDF (the reverse of step 2).</p></li>
+</ol>
+<p>This algorithm is best explained with an example. For this example we will use least squares estimation to fit a Weibull Distribution to the following dataset x = [25, 43, 53, 65, 76, 86, 95, 115, 132, 150].
+We firstly need the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/How%20are%20the%20plotting%20positions%20calculated.html">plotting positions</a>. In Python this is done as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plotting_positions</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">150</span><span class="p">]</span>
+<span class="n">t</span><span class="p">,</span><span class="n">F</span> <span class="o">=</span> <span class="n">plotting_positions</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'t ='</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'F ='</span><span class="p">,</span><span class="n">F</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">t = [ 25.  43.  53.  65.  76.  86.  95. 115. 132. 150.]</span>
+<span class="sd">F = [0.06730769 0.16346154 0.25961538 0.35576923 0.45192308 0.54807692 0.64423077 0.74038462 0.83653846 0.93269231]</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p>We now need to find the transforms required to linearize the Weibull CDF (to get it in the form <span class="math notranslate nohighlight">\(y = m.x+c\)</span>).</p>
+<p><span class="math notranslate nohighlight">\(F=1-exp\left(-\left(\frac{t}{\alpha}\right)^\beta\right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(-ln(1-F)=\left(\frac{t}{\alpha}\right)^\beta\)</span></p>
+<p><span class="math notranslate nohighlight">\(\underbrace{ln(-ln(1-F))}_{\text{y}}=\underbrace{\beta}_{\text{m}}.\underbrace{ln(t)}_{\text{x}}\underbrace{-\beta.ln(\alpha)}_{\text{c}}\)</span></p>
+<p>So the forward transforms for x and y are:</p>
+<p><span class="math notranslate nohighlight">\(x = ln(t)\)</span></p>
+<p><span class="math notranslate nohighlight">\(y = ln(-ln(1-F))\)</span></p>
+<p>Once we fit the straight line to the transformed data, we will need the reverse transforms to obtain <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> which are:</p>
+<p><span class="math notranslate nohighlight">\(\beta = m\)</span></p>
+<p><span class="math notranslate nohighlight">\(c = -\beta.ln(\alpha)\)</span> which becomes <span class="math notranslate nohighlight">\(\alpha=exp\left(-\frac{c}{\beta}\right)\)</span></p>
+<p>The table below shows the transformed data (from t and F into x and y) and a plot in Excel with the line of best fit.
+It also shows <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> which are obtained using the reverse transforms described above.</p>
+<img alt="_images/least_squares_1.PNG" src="_images/least_squares_1.PNG"/>
+<p>Here’s how to do the same thing in Python, using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.polyfit.html">numpy.polyfit</a> for the line of best fit.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plotting_positions</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">150</span><span class="p">]</span>
+
+<span class="c1"># plotting positions</span>
+<span class="n">t</span><span class="p">,</span><span class="n">F</span> <span class="o">=</span> <span class="n">plotting_positions</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'t ='</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'F ='</span><span class="p">,</span><span class="n">F</span><span class="p">)</span>
+
+<span class="c1"># forward transform</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">F</span><span class="p">))</span>
+<span class="n">m</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'m ='</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'c ='</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+
+<span class="c1"># reverse transform</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">m</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">c</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'alpha ='</span><span class="p">,</span><span class="n">alpha</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'beta ='</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">t = [ 25.  43.  53.  65.  76.  86.  95. 115. 132. 150.]</span>
+<span class="sd">F = [0.06730769 0.16346154 0.25961538 0.35576923 0.45192308 0.54807692 0.64423077 0.74038462 0.83653846 0.93269231]</span>
+<span class="sd">m = 2.02739072618974</span>
+<span class="sd">c = -9.261589398516517</span>
+<span class="sd">alpha = 96.37348533880761</span>
+<span class="sd">beta = 2.02739072618974</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p>Let’s plot the Weibull Distribution that we have fitted alongside the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">115</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">150</span><span class="p">]</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">96.37348533880761</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mf">2.02739072618974</span>
+
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">'o'</span><span class="p">)</span>
+<span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">CDF</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/least_squares_2.png" src="_images/least_squares_2.png"/>
+<p>If you have right censored data, the only thing that will change will be the plotting positions.
+If you use different software to find the parameters of the line of best fit, the results may differ slightly.
+This is because there are several different algorithms to find the line of best fit, some of which use an optimizer and some of which do not.
+The RRX and RRY difference (discussed below) will also cause discrepancies in the results if each of the software packages you are using do not use the same approach.</p>
+</section>
+<section id="rrx-and-rry">
+<h2>RRX and RRY<a class="headerlink" href="#rrx-and-rry" title="Link to this heading"></a></h2>
+<p>Least squares is sometimes known as Rank Regression on X (RRX) or Rank Regression on Y (RRY).
+These two names are simply the two possible ways of fitting a line to the data.
+We can minimize the sum of the squared errors on X or we can minimize the sum of the squared errors on Y as shown below.</p>
+<img alt="_images/least_squares_3.png" src="_images/least_squares_3.png"/>
+<p>These two methods can give very different results, particularly if there is a small dataset.
+Most software (including MINITAB, Excel and numpy) use RRY. Reliasoft’s Weibull++ gives the options for RRX or RRY, as does <cite>reliability</cite> in all of the fitters.</p>
+<p>To illustrate the difference between RRX and RRY we can use one of the functions inside reliability.Utils which accepts RRX_or_RRY as an argument.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plotting_positions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">linear_regression</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">85</span><span class="p">]</span>
+<span class="n">t</span><span class="p">,</span><span class="n">F</span> <span class="o">=</span> <span class="n">plotting_positions</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">linear_regression</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">F</span><span class="p">,</span><span class="n">RRX_or_RRY</span><span class="o">=</span><span class="s2">"RRX"</span><span class="p">,</span><span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'RRX'</span><span class="p">)</span>
+<span class="n">linear_regression</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">F</span><span class="p">,</span><span class="n">RRX_or_RRY</span><span class="o">=</span><span class="s2">"RRY"</span><span class="p">,</span><span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'RRY'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Comparison of the lines produced by RRX and RRY'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/least_squares_4.png" src="_images/least_squares_4.png"/>
+</section>
+<section id="non-linear-least-squares">
+<h2>Non-linear least squares<a class="headerlink" href="#non-linear-least-squares" title="Link to this heading"></a></h2>
+<p>In the first example above, the CDF of the Weibull Distribution was able to be linearized without too much trouble into the form <span class="math notranslate nohighlight">\(y=m.x+c\)</span>.
+Some distributions cannot be linearized. These include 3 parameter distributions (such as Weibull_3P) and distributions involving special functions (such as the Gamma and Beta Distributions).
+I encourage you to try this yourself using the equations for the CDF available <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Equations%20of%20supported%20distributions.html">here</a>.
+The Normal (and Lognormal) distributions can be linearized quite easily because there is an algorithm to compute the Normal CDF <span class="math notranslate nohighlight">\((\Phi)\)</span> as well as its inverse <span class="math notranslate nohighlight">\((\Phi^{-1})\)</span>.</p>
+<p>When the equation of the CDF cannot be linearized, we can use non-linear least squares (NLLS).
+The NLLS algorithm still seeks to minimize the sum of the square errors (usually the errors on Y), but it does not use the linear regression formula and can therefore work on any function.
+You can see this in action inside Excel when you chose a higher order polynomial for the line of best fit.
+To achieve this complicated fitting process, <cite>reliability</cite> calls <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html">scipy.optimize.curve_fit</a> to find the parameters of the distribution directly.
+There is no forward and reverse transform required, just the appropriate setup of scipy’s curve_fit.
+The hardest part (and one possible source of failure) is obtaining a reasonable initial guess for the optimizer to begin.
+There are several different ways in which <cite>relibility</cite> obtains an initial guess, depending on the function being fitted.</p>
+</section>
+<section id="is-mle-better-than-least-squares">
+<h2>Is MLE better than Least Squares<a class="headerlink" href="#is-mle-better-than-least-squares" title="Link to this heading"></a></h2>
+<p>Sometimes yes, but sometimes no. It really depends on the distribution, the amount of data, and the amount of censoring.
+Least squares is computationally easier so it was invented first and remains popular today as it is easier for students to learn and can be faster for computers if doing a lot of calculations.
+MLE is the default method for most reliability engineering software including Weibull++, MINITAB, <cite>reliability</cite>, and many others.
+For most cases, MLE is generally regarded as more accurate.</p>
+<p>The best way to check whether MLE or Least squares is more accurate is through a Monte-Carlo simulation.
+In the following code, we will draw some random parameters (alpha and beta) to create a Weibull Distribution.
+In this simulation alpha is between 1 and 1000, while beta is between 0.5 and 10.
+We will then draw some random data from the Weibull distribution. This is done 3 times (10 samples, 100 samples, 1000 samples).
+We will right censor a fraction of the data (from 0 (no censoring) to 0.9 (90% censored)).
+Then we will fit a distribution to the random data using MLE and LS.
+The percentage error in the parameters (alpha and beta) is calculated and plotted.
+The following code performs this simulation 1000 times for each fraction censored.
+The code took about 45 minutes to run as it is fitting around 60K distributions (1000 trials x 10 fraction censored increments x 2 methods (MLE and LS) x 3 groups of samples).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_right_censored_data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarFormatter</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">MLE_or_LS</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span><span class="n">number_of_samples</span><span class="p">):</span>
+
+    <span class="n">fraction_censored</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.9</span><span class="p">]</span>
+
+    <span class="n">MLE_alpha_error_mean_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">MLE_beta_error_mean_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">LS_alpha_error_mean_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">LS_beta_error_mean_array</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">frac</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">fraction_censored</span><span class="p">):</span>
+
+        <span class="n">MLE_alpha_error_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">MLE_beta_error_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">LS_alpha_error_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">LS_beta_error_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># alpha between 1 and 1000</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># beta between 0.5 and 10</span>
+            <span class="n">true_dist</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span>
+            <span class="n">raw_samples</span> <span class="o">=</span> <span class="n">true_dist</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="n">number_of_samples</span><span class="o">=</span><span class="n">number_of_samples</span><span class="p">)</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">make_right_censored_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">raw_samples</span><span class="p">,</span><span class="n">fraction_censored</span><span class="o">=</span><span class="n">frac</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">failures</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">MLE</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s1">'MLE'</span><span class="p">)</span>
+                <span class="n">MLE_alpha</span> <span class="o">=</span> <span class="n">MLE</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">alpha</span>
+                <span class="n">MLE_beta</span> <span class="o">=</span> <span class="n">MLE</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">beta</span>
+                <span class="n">MLE_alpha_error_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">alpha</span><span class="o">-</span><span class="n">MLE_alpha</span><span class="p">)</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span>
+                <span class="n">MLE_beta_error_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">beta</span><span class="o">-</span><span class="n">MLE_beta</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+
+                <span class="n">LS</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s1">'LS'</span><span class="p">)</span>
+                <span class="n">LS_alpha</span> <span class="o">=</span> <span class="n">LS</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">alpha</span>
+                <span class="n">LS_beta</span> <span class="o">=</span> <span class="n">LS</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">beta</span>
+                <span class="n">LS_alpha_error_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">alpha</span><span class="o">-</span><span class="n">LS_alpha</span><span class="p">)</span><span class="o">/</span><span class="n">alpha</span><span class="p">)</span>
+                <span class="n">LS_beta_error_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">beta</span><span class="o">-</span><span class="n">LS_beta</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+
+        <span class="n">MLE_alpha_error_mean_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">MLE_alpha_error_array</span><span class="p">))</span>
+        <span class="n">MLE_beta_error_mean_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">MLE_beta_error_array</span><span class="p">))</span>
+        <span class="n">LS_alpha_error_mean_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">LS_alpha_error_array</span><span class="p">))</span>
+        <span class="n">LS_beta_error_mean_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">LS_beta_error_array</span><span class="p">))</span>
+
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fraction_censored</span><span class="p">,</span><span class="n">MLE_alpha_error_mean_array</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'MLE alpha'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'steelblue'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fraction_censored</span><span class="p">,</span><span class="n">MLE_beta_error_mean_array</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'MLE beta'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'darkorange'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fraction_censored</span><span class="p">,</span><span class="n">LS_alpha_error_mean_array</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'LS alpha'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'steelblue'</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fraction_censored</span><span class="p">,</span><span class="n">LS_beta_error_mean_array</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">'LS beta'</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'darkorange'</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">ScalarFormatter</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Fraction censored'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Percentage error'</span><span class="p">)</span>
+
+<span class="n">trials</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">MLE_or_LS</span><span class="p">(</span><span class="n">trials</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'10 samples'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">MLE_or_LS</span><span class="p">(</span><span class="n">trials</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'100 samples'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">MLE_or_LS</span><span class="p">(</span><span class="n">trials</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'1000 samples'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">'Comparison of MLE and Least Squares based on number of samples and amount of censoring'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/least_squares_5.png" src="_images/least_squares_5.png"/>
+<p>The y-axis is a log plot of the percentage error, so where you see 1 that means it is 100% in error (eg. correct value of 2, predicted value of 4).
+The fraction censored ranges from 0 to 0.9, except for the 10 sample case as a minimum of 2 samples are needed to fit the distribution making 0.8 the maximum possible fraction censored.
+From the above plots we can see a few things:</p>
+<ul class="simple">
+<li><p>The percentage error in beta is much higher than the percentage error in alpha for smaller sample sizes, but about the same for large sample sizes.</p></li>
+<li><p>Both MLE and LS perform very similarly in terms of their percentage error.</p></li>
+<li><p>Least squares is generally better than MLE for small sample sizes, while MLE is generally better than Least squares for large sample sizes.</p></li>
+<li><p>MLE tends to have more error in the beta parameter than Least squares, and less error in the alpha parameter than least squares. A correction method exists for this, though it is not currently implemented in <cite>reliability</cite>.</p></li>
+</ul>
+<p>The trends we see in the above plot may differ if we chose another distribution, different ranges for the parameters, or different numbers of samples.</p>
+<p>If you find any errors, think this needs to be explained better, or have any suggestions for improvements, please email me (<a class="reference external" href="mailto:alpha.reliability%40gmail.com">alpha<span>.</span>reliability<span>@</span>gmail<span>.</span>com</a>).</p>
+</section>
+</section>
+</div>
+</div>

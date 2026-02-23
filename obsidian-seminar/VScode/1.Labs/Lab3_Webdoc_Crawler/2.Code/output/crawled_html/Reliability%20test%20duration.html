@@ -1,0 +1,58 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="reliability-test-duration">
+<h1>Reliability test duration<a class="headerlink" href="#reliability-test-duration" title="Link to this heading"></a></h1>
+<p>This function is an extension of the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Reliability%20test%20planner.html">reliability_test_planner</a> which allows users to calculate the required duration for a reliability test to achieve the specified producers and consumers risks. This is done based on the specified MTBF (mean time between failure) required and MTBF design (the MTBF that the manufacturer believes the system has been designed to).</p>
+<p>This type of determination must be made when organisations looking to test an item are uncertain of how much testing is required, but they know the amount of risk they are willing to accept as well as the MTBF required and the MTBF to which the item has been designed.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Reliability_testing/reliability_test_duration.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the example below the consumer requires a vehicle to achieve an MTBF of 2500km and is willing to accept 20% risk that they accept a bad item when they should have rejected it. The producer has designed the vehicle to have an MTBF of 3000km and they are willing to accept 20% risk that the consumer rejects a good item when they should have accepted it. How many kilometres should the reliability test be? Using the function we find the test needs to be 231616 km. Note that this duration is the total time on test and may be split across several vehicles. See the discussion points below on whether to split the test duration up among multiple vehicles.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_test_duration</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">reliability_test_duration</span><span class="p">(</span><span class="n">MTBF_required</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span> <span class="n">MTBF_design</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">consumer_risk</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">producer_risk</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Reliability Test Duration Solver for time-terminated test:</span>
+<span class="sd">Required test duration: 231615.79491309822</span>
+<span class="sd">Specified consumer's risk: 0.2</span>
+<span class="sd">Specified producer's risk: 0.2</span>
+<span class="sd">Specified MTBF required by the consumer: 2500</span>
+<span class="sd">Specified MTBF designed to by the producer: 3000</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/reliability_test_duration.png" src="_images/reliability_test_duration.png"/>
+<p>Splitting the test up among several vehicles has both positives and negatives as follows:</p>
+<p><strong>Advantages of testing on only a few vehicles</strong></p>
+<ul class="simple">
+<li><p>We can observe the failure behaviour later in life. If we tested 50 vehices to 4632km each then we are unlikely to observe failures that typically occur after 50000km.</p></li>
+<li><p>It costs us less in vehicles since each vehicle has some of its life consumed during the testing.</p></li>
+<li><p>We may not have many items available for testing, particularly if it is a prototype that is yet to enter full production.</p></li>
+<li><p>We may not have many test facilities available so keeping the number of vehicles to a small number is often limited by the availability of the test facilities.</p></li>
+</ul>
+<p><strong>Advantages of splitting the testing up between many vehicles</strong></p>
+<ul class="simple">
+<li><p>It is more representative of the population since all the testing on a single vehicle may not be accurate if that one vehicle is above or below average quality compared to the rest of the vehicles.</p></li>
+<li><p>Testing can be done faster which also means less cost on testing facilities. Reliability testing is often something that Project managers will put pressure on to cut if the project is falling behind schedule so using more vehicles may be a way to get the same amount of reliability testing done faster.</p></li>
+</ul>
+</section>
+<section id="how-does-the-algorithm-work">
+<h2>How does the algorithm work?<a class="headerlink" href="#how-does-the-algorithm-work" title="Link to this heading"></a></h2>
+<p>The underlying method is as follows:</p>
+<p>Step 1) Begin with failures = 1. This will be iterated later.</p>
+<p>Step 2) Using the function <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Reliability%20test%20planner.html">Reliability_testing.reliability_test_planner</a>, we set CI = 1-consumer_risk, MTBF = MTBF_required to solve for the test_duration that is achieved by this test. This is the test duration required if there was 1 failure which would give the specified MTBF required and specified consumer’s risk.</p>
+<p>Step 3) We again use the function Reliability_testing.reliability_test_planner but this time we set MTBF = MTBF_design and use the test_duration as the output from step 2. Still keeping failures = 1 we are solving for the CI achieved. This is effectively the producer’s risk for the given test_duration and number of failures.</p>
+<p>Step 4) The answer is higher than the specified producer’s risk, so we now repeat steps 2 and 3 by increasing the number of failures by 1 each iteration. This is continued until the producer’s risk is below what was specified. We then go back 1 failure since is it standard that the producer’s risk can’t be below what was specified (or the consumer may think the producer is cheating by lowering their risk).</p>
+<p>We now have a value for test_duration that will give our required outputs in both equations. We also happen to arrive at the number of failures, though this is not particularly relevant since it is just part of the solution process and the actual number of failures will be determined based on the conduct of the reliability test.</p>
+<p>The plot that is produced by Reliability_testing.reliability_test_duration displays a scatter plot at each failure. Since the number of failures must be an integer, we get results for reliability test durations that go in steps. The result returned corresponds to the test_duration at the last failure before the producer’s risk dropped below what was specified. Also note that if the consumer’s risk is different from the producer’s risk, the solution for test_duration will not occur near the point on the graph where producer’s risk and consumer’s risk are equal.</p>
+</section>
+</section>
+</div>
+</div>

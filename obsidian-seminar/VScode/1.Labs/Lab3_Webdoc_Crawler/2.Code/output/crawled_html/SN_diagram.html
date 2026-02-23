@@ -1,0 +1,60 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="sn-diagram">
+<h1>SN_diagram<a class="headerlink" href="#sn-diagram" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.SN_diagram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">SN_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stress</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_runout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycles_runout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycles_trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_endurance_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_for_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'statistical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.SN_diagram" title="Link to this definition"></a></dt>
+<dd><p>This function will plot the stress vs number of cycles (S-N) diagram when
+supplied with data from a series of fatigue tests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stress</strong> (<em>array, list</em>) – The stress values at failure.</p></li>
+<li><p><strong>cycles</strong> (<em>array, list</em>) – The cycles values at failure. Must match the length of stress.</p></li>
+<li><p><strong>stress_runout</strong> (<em>array, list, optional</em>) – The stress values that did not result in failure. Optional input.</p></li>
+<li><p><strong>cycles_runout</strong> (<em>array, list, optional</em>) – The cycles values that did not result in failure. Optional input. If
+supplied, Must match the length of stress_runout.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – The scale for the x-axis. Must be ‘log’ or ‘linear’. Default is ‘log’.</p></li>
+<li><p><strong>stress_trace</strong> (<em>array, list, optional</em>) – The stress values to be traced across to cycles values on the plot.
+Optional input.</p></li>
+<li><p><strong>cycles_trace</strong> (<em>array, list, optional</em>) – The cycles values to be traced across to stress values on the plot.
+Optional input.</p></li>
+<li><p><strong>show_endurance_limit</strong> (<em>bool, optional</em>) – This will adjust all lines of best fit to be greater than or equal to
+the average stress_runout. Defaults to False if stress_runout is not
+specified. Defaults to True if stress_runout is specified.</p></li>
+<li><p><strong>method_for_bounds</strong> (<em>str, None, optional</em>) – The method for the confidence bounds. Must be ‘statistical’, ‘residual’,
+or None. Defaults to ‘statistical’. If set to ‘statistical’ the CI value
+is used, otherwise it is not used for the ‘residual’ method. Residual
+uses the maximum residual datapoint for symmetric bounds. Setting the
+method for bounds to None will turn off the confidence bounds.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence interval. Must be between 0 and 1. Default is 0.95 for
+95% confidence interval. Only used if method_for_bounds is
+‘statistical’.</p></li>
+<li><p><strong>kwargs</strong> – Other plotting keywords (eg. color, linestyle, etc) are accepted and
+passed to matplotlib for the line of best fit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The plot is the only output. All calculated values are shown on the
+plot.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">stress</span> <span class="o">=</span> <span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">275</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">210</span><span class="p">]</span>
+<span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15000</span><span class="p">,</span> <span class="mi">24000</span><span class="p">,</span> <span class="mi">36000</span><span class="p">,</span> <span class="mi">80000</span><span class="p">,</span> <span class="mi">177000</span><span class="p">,</span> <span class="mi">162000</span><span class="p">,</span> <span class="mi">301000</span><span class="p">,</span> <span class="mi">290000</span><span class="p">,</span> <span class="mi">361000</span><span class="p">,</span> <span class="mi">881000</span><span class="p">,</span> <span class="mi">1300000</span><span class="p">,</span> <span class="mi">2500000</span><span class="p">]</span>
+<span class="n">stress_runout</span> <span class="o">=</span> <span class="p">[</span><span class="mi">210</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">205</span><span class="p">]</span>
+<span class="n">cycles_runout</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">SN_diagram</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="n">stress</span><span class="p">,</span> <span class="n">cycles</span><span class="o">=</span><span class="n">cycles</span><span class="p">,</span> <span class="n">stress_runout</span><span class="o">=</span><span class="n">stress_runout</span><span class="p">,</span> <span class="n">cycles_runout</span><span class="o">=</span><span class="n">cycles_runout</span><span class="p">,</span><span class="n">method_for_bounds</span><span class="o">=</span><span class="s1">'residual'</span><span class="p">,</span><span class="n">cycles_trace</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">5</span><span class="p">],</span> <span class="n">stress_trace</span><span class="o">=</span><span class="p">[</span><span class="mi">260</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,38 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="creep-failure-time">
+<h1>creep_failure_time<a class="headerlink" href="#creep-failure-time" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.creep_failure_time">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">creep_failure_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.creep_failure_time" title="Link to this definition"></a></dt>
+<dd><p>This function uses the Larson-Miller relation to find the time to failure
+due to creep.</p>
+<p>The method uses a known failure time (time_low) at a lower failure
+temperature (temp_low) to find the unknown failure time at the higher
+temperature (temp_high).</p>
+<p>This relation requires the input temperatures in Fahrenheit. To convert
+Celsius to Fahrenheit use <span class="math notranslate nohighlight">\(F = C × 1.8 + 32\)</span></p>
+<p>Note that the conversion between Fahrenheit and Rankine used in this
+calculation is <span class="math notranslate nohighlight">\(R = F+459.67\)</span></p>
+<p>For more information see <a class="reference external" href="https://en.wikipedia.org/wiki/Larson%E2%80%93Miller_relation">Wikipedia</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp_low</strong> (<em>float, int</em>) – The temperature (in degrees Fahrenheit) where the time_low is known</p></li>
+<li><p><strong>temp_high</strong> (<em>float, int</em>) – The temperature (in degrees Fahrenheit) which time_high is unknown and
+will be found by this function</p></li>
+<li><p><strong>time_low</strong> (<em>float, int</em>) – The time to failure at temp_low</p></li>
+<li><p><strong>C</strong> (<em>float, int, optional</em>) – The creep constant. The default is 20. Typically 20-22 for metals.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If print_results is True, the output will also be printed to the console.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>time_high</strong> (<em>float</em>) – The time to failure at the higher temperature.</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,117 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="importing-data-from-excel">
+<h1>Importing data from Excel<a class="headerlink" href="#importing-data-from-excel" title="Link to this heading"></a></h1>
+<p>The module Convert_data contains three functions for importing data from Microsoft Excel (.xlsx files) into Python and converting that data into the structure of a Python object for further use. These functions are:</p>
+<ul class="simple">
+<li><p>xlsx_to_XCN</p></li>
+<li><p>xlsx_to_FNRN</p></li>
+<li><p>xlsx_to_FR</p></li>
+</ul>
+<p>Each of the three data formats has an acceptable reduced form as follows:</p>
+<ul class="simple">
+<li><p>XCN reduced form is XC and all rows are assumed to have a quantity of 1</p></li>
+<li><p>FNRN reduced form is FN and it is assumed that there is no right censored data</p></li>
+<li><p>FR reduced form is F and it is assumed that there is no right censored data</p></li>
+</ul>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Convert_data.html">API reference</a>.</p>
+</div>
+<p>These three functions should be used only for data in their respective format (XCN, FNRN, FR). This means that the columns of the xlsx file should be in the same order as the name of the data format. For example, xlsx_to_XCN is expecting to receive an xlsx file with 3 columns corresponding to X, C, and N. If these are in a different order they may be misinterpreted or trigger an error. You should correct the column order in the xlsx file before importing into Python.</p>
+<p>All of the three conversion functions contain the following methods:</p>
+<ul class="simple">
+<li><p>print() - this will print a dataframe of the data in the output format to the console</p></li>
+<li><p>write_to_xlsx() - this will export the data in the output format to an xlsx file at the specified path. Ensure you specify the path string preceeded by r to indicate raw text. For example: write_to_xlsx(path=r’C:/Users/Current User/Desktop/mydata.xlsx’). If the file already exists in the destination folder, the user will be asked (Y/N) whether they want to overwrite the existing file. If they input N then specified filename will have (new) added to the end.</p></li>
+</ul>
+<p><strong>Why use different formats</strong></p>
+<p>There are advantages and disadvantages of each of these formats depending on the data being represented. Most importantly, we need an easy way of converting data between these formats as different software may store and receive data in different formats.</p>
+<ul class="simple">
+<li><p>XCN - This format is the default in most commercial software including Reliasoft and Minitab. The sequence of XCN and the names may change between different software, but the format is essentially the same. Within <cite>reliability</cite> the XCN format may be reduced to XC (and all items are assumed to have quantity of 1). Some other software accepts the further reduced form of X (where there are no censored items and all items have a quantity of 1). If you have only failure data that is not grouped, then you should use the FR format as FR has a reduced form of F which is equivalent to X from XCN.</p></li>
+<li><p>FNRN - This format is not used as a data entry format for <cite>reliability</cite> or any commercial software (that the author has used), but is still a valid format which combines aspects of the XCN and FR formats together. FNRN is used internally within reliability as part of the MLE algorithms.</p></li>
+<li><p>FR - This is the standard data entry format for <cite>reliability</cite>. The FR format is the most simple, but for data with many repeated values it is not as efficient at representing the data in a table as FNRN or XCN. Python has no problems with long arrays so the FR format is chosen as the data entry format for its simplicity.</p></li>
+</ul>
+<p>For more information on these three data formats as well as how to convert data between the different formats, please see the section on <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Converting%20data%20between%20different%20formats.html">Converting data between different formats</a>.</p>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the example below, a screenshot of the data from Excel is shown along with the import process and an example of the print method. The censoring codes are automatically recognised. See <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Importing%20data%20from%20Excel.html#example-3">Example 3</a> for how to modify the censor code recognition process.</p>
+<img alt="_images/excel_XCN_1.png" src="_images/excel_XCN_1.png"/>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Convert_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">xlsx_to_XCN</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">xlsx_to_XCN</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="sa">r</span><span class="s1">'C:\Users\Current User\Desktop\XCN.xlsx'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">[ 13.  45.  78.  89. 102. 105.]</span>
+<span class="sd">['F' 'F' 'F' 'C' 'C' 'C']</span>
+<span class="sd">[2 3 1 4 1 2]</span>
+<span class="sd">Data (XCN format)</span>
+<span class="sd">event time censor code  number of events</span>
+<span class="sd">        13           F                 2</span>
+<span class="sd">        45           F                 3</span>
+<span class="sd">        78           F                 1</span>
+<span class="sd">        89           C                 4</span>
+<span class="sd">       102           C                 1</span>
+<span class="sd">       105           C                 2</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>The use of xlsx_to_FNRN and xlsx_to_FR are very similar to that shown above. This example shows the use of xlsx_to_FR.</p>
+<img alt="_images/excel_FR.png" src="_images/excel_FR.png"/>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Convert_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">xlsx_to_FR</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">xlsx_to_FR</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="sa">r</span><span class="s1">'C:\Users\Current User\Desktop\FR.xlsx'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">failures</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">[ 37.  67. 120.]</span>
+<span class="sd">[200 200 200 300 300]</span>
+<span class="sd">Data (FR format)</span>
+<span class="sd">failures  right censored</span>
+<span class="sd">      37             200</span>
+<span class="sd">      67             200</span>
+<span class="sd">     120             200</span>
+<span class="sd">                     300</span>
+<span class="sd">                     300</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Example 3<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>In this example we will again use xlsx_to_XCN, however this time the censoring codes need customizing. The xlsx file uses 1 in the second column for failures (note that the defaults recognise 0 as failure and 1 as right censored) and ‘still alive’ for the right censored items (‘still alive’ is not part of the recognised defaults). If we do not specify these custom censoring codes, the failures will be misinterpreted as right censored items and the ‘still alive’ items will return an error as this code is not recognised. To resolve this we must set the censor_code_in_xlsx and failure_code_in_xlsx arguments. Furthermore we want the XCN data object in Python to use ‘S’ instead of ‘C’ for the censored items. We do this by setting the censor_code_in_XCN argument. If we wanted to change the failure code from ‘F’ to something else we could similarly use the argument failure_code_in_XCN.</p>
+<img alt="_images/excel_XCN_special.png" src="_images/excel_XCN_special.png"/>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Convert_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">xlsx_to_XCN</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">xlsx_to_XCN</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="sa">r</span><span class="s1">'C:\Users\Current User\Desktop\XCN.xlsx'</span><span class="p">,</span> <span class="n">censor_code_in_xlsx</span><span class="o">=</span><span class="s1">'still alive'</span><span class="p">,</span> <span class="n">failure_code_in_xlsx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">censor_code_in_XCN</span><span class="o">=</span><span class="s1">'S'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">[ 13.  45.  78.  89. 102. 105.]</span>
+<span class="sd">['F' 'F' 'F' 'S' 'S' 'S']</span>
+<span class="sd">[2 3 1 4 1 2]</span>
+<span class="sd">Data (XCN format)</span>
+<span class="sd">event time censor code  number of events</span>
+<span class="sd">        13           F                 2</span>
+<span class="sd">        45           F                 3</span>
+<span class="sd">        78           F                 1</span>
+<span class="sd">        89           S                 4</span>
+<span class="sd">       102           S                 1</span>
+<span class="sd">       105           S                 2</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+</section>
+</div>
+</div>

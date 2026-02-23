@@ -1,0 +1,176 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fit-weibull-2p-grouped">
+<h1>Fit_Weibull_2P_grouped<a class="headerlink" href="#fit-weibull-2p-grouped" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Weibull_2P_grouped">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Fitters.</span></span><span class="sig-name descname"><span class="pre">Fit_Weibull_2P_grouped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MLE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Weibull_2P_grouped" title="Link to this definition"></a></dt>
+<dd><p>Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
+This function is similar to Fit_Weibull_2P however it accepts a dataframe
+which allows for efficient handling of grouped (repeated) data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataframe</strong> (<em>dataframe</em>) – a pandas dataframe of the appropriate format. See the example in Notes.</p></li>
+<li><p><strong>show_probability_plot</strong> (<em>bool, optional</em>) – True or False. Default = True</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Prints a dataframe of the point estimate, standard error, Lower CI and
+Upper CI for each parameter. True or False. Default = True</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – The method used to fit the distribution. Must be either ‘MLE’ (maximum
+likelihood estimation), ‘LS’ (least squares estimation), ‘RRX’ (Rank
+regression on X), or ‘RRY’ (Rank regression on Y). LS will perform both
+RRX and RRY and return the better one. Default is ‘MLE’.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – The optimization algorithm used to find the solution. Must be either
+‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, or ‘powell’. The default optimizer is
+‘TNC’. The option to use all these optimizers is not available (as it is
+in all the other Fitters). If the optimizer fails, the initial guess
+will be returned.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – confidence interval for estimating confidence limits on parameters. Must
+be between 0 and 1. Default is 0.95 for 95% CI.</p></li>
+<li><p><strong>CI_type</strong> (<em>str, optional</em>) – This is the confidence bounds on time or reliability shown on the plot.
+Use ‘none’ to turn off the confidence intervals. Must be either ‘time’,
+‘reliability’, or ‘none’. Default is ‘time’. Some flexibility in names is
+allowed (eg. ‘t’, ‘time’, ‘r’, ‘rel’, ‘reliability’ are all valid).</p></li>
+<li><p><strong>force_beta</strong> (<em>float, int, optional</em>) – Used to specify the beta value if you need to force beta to be a certain
+value. Used in ALT probability plotting. Optional input. If specified it
+must be &gt; 0.</p></li>
+<li><p><strong>quantiles</strong> (<em>bool, str, list, array, None, optional</em>) – quantiles (y-values) to produce a table of quantiles failed with
+lower, point, and upper estimates. Default is None which results in no
+output. To use default array [0.01, 0.05, 0.1,…, 0.95, 0.99] set
+quantiles as either ‘auto’, True, ‘default’, ‘on’.
+If an array or list is specified then it will be used instead of the
+default array. Any array or list specified must contain values between
+0 and 1.</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is True. This
+functionality makes plotting faster when there are very large numbers of
+points. It only affects the scatterplot not the calculations.</p></li>
+<li><p><strong>kwargs</strong> – Plotting keywords that are passed directly to matplotlib for the
+probability plot (e.g. color, label, linestyle)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – the fitted Weibull_2P alpha parameter</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – the fitted Weibull_2P beta parameter</p></li>
+<li><p><strong>alpha_SE</strong> (<em>float</em>) – the standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>beta_SE</strong> (<em>float</em>) – the standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>Cov_alpha_beta</strong> (<em>float</em>) – the covariance between the parameters</p></li>
+<li><p><strong>alpha_upper</strong> (<em>float</em>) – the upper CI estimate of the parameter</p></li>
+<li><p><strong>alpha_lower</strong> (<em>float</em>) – the lower CI estimate of the parameter</p></li>
+<li><p><strong>beta_upper</strong> (<em>float</em>) – the upper CI estimate of the parameter</p></li>
+<li><p><strong>beta_lower</strong> (<em>float</em>) – the lower CI estimate of the parameter</p></li>
+<li><p><strong>loglik</strong> (<em>float</em>) – Log Likelihood (as used in Minitab and Reliasoft)</p></li>
+<li><p><strong>loglik2</strong> (<em>float</em>) – LogLikelihood*-2 (as used in JMP Pro)</p></li>
+<li><p><strong>AICc</strong> (<em>float</em>) – Akaike Information Criterion</p></li>
+<li><p><strong>BIC</strong> (<em>float</em>) – Bayesian Information Criterion</p></li>
+<li><p><strong>AD</strong> (<em>float</em>) – the Anderson Darling (corrected) statistic (as reported by Minitab)</p></li>
+<li><p><strong>distribution</strong> (<em>object</em>) – a Weibull_Distribution object with the parameters of the fitted
+distribution</p></li>
+<li><p><strong>results</strong> (<em>dataframe</em>) – a pandas dataframe of the results (point estimate, standard error,
+lower CI and upper CI for each parameter)</p></li>
+<li><p><strong>goodness_of_fit</strong> (<em>dataframe</em>) – a pandas dataframe of the goodness of fit values (Log-likelihood, AICc,
+BIC, AD).</p></li>
+<li><p><strong>quantiles</strong> (<em>dataframe</em>) – a pandas dataframe of the quantiles with bounds on time. This is only
+produced if quantiles is not None. Since quantiles defaults to None,
+this output is not normally produced.</p></li>
+<li><p><strong>probability_plot</strong> (<em>object</em>) – the axes handle for the probability plot. This is only returned if
+show_probability_plot = True</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the fitting process encounters a problem a warning will be printed. This
+may be caused by the chosen distribution being a very poor fit to the data
+or the data being heavily censored. If a warning is printed, consider trying
+a different optimizer.</p>
+<p>Requirements of the input dataframe:
+The column titles MUST be ‘category’, ‘time’, ‘quantity’
+The category values MUST be ‘F’ for failure or ‘C’ for censored (right
+censored). The time values are the failure or right censored times.
+The quantity is the number of items at that time. This must be specified for
+all values even if the quantity is 1.</p>
+<p>Example of the input dataframe:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>category</p></th>
+<th class="head"><p>time</p></th>
+<th class="head"><p>quantity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>F</p></td>
+<td><p>24</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>29</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>F</p></td>
+<td><p>34</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>39</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>F</p></td>
+<td><p>40</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>42</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>F</p></td>
+<td><p>44</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>C</p></td>
+<td><p>50</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>55</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-odd"><td><p>C</p></td>
+<td><p>60</p></td>
+<td><p>10</p></td>
+</tr>
+</tbody>
+</table>
+<p>This is easiest to achieve by importing data from excel. An example of this
+is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P_grouped</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">'C:\Users\Current User\Desktop\data.xlsx'</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">io</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">Fit_Weibull_2P_grouped</span><span class="p">(</span><span class="n">dataframe</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Weibull_2P_grouped.LL">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_rc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Weibull_2P_grouped.LL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Weibull_2P_grouped.LL_fb">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LL_fb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Weibull_2P_grouped.LL_fb" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Weibull_2P_grouped.logR">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Weibull_2P_grouped.logR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Weibull_2P_grouped.logf">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Weibull_2P_grouped.logf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,32 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="getting-your-alt-data-in-the-right-format">
+<h1>Getting your ALT data in the right format<a class="headerlink" href="#getting-your-alt-data-in-the-right-format" title="Link to this heading"></a></h1>
+<p>Because the ALT probability models failures and right censored data from many stress levels, it was not practical to make an input for each stress level. Instead, the failure times are combined in a single input and the failure_stress input provides a list of the corresponding stresses at which each failure occurred. The same is true of the right_censored and right_censored_stress inputs.</p>
+<p>To get your data in the correct format, ensure you have combined all your failure times into a single list or numpy array and there is a corresponding list or array of the same length that provides all of the stresses. The following example illustrates one method to do this if you do not have the list already imported from Excel or another source. This is done for failures only but if you have right_censored data then you would do the same thing, but keep it separate to the failure data. There is no need to sort the data in any particular order as this is all done automatically. The only requirement is that the length of failures matches the length of the failure_stress, and that there are no new stresses in right_censored_stress that are not present in failure_stress.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1">#create the data</span>
+<span class="n">failure_times_at_stress_1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">800</span><span class="p">,</span><span class="mi">850</span><span class="p">,</span><span class="mi">910</span><span class="p">,</span><span class="mi">940</span><span class="p">]</span>
+<span class="n">failure_stress_1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">]</span>
+<span class="n">failure_times_at_stress_2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">650</span><span class="p">,</span><span class="mi">670</span><span class="p">,</span><span class="mi">715</span><span class="p">,</span><span class="mi">740</span><span class="p">]</span>
+<span class="n">failure_stress_2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+<span class="n">failure_times_at_stress_3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">,</span><span class="mi">320</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">380</span><span class="p">]</span>
+<span class="n">failure_stress_3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">60</span><span class="p">]</span>
+<span class="c1"># combine the data</span>
+<span class="n">failures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">failure_times_at_stress_1</span><span class="p">,</span><span class="n">failure_times_at_stress_2</span><span class="p">,</span><span class="n">failure_times_at_stress_3</span><span class="p">])</span>
+<span class="n">failure_stresses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">failure_stress_1</span><span class="p">,</span><span class="n">failure_stress_2</span><span class="p">,</span><span class="n">failure_stress_3</span><span class="p">])</span>
+<span class="c1"># print for inspection</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">failure_stresses</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">[800 850 910 940 650 670 715 740 300 320 350 380]</span>
+<span class="sd">[40 40 40 40 50 50 50 50 60 60 60 60]</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+</div>
+</div>

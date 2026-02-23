@@ -1,0 +1,127 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="sequential-sampling-chart">
+<h1>Sequential sampling chart<a class="headerlink" href="#sequential-sampling-chart" title="Link to this heading"></a></h1>
+<p>A sequential sampling chart provides decision boundaries so that a success/failure test may be stopped as soon as there have been enough successes or enough failures to exceed the decision boundary. The decision boundary is calculated based on four parameters; producer’s quality, consumer’s quality, producer’s risk, and consumer’s risk. Producer’s risk is the chance that the consumer rejects a batch when they should have accepted it. Consumer’s risk is the chance that the consumer accepts a batch when they should have rejected it. We can also consider the producer’s and consumer’s quality to be the desired reliability of the sample, and the producer’s and consumer’s risk to be 1-confidence interval that the sample test result matches the population test result.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Reliability_testing/sequential_sampling_chart.html">API reference</a>.</p>
+</div>
+<p>In the example below, we use the inputs p1=0.01, p2=0.10, alpha=0.05, beta=0.10. The resulting decision boundaries are plotted, and the test results that we have supplied are also plotted as a stepped line. The plot shows that after our 3rd failure, the test should be stopped as the batch can be rejected. The dataframe of results is also printed by default. In this dataframe, the value of x is used to replace impossible numbers, ie. we cannot reject 2 failures if we have only conducted 1 inspection. This example is based on an example in the <a class="reference external" href="https://itl.nist.gov/div898/handbook/pmc/section2/pmc26.htm">Engineering statistics handbook</a> published online by NIST.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequential_samling_chart</span>
+<span class="n">test_results</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">sequential_samling_chart</span><span class="p">(</span><span class="n">p1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">p2</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span><span class="n">test_results</span><span class="o">=</span><span class="n">test_results</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from sequential_sampling_chart:</span>
+<span class="sd"> Samples Failures to accept Failures to reject</span>
+<span class="sd">       0                  x                  x</span>
+<span class="sd">       1                  x                  x</span>
+<span class="sd">       2                  x                  2</span>
+<span class="sd">       3                  x                  2</span>
+<span class="sd">       4                  x                  2</span>
+<span class="sd">       5                  x                  2</span>
+<span class="sd">       6                  x                  2</span>
+<span class="sd">       7                  x                  2</span>
+<span class="sd">       8                  x                  2</span>
+<span class="sd">       9                  x                  2</span>
+<span class="sd">      10                  x                  2</span>
+<span class="sd">      11                  x                  2</span>
+<span class="sd">      12                  x                  2</span>
+<span class="sd">      13                  x                  2</span>
+<span class="sd">      14                  x                  2</span>
+<span class="sd">      15                  x                  2</span>
+<span class="sd">      16                  x                  2</span>
+<span class="sd">      17                  x                  2</span>
+<span class="sd">      18                  x                  2</span>
+<span class="sd">      19                  x                  2</span>
+<span class="sd">      20                  x                  3</span>
+<span class="sd">      21                  x                  3</span>
+<span class="sd">      22                  x                  3</span>
+<span class="sd">      23                  x                  3</span>
+<span class="sd">      24                  0                  3</span>
+<span class="sd">      25                  0                  3</span>
+<span class="sd">      26                  0                  3</span>
+<span class="sd">      27                  0                  3</span>
+<span class="sd">      28                  0                  3</span>
+<span class="sd">      29                  0                  3</span>
+<span class="sd">      30                  0                  3</span>
+<span class="sd">      31                  0                  3</span>
+<span class="sd">      32                  0                  3</span>
+<span class="sd">      33                  0                  3</span>
+<span class="sd">      34                  0                  3</span>
+<span class="sd">      35                  0                  3</span>
+<span class="sd">      36                  0                  3</span>
+<span class="sd">      37                  0                  3</span>
+<span class="sd">      38                  0                  3</span>
+<span class="sd">      39                  0                  3</span>
+<span class="sd">      40                  0                  3</span>
+<span class="sd">      41                  0                  3</span>
+<span class="sd">      42                  0                  3</span>
+<span class="sd">      43                  0                  3</span>
+<span class="sd">      44                  0                  3</span>
+<span class="sd">      45                  0                  3</span>
+<span class="sd">      46                  0                  4</span>
+<span class="sd">      47                  0                  4</span>
+<span class="sd">      48                  0                  4</span>
+<span class="sd">      49                  1                  4</span>
+<span class="sd">      50                  1                  4</span>
+<span class="sd">      51                  1                  4</span>
+<span class="sd">      52                  1                  4</span>
+<span class="sd">      53                  1                  4</span>
+<span class="sd">      54                  1                  4</span>
+<span class="sd">      55                  1                  4</span>
+<span class="sd">      56                  1                  4</span>
+<span class="sd">      57                  1                  4</span>
+<span class="sd">      58                  1                  4</span>
+<span class="sd">      59                  1                  4</span>
+<span class="sd">      60                  1                  4</span>
+<span class="sd">      61                  1                  4</span>
+<span class="sd">      62                  1                  4</span>
+<span class="sd">      63                  1                  4</span>
+<span class="sd">      64                  1                  4</span>
+<span class="sd">      65                  1                  4</span>
+<span class="sd">      66                  1                  4</span>
+<span class="sd">      67                  1                  4</span>
+<span class="sd">      68                  1                  4</span>
+<span class="sd">      69                  1                  4</span>
+<span class="sd">      70                  1                  4</span>
+<span class="sd">      71                  1                  5</span>
+<span class="sd">      72                  1                  5</span>
+<span class="sd">      73                  1                  5</span>
+<span class="sd">      74                  2                  5</span>
+<span class="sd">      75                  2                  5</span>
+<span class="sd">      76                  2                  5</span>
+<span class="sd">      77                  2                  5</span>
+<span class="sd">      78                  2                  5</span>
+<span class="sd">      79                  2                  5</span>
+<span class="sd">      80                  2                  5</span>
+<span class="sd">      81                  2                  5</span>
+<span class="sd">      82                  2                  5</span>
+<span class="sd">      83                  2                  5</span>
+<span class="sd">      84                  2                  5</span>
+<span class="sd">      85                  2                  5</span>
+<span class="sd">      86                  2                  5</span>
+<span class="sd">      87                  2                  5</span>
+<span class="sd">      88                  2                  5</span>
+<span class="sd">      89                  2                  5</span>
+<span class="sd">      90                  2                  5</span>
+<span class="sd">      91                  2                  5</span>
+<span class="sd">      92                  2                  5</span>
+<span class="sd">      93                  2                  5</span>
+<span class="sd">      94                  2                  5</span>
+<span class="sd">      95                  2                  5</span>
+<span class="sd">      96                  2                  6</span>
+<span class="sd">      97                  2                  6</span>
+<span class="sd">      98                  2                  6</span>
+<span class="sd">      99                  2                  6</span>
+<span class="sd">     100                  3                  6</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/sequential_sampling_chart.png" src="_images/sequential_sampling_chart.png"/>
+</section>
+</div>
+</div>

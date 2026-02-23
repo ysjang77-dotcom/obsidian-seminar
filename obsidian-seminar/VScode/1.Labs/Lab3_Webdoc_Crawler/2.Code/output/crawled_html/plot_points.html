@@ -1,0 +1,60 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="plot-points">
+<h1>plot_points<a class="headerlink" href="#plot-points" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Probability_plotting.plot_points">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Probability_plotting.</span></span><span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CDF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Probability_plotting.plot_points" title="Link to this definition"></a></dt>
+<dd><p>Plots the failure points as a scatter plot based on the plotting positions.
+This is similar to a probability plot, just without the axes scaling or the
+fitted distribution. It may be used to overlay the failure points with a
+fitted distribution on either the PDF, CDF, SF, HF, or CHF. If you choose to
+plot the points for PDF or HF the points will not form a smooth curve as
+this process requires integration of discrete points which leads to a
+discontinuous plot. The PDF and HF points are correct but not as useful as
+CDF, SF, and CHF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure times. Minimum number of points allowed is 1.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored failure times. Optional input.</p></li>
+<li><p><strong>func</strong> (<em>str</em>) – The distribution function to plot. Choose either ‘PDF,’CDF’,’SF’,’HF’,
+or ‘CHF’. Default = ‘CDF’.</p></li>
+<li><p><strong>a</strong> (<em>float, int</em>) – The heuristic constant for plotting positions of the form
+(k-a)/(n+1-2a). Default is a=0.3 which is the median rank method (same
+as the default in Minitab). For more heuristics, see:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics">https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics</a></p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is False which will
+result in no downsampling. This functionality makes plotting faster when
+there are very large numbers of points. It only affects the scatterplot
+not the calculations.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments for the scatter plot. Defaults are set for color=’k’
+and marker=’.’ These defaults can be changed using kwargs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It is recommended that plot_points be used in conjunction with one of the
+plotting methods from a distribution (see the example below).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Lognormal_2P</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="mf">7.1</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">15.4</span><span class="p">,</span> <span class="mf">17.7</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">,</span> <span class="mf">5.8</span><span class="p">,</span> <span class="mf">11.7</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mf">18.1</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">6.6</span><span class="p">,</span> <span class="mf">9.7</span><span class="p">,</span> <span class="mf">13.7</span><span class="p">,</span> <span class="mf">8.2</span><span class="p">,</span> <span class="mf">15.3</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">]</span>
+<span class="n">fitted_dist</span> <span class="o">=</span> <span class="n">Fit_Lognormal_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#fit the Lognormal distribution to the failure data</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="s1">'SF'</span><span class="p">)</span> <span class="c1">#plot the failure points on the scatter plot</span>
+<span class="n">fitted_dist</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">SF</span><span class="p">()</span> <span class="c1">#plot the distribution</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,43 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="histogram">
+<h1>Histogram<a class="headerlink" href="#histogram" title="Link to this heading"></a></h1>
+<p>This function plots a histogram using the matplotlib histogram (plt.hist()), but adds some additional features. Default formatting is improved, the number of bins is optimized by default, and there is an option to shade the bins white above a chosen threshold. If you would like to specify the number of bins rather than having the optimal number calculated, then the bins argument allows this.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Other_functions/histogram.html">API reference</a>.</p>
+</div>
+<p>The following example shows the difference between the appearance of the default histogram in matplotlib, and the histogram in reliability.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gamma_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Gamma_2P</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_right_censored_data</span><span class="p">,</span> <span class="n">histogram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">threshold</span> <span class="o">=</span> <span class="mi">180</span>  <span class="c1"># this is used when right censoring the data</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Gamma_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">raw_data</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># create some data. Seeded for repeatability</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">make_right_censored_data</span><span class="p">(</span><span class="n">raw_data</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>  <span class="c1"># right censor the data</span>
+<span class="n">gf</span> <span class="o">=</span> <span class="n">Fit_Gamma_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span><span class="n">right_censored</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">gf</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">PDF</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">raw_data</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># default histogram from matplotlib</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'matplotlib histogram'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">gf</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">PDF</span><span class="p">()</span>
+<span class="n">histogram</span><span class="p">(</span><span class="n">raw_data</span><span class="p">,</span> <span class="n">white_above</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span> <span class="c1"># histogram from reliability - better formatting, optimal bin width by default, white_above option</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'reliability histogram'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.38</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/histogram.png" src="_images/histogram.png"/>
+</section>
+</div>
+</div>

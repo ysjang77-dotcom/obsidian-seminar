@@ -1,0 +1,41 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="stress-strain-diagram">
+<h1>stress_strain_diagram<a class="headerlink" href="#stress-strain-diagram" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.stress_strain_diagram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">stress_strain_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_load_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tension'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.stress_strain_diagram" title="Link to this definition"></a></dt>
+<dd><p>This function plots the stress-strain diagram.</p>
+<p>If you do not have the parameters K, n, but you do have stress and strain
+data then you can use the function ‘stress_strain_life_parameters_from_data’
+to calculate K and n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>float, int</em>) – The cyclic strength coefficient</p></li>
+<li><p><strong>n</strong> (<em>float, int</em>) – The strain hardening exponent</p></li>
+<li><p><strong>E</strong> (<em>float, int</em>) – The modulus of elasticity. Ensure this is in the same units for which K
+and n were obtained (typically MPa).</p></li>
+<li><p><strong>max_strain</strong> (<em>float, int</em>) – The maximum strain to use for cyclic loading when plotting the
+hysteresis loop.</p></li>
+<li><p><strong>max_stress</strong> (<em>float, int</em>) – The maximum stress to use for cyclic loading when plotting the hysteresis loop.</p></li>
+<li><p><strong>min_strain</strong> (<em>float, int, optional</em>) – If this is not -max_strain then specify it here. Optional input.</p></li>
+<li><p><strong>min_stress</strong> (<em>float, int, optional</em>) – Tf this is not -max_stress then specify it here. Optional input.</p></li>
+<li><p><strong>initial_load_direction</strong> (<em>str, optional</em>) – Must be ‘tension’ or ‘compression’. Default is tension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The plot is the only output. All calculated values are shown on the
+plot.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When specifying min and max stress or strain, Do not specify both stress and
+strain as the corresponding value will be automatically calculated. Only
+specify the min if it is not -max.</p>
+</dd></dl>
+</section>
+</div>
+</div>

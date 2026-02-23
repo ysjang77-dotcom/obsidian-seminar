@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Lab 2] 신뢰성 전문가를 위한 Vibe Coding 및 Streamlit 기초</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="lab-2-신뢰성-전문가를-위한-vibe-coding-및-streamlit-기초">[Lab 2] 신뢰성 전문가를 위한 Vibe Coding 및 Streamlit 기초</h1>
+<h2 id="과정-개요">1. 과정 개요</h2>
+<p>본 과정은 Python이나 코딩 경험이 많지 않은 신뢰성 분야의 전문가들을 위해 설계되었습니다. 우리는 생성형 AI, 특히 **AI 에이전트(AI Agent)**의 개념을 활용하여 복잡한 코드를 직접 작성하는 대신, AI와 대화하고 요구사항을 명확히 전달함으로써 원하는 데이터 분석 애플리케이션을 손쉽게 개발하는 <strong>“Vibe 코딩”</strong> 방식을 학습합니다.</p>
+<p>이번 실습에서는 통계 분석의 기초인 <strong>단순 선형회귀분석</strong>을 수행하고, 그 결과를 사용자가 직접 조작하며 확인할 수 있는 <strong>인터랙티브 웹 애플리케이션</strong>을 만들어봅니다. 이 과정을 통해 AI를 단순한 코드 생성기를 넘어, 개발의 전 과정을 함께하는 협업 파트너, 즉 AI 에이전트로 활용하는 방법을 체득하게 될 것입니다.</p>
+<h3 id="학습-목표">학습 목표</h3>
+<ul>
+<li>AI 에이전트의 개념과 Vibe 코딩의 원리를 이해합니다.</li>
+<li>명확한 요구사항 정의(프롬프트 설계)를 통해 AI의 결과물 품질을 높이는 방법을 배웁니다.</li>
+<li>Python의 <code>Streamlit</code> 라이브러리를 활용하여 인터랙티브 웹 앱을 개발하는 과정을 경험합니다.</li>
+<li>단순 선형회귀분석의 핵심 개념을 시각적이고 직관적으로 이해합니다.</li>
+</ul>
+<hr>
+<h2 id="ai-에이전트를-활용한-개발-프로세스-시각화">2. AI 에이전트를 활용한 개발 프로세스 시각화</h2>
+<p>우리가 진행할 전체 개발 과정은 다음과 같은 흐름으로 이루어집니다. 이는 마치 관리자가 실무자에게 업무를 지시하고 결과물을 보고받는 과정과 유사합니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-okIx3OsQvVxvGCKE" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="910.0625" style="max-width: 262.84375px;" viewBox="0 0 262.84375 910.0625"><style>#mermaid-svg-okIx3OsQvVxvGCKE{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-okIx3OsQvVxvGCKE .error-icon{fill:#552222;}#mermaid-svg-okIx3OsQvVxvGCKE .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-okIx3OsQvVxvGCKE .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-okIx3OsQvVxvGCKE .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-okIx3OsQvVxvGCKE .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-okIx3OsQvVxvGCKE .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-okIx3OsQvVxvGCKE .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-okIx3OsQvVxvGCKE .marker{fill:#666;stroke:#666;}#mermaid-svg-okIx3OsQvVxvGCKE .marker.cross{stroke:#666;}#mermaid-svg-okIx3OsQvVxvGCKE svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-okIx3OsQvVxvGCKE .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-okIx3OsQvVxvGCKE .cluster-label text{fill:#333;}#mermaid-svg-okIx3OsQvVxvGCKE .cluster-label span{color:#333;}#mermaid-svg-okIx3OsQvVxvGCKE .label text,#mermaid-svg-okIx3OsQvVxvGCKE span{fill:#000000;color:#000000;}#mermaid-svg-okIx3OsQvVxvGCKE .node rect,#mermaid-svg-okIx3OsQvVxvGCKE .node circle,#mermaid-svg-okIx3OsQvVxvGCKE .node ellipse,#mermaid-svg-okIx3OsQvVxvGCKE .node polygon,#mermaid-svg-okIx3OsQvVxvGCKE .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-okIx3OsQvVxvGCKE .node .label{text-align:center;}#mermaid-svg-okIx3OsQvVxvGCKE .node.clickable{cursor:pointer;}#mermaid-svg-okIx3OsQvVxvGCKE .arrowheadPath{fill:#333333;}#mermaid-svg-okIx3OsQvVxvGCKE .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-okIx3OsQvVxvGCKE .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-okIx3OsQvVxvGCKE .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-okIx3OsQvVxvGCKE .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-okIx3OsQvVxvGCKE .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-okIx3OsQvVxvGCKE .cluster text{fill:#333;}#mermaid-svg-okIx3OsQvVxvGCKE .cluster span{color:#333;}#mermaid-svg-okIx3OsQvVxvGCKE div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-okIx3OsQvVxvGCKE:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-okIx3OsQvVxvGCKE flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph2-1823" style="opacity: 1;" transform="translate(131.421875,778.625)"><rect width="246.84375" height="246.875" x="-123.421875" y="-123.4375"></rect><g class="label" transform="translate(0, -109.4375)" id="mermaid-svg-okIx3OsQvVxvGCKEText"><g transform="translate(-85.5390625,-13.359375)"><foreignObject width="171.078125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. 인간과 AI의 협업: 검증</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph1-1824" style="opacity: 1;" transform="translate(131.421875,543.46875)"><rect width="246.84375" height="123.4375" x="-123.421875" y="-61.71875"></rect><g class="label" transform="translate(0, -47.71875)" id="mermaid-svg-okIx3OsQvVxvGCKEText"><g transform="translate(-92.4609375,-13.359375)"><foreignObject width="184.921875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">2. AI 에이전트의 영역: 실행</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-1825" style="opacity: 1;" transform="translate(131.421875,219.875)"><rect width="212.59375" height="423.75" x="-106.296875" y="-211.875"></rect><g class="label" transform="translate(0, -197.875)" id="mermaid-svg-okIx3OsQvVxvGCKEText"><g transform="translate(-95.7265625,-13.359375)"><foreignObject width="191.453125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. 인간의 영역: 기획 및 지시</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M131.421875,106.4375L131.421875,131.4375L131.421875,156.4375" marker-end="url(https://stackedit.io/app#arrowhead231)" style="fill:none"></path><defs><marker id="arrowhead231" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M131.421875,256.59375L131.421875,281.59375L131.421875,306.59375" marker-end="url(https://stackedit.io/app#arrowhead232)" style="fill:none"></path><defs><marker id="arrowhead232" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M131.421875,406.75L131.421875,431.75L131.421875,456.75L131.421875,481.75L131.421875,506.75" marker-end="url(https://stackedit.io/app#arrowhead233)" style="fill:none"></path><defs><marker id="arrowhead233" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-E" style="opacity: 1;" id="L-D-E"><path class="path" d="M131.421875,580.1875L131.421875,605.1875L131.421875,630.1875L131.421875,655.1875L131.421875,680.1875" marker-end="url(https://stackedit.io/app#arrowhead234)" style="fill:none"></path><defs><marker id="arrowhead234" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-F" style="opacity: 1;" id="L-E-F"><path class="path" d="M131.421875,753.625L131.421875,778.625L131.421875,803.625" marker-end="url(https://stackedit.io/app#arrowhead235)" style="fill:none"></path><defs><marker id="arrowhead235" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-E" class="edgeLabel L-LS-D' L-LE-E"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-F" class="edgeLabel L-LS-E' L-LE-F"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-E-1814" transform="translate(131.421875,716.90625)"><rect rx="5" ry="5" x="-88.421875" y="-36.71875" width="176.84375" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-78.421875,-26.71875)"><foreignObject width="156.84375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">생성된 코드를 실행하고<br>오류 수정 및 기능 확인</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-F-1816" transform="translate(131.421875,840.34375)"><rect rx="5" ry="5" x="-83.4765625" y="-36.71875" width="166.953125" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-73.4765625,-26.71875)"><foreignObject width="146.953125" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">사용자 친화적인<br>데이터 분석 도구 완성</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-1812" transform="translate(131.421875,543.46875)"><rect rx="5" ry="5" x="-88.421875" y="-36.71875" width="176.84375" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-78.421875,-26.71875)"><foreignObject width="156.84375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">설계된 프롬프트에 따라<br>Python 코드 자동 생성</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-1807" transform="translate(131.421875,69.71875)"><rect rx="5" ry="5" x="-71.296875" y="-36.71875" width="142.59375" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-61.296875,-26.71875)"><foreignObject width="122.59375" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">단순 선형회귀분석<br>웹 앱 개발</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-1808" transform="translate(131.421875,206.515625)"><rect rx="5" ry="5" x="-69.25" y="-50.078125" width="138.5" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-59.25,-40.078125)"><foreignObject width="118.5" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">AI에게 역할과<br>전문성 부여<br>(System Prompt)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-1810" transform="translate(131.421875,356.671875)"><rect rx="5" ry="5" x="-66.34375" y="-50.078125" width="132.6875" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-56.34375,-40.078125)"><foreignObject width="112.6875" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">만들고 싶은 앱의<br>상세 기능 정의<br>(User Prompt)</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<hr>
+<h2 id="개발-과정-상세-안내-단계별">3. 개발 과정 상세 안내 (단계별)</h2>
+<h3 id="단계-ai-에이전트-설정-system-prompt-설계">1단계: AI 에이전트 설정 (System Prompt 설계)</h3>
+<p>AI에게 단순히 "코드를 만들어줘"라고 요청하는 것과 "너는 최고의 데이터 분석 앱 개발 전문가야"라고 역할을 부여하고 구체적인 지침을 주는 것은 결과물의 품질에 큰 차이를 만듭니다. 우리는 AI가 따라야 할 <strong>행동 강령과 원칙</strong>을 정의하는 **시스템 프롬프트(System Prompt)**를 먼저 설계합니다.</p>
+<p>이번 실습에서는 <code>gemini.md</code> 파일에 다음과 같이 AI 에이전트의 역할을 정의했습니다.</p>
+<blockquote>
+<h4 id="gemini.md--ai-에이전트의-역할-정의서"><strong><code>gemini.md</code> : AI 에이전트의 역할 정의서</strong></h4>
+<p><strong>- 역할:</strong> Python 데이터 분석 및 시각화 애플리케이션 개발 전문가 (특히 Streamlit에 능숙)<br>
+<strong>- 목표:</strong> 사용자의 요구사항을 정확히 이해하고, 깨끗하고, 효율적이며, 상세한 설명이 포함된 코드를 생성<br>
+<strong>- 핵심 원칙:</strong></p>
+<ol>
+<li><strong>가독성 우선:</strong> PEP 8 스타일 가이드 준수, 직관적인 변수/함수명 사용</li>
+<li><strong>상세한 한글 주석:</strong> 코드의 모든 주요 부분에 상세한 한글 주석 작성</li>
+<li><strong>구조화된 코드:</strong> 기능별 모듈화, 전역 변수 사용 최소화</li>
+<li><strong>사용자 가이드 포함:</strong> 코드 최상단에 앱 설명, 라이브러리 목록, 설치 및 실행 명령어 포함</li>
+<li><strong>표준 라이브러리 활용:</strong> <code>pandas</code>, <code>numpy</code>, <code>statsmodels</code>, <code>matplotlib</code>/<code>plotly</code> 등 검증된 라이브러리 사용</li>
+<li><strong>예외 처리:</strong> 사용자 입력 오류 등 예외 상황 고려</li>
+</ol>
+</blockquote>
+<p>이처럼 AI 에이전트의 정체성과 작업 기준을 명확히 함으로써, 우리는 일관성 있고 품질 높은 결과물을 안정적으로 얻을 수 있습니다.</p>
+<h3 id="단계-요구사항-명세화-user-prompt-설계">2단계: 요구사항 명세화 (User Prompt 설계)</h3>
+<p>이제 설정된 AI 에이전트에게 우리가 만들고 싶은 애플리케이션의 <strong>구체적인 기능과 요구사항</strong>을 전달할 차례입니다. 이를 **사용자 프롬프트(User Prompt)**라고 합니다. 프롬프트가 상세하고 명확할수록 AI는 우리의 의도를 더 정확하게 파악합니다.</p>
+<p>이번 실습에서는 <code>1.Lab2-Prompt_UI(Streamlit).md</code> 파일의 내용을 기반으로 다음과 같이 요구사항을 정리하여 AI에게 전달했습니다.</p>
+<blockquote>
+<h4 id="요구사항-요약-ai에게-전달된-내용"><strong>요구사항 요약 (AI에게 전달된 내용)</strong></h4>
+<ol>
+<li>
+<p><strong>앱의 핵심 기능:</strong></p>
+<ul>
+<li>사용자가 설정한 파라미터(<code>a</code>, <code>b</code>, <code>sigma</code> 등)로 가상의 데이터 생성</li>
+<li>생성된 데이터로 단순 선형회귀모델(<code>y ~ x</code>) 적합</li>
+<li>결과를 시각화하고 통계적으로 해석</li>
+<li>특정 x값(<code>k</code>)에 대한 신뢰구간 및 예측구간 계산</li>
+</ul>
+</li>
+<li>
+<p><strong>UI/UX 요구사항 (Streamlit 사용):</strong></p>
+<ul>
+<li>모든 사용자 입력은 화면 좌측의 <strong>사이드바</strong>에 배치</li>
+<li><code>a</code>, <code>b</code>, <code>sigma</code>, <code>c</code>, <code>d</code>, <code>k</code> 값을 숫자로 입력받는 컨트롤 생성</li>
+<li><strong>"분석 실행"</strong> 버튼을 눌렀을 때만 분석 과정이 수행되도록 구현</li>
+</ul>
+</li>
+<li>
+<p><strong>결과 출력 형식:</strong></p>
+<ul>
+<li>데이터 산점도와 회귀선을 포함한 <strong>그래프</strong> 출력</li>
+<li><code>statsmodels</code> 라이브러리의 <strong>모델 요약표</strong> 전체 출력</li>
+<li>기울기의 <strong>P-값을 해석</strong>하여 통계적 유의성 여부를 문장으로 설명</li>
+<li>계산된 <strong>신뢰구간과 예측구간</strong>을 친절한 설명과 함께 출력</li>
+</ul>
+</li>
+<li>
+<p><strong>품질 요구사항:</strong></p>
+<ul>
+<li>앞서 정의한 시스템 프롬프트(<code>gemini.md</code>)의 모든 원칙을 준수할 것</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<p>이처럼 추상적인 아이디어를 구체적인 기능 명세로 바꾸는 과정이 프롬프트 설계의 핵심입니다.</p>
+<h3 id="단계-ai의-코드-생성-및-분석">3단계: AI의 코드 생성 및 분석</h3>
+<p>위의 시스템 프롬프트와 사용자 프롬프트를 기반으로, AI 에이전트는 <code>simple_linear_regression_app.py</code>라는 결과물을 생성했습니다. 이 코드는 우리의 모든 요구사항을 충실히 반영하고 있으며, 특히 시스템 프롬프트에서 지시한 대로 <strong>상세한 주석과 사용자 가이드</strong>가 포함되어 있습니다.</p>
+<p>이제 코드의 주요 구조를 함께 살펴보겠습니다.</p>
+<h4 id="simple_linear_regression_app.py-코드-구조-분석"><strong><code>simple_linear_regression_app.py</code> 코드 구조 분석</strong></h4>
+<pre class=" language-python"><code class="prism  language-python"><span class="token triple-quoted-string string">"""
+[사용자 실행 가이드]
+- 앱 설명, 필요 라이브러리, 설치 및 실행 방법이 상세히 기술되어 있습니다.
+- 이 부분만 복사해서 전달하면 누구나 쉽게 앱을 실행할 수 있습니다.
+"""</span>
+
+<span class="token comment"># --- 1. 라이브러리 임포트 ---</span>
+<span class="token comment"># Streamlit, Pandas, Numpy 등 앱 구동과 분석에 필요한 도구들을 불러옵니다.</span>
+<span class="token keyword">import</span> streamlit <span class="token keyword">as</span> st
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">import</span> statsmodels<span class="token punctuation">.</span>formula<span class="token punctuation">.</span>api <span class="token keyword">as</span> smf
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token comment"># ... (한글 폰트 설정 등)</span>
+
+<span class="token comment"># --- 2. 메인 애플리케이션 로직 ---</span>
+
+<span class="token comment"># st.title() : 앱의 제목을 설정합니다.</span>
+st<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">"📊 단순 선형회귀분석 시뮬레이터"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># --- 3. 사이드바 (사용자 입력 영역) ---</span>
+<span class="token comment"># with st.sidebar: 구문 안의 모든 내용은 좌측 사이드바에 표시됩니다.</span>
+<span class="token keyword">with</span> st<span class="token punctuation">.</span>sidebar<span class="token punctuation">:</span>
+    st<span class="token punctuation">.</span>header<span class="token punctuation">(</span><span class="token string">"⚙️ 파라미터 설정"</span><span class="token punctuation">)</span>
+    <span class="token comment"># st.number_input() : 사용자가 숫자를 입력할 수 있는 위젯을 생성합니다.</span>
+    a <span class="token operator">=</span> st<span class="token punctuation">.</span>number_input<span class="token punctuation">(</span>label<span class="token operator">=</span><span class="token string">"a (절편, Intercept)"</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+    b <span class="token operator">=</span> st<span class="token punctuation">.</span>number_input<span class="token punctuation">(</span>label<span class="token operator">=</span><span class="token string">"b (기울기, Slope)"</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+    <span class="token comment"># ... (다른 파라미터 입력) ...</span>
+
+    <span class="token comment"># st.button() : 클릭 가능한 버튼을 생성합니다.</span>
+    run_button <span class="token operator">=</span> st<span class="token punctuation">.</span>button<span class="token punctuation">(</span>label<span class="token operator">=</span><span class="token string">"🚀 분석 실행"</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+
+<span class="token comment"># --- 4. 분석 실행 로직 ---</span>
+<span class="token comment"># "분석 실행" 버튼이 클릭되었을 때(run_button == True)만 내부 코드가 실행됩니다.</span>
+<span class="token keyword">if</span> run_button<span class="token punctuation">:</span>
+    <span class="token comment"># 4-1. 데이터 생성</span>
+    <span class="token comment"># 사용자가 입력한 a, b, sigma 등의 값으로 numpy를 이용해 가상 데이터를 만듭니다.</span>
+    x_data <span class="token operator">=</span> np<span class="token punctuation">.</span>arange<span class="token punctuation">(</span>c<span class="token punctuation">,</span> d <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    e <span class="token operator">=</span> np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>normal<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> sigma<span class="token punctuation">,</span> size<span class="token operator">=</span><span class="token builtin">len</span><span class="token punctuation">(</span>x_data<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    y_data <span class="token operator">=</span> a <span class="token operator">+</span> b <span class="token operator">*</span> x_data <span class="token operator">+</span> e
+    df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">'x'</span><span class="token punctuation">:</span> x_data<span class="token punctuation">,</span> <span class="token string">'y'</span><span class="token punctuation">:</span> y_data<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 4-2. 모델 적합</span>
+    <span class="token comment"># statsmodels를 사용해 'y ~ x' 형식으로 회귀모델을 정의하고 적합합니다.</span>
+    model <span class="token operator">=</span> smf<span class="token punctuation">.</span>ols<span class="token punctuation">(</span><span class="token string">'y ~ x'</span><span class="token punctuation">,</span> data<span class="token operator">=</span>df<span class="token punctuation">)</span><span class="token punctuation">.</span>fit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># --- 5. 결과 출력 ---</span>
+    <span class="token comment"># st.subheader() : 소제목을 추가합니다.</span>
+    st<span class="token punctuation">.</span>subheader<span class="token punctuation">(</span><span class="token string">"1. 데이터 시각화 및 회귀선"</span><span class="token punctuation">)</span>
+    <span class="token comment"># matplotlib으로 그래프를 그리고 st.pyplot()으로 앱에 표시합니다.</span>
+    fig<span class="token punctuation">,</span> ax <span class="token operator">=</span> plt<span class="token punctuation">.</span>subplots<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    ax<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'x'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> df<span class="token punctuation">[</span><span class="token string">'y'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span> <span class="token comment"># 산점도</span>
+    ax<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'x'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> model<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>df<span class="token punctuation">[</span><span class="token string">'x'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span> <span class="token comment"># 회귀선</span>
+    st<span class="token punctuation">.</span>pyplot<span class="token punctuation">(</span>fig<span class="token punctuation">)</span>
+
+    st<span class="token punctuation">.</span>subheader<span class="token punctuation">(</span><span class="token string">"2. 회귀분석 모델 요약"</span><span class="token punctuation">)</span>
+    <span class="token comment"># st.code() : 모델의 요약 정보를 코드 블록 형태로 보여줍니다.</span>
+    st<span class="token punctuation">.</span>code<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>model<span class="token punctuation">.</span>summary<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># ... (결과 해석, 신뢰/예측구간 출력 등) ...</span>
+
+<span class="token comment"># --- 6. 초기 화면 안내 ---</span>
+<span class="token comment"># 버튼이 눌리지 않았을 때 사용자에게 보여줄 안내 메시지입니다.</span>
+<span class="token keyword">else</span><span class="token punctuation">:</span>
+    st<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">"👈 사이드바에서 파라미터를 설정한 후 '분석 실행' 버튼을 클릭하세요."</span><span class="token punctuation">)</span>
+
+</code></pre>
+<h3 id="단계-애플리케이션-실행-및-검증">4단계: 애플리케이션 실행 및 검증</h3>
+<p>AI가 생성한 코드가 실제로 잘 동작하는지 확인하는 단계입니다.</p>
+<ol>
+<li>
+<p><strong>필요 라이브러리 설치:</strong><br>
+코드를 처음 실행하기 전, 터미널(명령 프롬프트)을 열고 코드 상단의 사용자 가이드에 명시된 대로 필요한 라이브러리들을 설치합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> streamlit pandas numpy statsmodels matplotlib
+</code></pre>
+</li>
+<li>
+<p><strong>Streamlit 앱 실행:</strong><br>
+터미널에서 <code>simple_linear_regression_app.py</code> 파일이 있는 폴더로 이동한 후, 다음 명령어를 입력합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">streamlit run simple_linear_regression_app.py
+</code></pre>
+</li>
+<li>
+<p><strong>결과 확인:</strong><br>
+명령어를 실행하면 웹 브라우저에 자동으로 새 탭이 열리면서 우리가 설계한 앱이 나타납니다. 사이드바의 값들을 변경하고 ‘분석 실행’ 버튼을 누르면서 모든 기능이 의도대로 동작하는지, 오류는 없는지 검증합니다.</p>
+</li>
+</ol>
+</div>
+</body>
+
+</html>

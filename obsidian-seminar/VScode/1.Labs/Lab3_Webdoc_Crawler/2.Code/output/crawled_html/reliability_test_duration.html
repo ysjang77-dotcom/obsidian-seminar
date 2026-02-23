@@ -1,0 +1,45 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="reliability-test-duration">
+<h1>reliability_test_duration<a class="headerlink" href="#reliability-test-duration" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.reliability_test_duration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">reliability_test_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MTBF_required</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MTBF_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_risk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">producer_risk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_sided</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_terminated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.reliability_test_duration" title="Link to this definition"></a></dt>
+<dd><p>This function calculates the required duration for a reliability test to
+achieve the specified producers and consumers risks. This is done based on
+the specified MTBF required and MTBF design. For details please see the
+<a class="reference external" href="https://reliability.readthedocs.io/en/latest/Reliability%20test%20duration.html#how-does-the-algorithm-work">algorithm</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MTBF_required</strong> (<em>float, int</em>) – The required MTBF that the equipment must demonstrate during the test.</p></li>
+<li><p><strong>MTBF_design</strong> (<em>float, int</em>) – The design target for the MTBF that the producer aims to achieve.</p></li>
+<li><p><strong>consumer_risk</strong> (<em>float</em>) – The risk the consumer is accepting. This is the probability that a bad
+product will be accepted as a good product by the consumer.</p></li>
+<li><p><strong>producer_risk</strong> (<em>float</em>) – The risk the producer is accepting. This is the probability that a good
+product will be rejected as a bad product by the consumer.</p></li>
+<li><p><strong>one_sided</strong> (<em>bool, optional</em>) – The risk is analogous to the confidence interval, and the confidence
+interval can be one sided or two sided. Default = True.</p></li>
+<li><p><strong>time_terminated</strong> (<em>bool, optional</em>) – Whether the test is time terminated or failure terminated. Typically it
+will be time terminated if the required test duration is sought.
+Default = True</p></li>
+<li><p><strong>show_plot</strong> (<em>bool</em>) – If True, this will create a plot of the risk vs test duration. Default =
+True.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True, this will print the results to the console. Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>test_duration</strong> (<em>float</em>) – The required test duration to meet the input parameters.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The number of failures allowed is calculated but not provided by this
+function since the test will determine the actual number of failures so any
+prediction of number of failures ahead of time is not practical.</p>
+<p>If the plot does not show automatically, use plt.show() to show it.</p>
+</dd></dl>
+</section>
+</div>
+</div>

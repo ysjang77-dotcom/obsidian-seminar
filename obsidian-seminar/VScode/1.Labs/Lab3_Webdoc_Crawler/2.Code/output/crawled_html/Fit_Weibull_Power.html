@@ -1,0 +1,101 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fit-weibull-power">
+<h1>Fit_Weibull_Power<a class="headerlink" href="#fit-weibull-power" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.ALT_fitters.Fit_Weibull_Power">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.ALT_fitters.</span></span><span class="sig-name descname"><span class="pre">Fit_Weibull_Power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_stress</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_life_stress_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.ALT_fitters.Fit_Weibull_Power" title="Link to this definition"></a></dt>
+<dd><p>This function will Fit the Weibull-Power life-stress model to the data
+provided. Please see the online documentation for the equations of this
+model.</p>
+<p>This model is most appropriate to model a life-stress relationship with
+non-thermal stresses (typically in fatigue applications).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data.</p></li>
+<li><p><strong>failure_stress</strong> (<em>array, list</em>) – The corresponding stresses (such as temperature) at which each failure
+occurred. This must match the length of failures as each failure is
+tied to a failure stress.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored failure times. Optional input.</p></li>
+<li><p><strong>right_censored_stress</strong> (<em>array, list, optional</em>) – The corresponding stresses (such as temperature) at which each
+right_censored data point was obtained. This must match the length of
+right_censored as each right_censored value is tied to a
+right_censored stress. Conditionally optional input. This must be
+provided if right_censored is provided.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>int, float, optional</em>) – The use level stress at which you want to know the mean life. Optional
+input.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – True/False. Default is True. Prints the results to the console.</p></li>
+<li><p><strong>show_probability_plot</strong> (<em>bool, object, optional</em>) – True/False. Default is True. Provides a probability plot of the fitted
+ALT model. If an axes object is passed it will be used.</p></li>
+<li><p><strong>show_life_stress_plot</strong> (<em>bool, str, object, optional</em>) – If True the life-stress plot will be shown. To hide the life-stress
+plot use False. To swap the axes and show a stress-life plot use
+‘swap’. If an axes handle is passed it will be used. Default is True.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – Confidence interval for estimating confidence limits on parameters. Must
+be between 0 and 1. Default is 0.95 for 95% CI.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – The optimization algorithm used to find the solution. Must be either
+‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, or ‘powell’. Specifying the optimizer
+will result in that optimizer being used. To use all of these specify
+‘best’ and the best result will be returned. The default behaviour is to
+try each optimizer in order (‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, and
+‘powell’) and stop once one of the optimizers finds a solution. If the
+optimizer fails, the initial guess will be returned.
+For more detail see the
+<a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – The fitted parameter from the Power model</p></li>
+<li><p><strong>n</strong> (<em>float</em>) – The fitted parameter from the Power model</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The fitted Weibull_2P beta parameter</p></li>
+<li><p><strong>loglik2</strong> (<em>float</em>) – Log Likelihood*-2 (as used in JMP Pro)</p></li>
+<li><p><strong>loglik</strong> (<em>float</em>) – Log Likelihood (as used in Minitab and Reliasoft)</p></li>
+<li><p><strong>AICc</strong> (<em>float</em>) – Akaike Information Criterion</p></li>
+<li><p><strong>BIC</strong> (<em>float</em>) – Bayesian Information Criterion</p></li>
+<li><p><strong>a_SE</strong> (<em>float</em>) – The standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>n_SE</strong> (<em>float</em>) – The standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>beta_SE</strong> (<em>float</em>) – The standard error (sqrt(variance)) of the parameter</p></li>
+<li><p><strong>a_upper</strong> (<em>float</em>) – The upper CI estimate of the parameter</p></li>
+<li><p><strong>a_lower</strong> (<em>float</em>) – The lower CI estimate of the parameter</p></li>
+<li><p><strong>n_upper</strong> (<em>float</em>) – The upper CI estimate of the parameter</p></li>
+<li><p><strong>n_lower</strong> (<em>float</em>) – The lower CI estimate of the parameter</p></li>
+<li><p><strong>beta_upper</strong> (<em>float</em>) – The upper CI estimate of the parameter</p></li>
+<li><p><strong>beta_lower</strong> (<em>float</em>) – The lower CI estimate of the parameter</p></li>
+<li><p><strong>results</strong> (<em>dataframe</em>) – A dataframe of the results (point estimate, standard error, Lower CI and
+Upper CI for each parameter)</p></li>
+<li><p><strong>goodness_of_fit</strong> (<em>dataframe</em>) – A dataframe of the goodness of fit criterion (Log-likelihood, AICc, BIC)</p></li>
+<li><p><strong>change_of_parameters</strong> (<em>dataframe</em>) – A dataframe showing the change of the parameters (alpha and beta) at
+each stress level.</p></li>
+<li><p><strong>mean_life</strong> (<em>float</em>) – The mean life at the use_level_stress (only provided if use_level_stress
+is provided).</p></li>
+<li><p><strong>alpha_at_use_stress</strong> (<em>float</em>) – The equivalent Weibull alpha parameter at the use level stress (only
+provided if use_level_stress is provided).</p></li>
+<li><p><strong>distribution_at_use_stress</strong> (<em>object</em>) – The Weibull distribution at the use level stress (only provided if
+use_level_stress is provided).</p></li>
+<li><p><strong>probability_plot</strong> (<em>object</em>) – The figure object from the probability plot (only provided if
+show_probability_plot is True).</p></li>
+<li><p><strong>life_stress_plot</strong> (<em>object</em>) – The figure object from the life-stress plot (only provided if
+show_life_stress_plot is True).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.ALT_fitters.Fit_Weibull_Power.LL">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_rc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.ALT_fitters.Fit_Weibull_Power.LL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.ALT_fitters.Fit_Weibull_Power.logR">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.ALT_fitters.Fit_Weibull_Power.logR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability.ALT_fitters.Fit_Weibull_Power.logf">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.ALT_fitters.Fit_Weibull_Power.logf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,34 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="similar-distributions">
+<h1>Similar Distributions<a class="headerlink" href="#similar-distributions" title="Link to this heading"></a></h1>
+<p>The function <cite>similar_distributions</cite> is a tool for finding the probability distributions that are most similar to an input distribution.
+It samples the CDF of an input distribution and then fits all other distributions to those samples to determine the best fitting and therefore most similar distributions.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Other_functions/similar_distributions.html">API reference</a>.</p>
+</div>
+<p>In the example below, we create a Weibull Distribution object using the reliability.Distributions module. We then provide the Weibull Distribution as input to <cite>similar_distributions</cite> and the output reveals the top 3 most similar distributions. The optional input of include_location_shifted has been set to False.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">similar_distributions</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mf">3.3</span><span class="p">)</span>
+<span class="n">similar_distributions</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span><span class="n">include_location_shifted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from similar_distributions:</span>
+<span class="sd">The input distribution was:</span>
+<span class="sd">Weibull Distribution (α=50,β=3.3)</span>
+
+<span class="sd">The top 3 most similar distributions are:</span>
+<span class="sd">Normal Distribution (μ=44.8471,σ=14.9226)</span>
+<span class="sd">Gamma Distribution (α=5.7607,β=7.785)</span>
+<span class="sd">Loglogistic Distribution (α=43.465,β=4.7564)</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/similar_distributions_V5.png" src="_images/similar_distributions_V5.png"/>
+</section>
+</div>
+</div>

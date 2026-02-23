@@ -1,0 +1,56 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="probability-probability-plots">
+<h1>Probability-Probability plots<a class="headerlink" href="#probability-probability-plots" title="Link to this heading"></a></h1>
+<p>This section contains two different styles of probability-probability (PP) plots. These are the fully parametric probability-probability plot (<cite>reliability.Probability_plotting.PP_plot_parametric</cite>) and the semi-parametric probability-probability plot (<cite>reliability.Probability_plotting.PP_plot_semiparametric</cite>). These will be described separately below. A PP plot is made by plotting the fraction failing (CDF) of one distribution vs the fraction failing (CDF) of another distribution. In the semiparametric form, when we only have the failure data and one hypothesised distribution, the CDF for the data can be obtained non-parametrically to generate an empirical CDF.</p>
+<section id="parametric-probability-probability-plot">
+<h2>Parametric Probability-Probability plot<a class="headerlink" href="#parametric-probability-probability-plot" title="Link to this heading"></a></h2>
+<p>To generate this plot we simply plot the CDF of one distribution vs the CDF of another distribution. If the distributions are very similar, the points will lie on the 45 degree diagonal. Any deviation from this diagonal indicates that one distribution is leading or lagging the other. Fully parametric PP plots are rarely used as their utility is limited to providing a graphical comparison of the similarity between two CDFs. To aide this comparison, the PP_plot_parametric function accepts x and y quantile lines that will be traced across to the other distribution.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Probability_plotting/PP_plot_parametric.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the example below, we generate two parametric distributions and compare them using a PP plot. We are interested in the differences at specific quantiles so these are specified and the plot traces them across to the opposing distribution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">PP_plot_parametric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span><span class="p">,</span><span class="n">Normal_Distribution</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">Field</span> <span class="o">=</span> <span class="n">Normal_Distribution</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">Lab</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">PP_plot_parametric</span><span class="p">(</span><span class="n">X_dist</span><span class="o">=</span><span class="n">Field</span><span class="p">,</span> <span class="n">Y_dist</span><span class="o">=</span><span class="n">Lab</span><span class="p">,</span> <span class="n">x_quantile_lines</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span> <span class="n">y_quantile_lines</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/PPparametric2.png" src="_images/PPparametric2.png"/>
+</section>
+<section id="semiparametric-probability-probability-plot">
+<h2>Semiparametric Probability-Probability plot<a class="headerlink" href="#semiparametric-probability-probability-plot" title="Link to this heading"></a></h2>
+<p>A semiparametric PP plot is still a probability-probability plot, but since we only have one parametric distribution to give us the CDF, we must use the failure data to obtain the non-parametric estimate of the empirical CDF. To create a semiparametric PP plot, we must provide the failure data and the non-parametric method (‘KM’,’NA’,’RA’ for Kaplan-Meier, Nelson-Aalen, and Rank Adjustment respectively) to estimate the empirical CDF, and we must also provide the parametric distribution for the parametric CDF. The failure units (times, cycles, rounds fired, strength units, etc.) are the limiting values here so the parametric CDF is only calculated at the failure units since that is the result we get from the empirical CDF. Note that the empirical CDF also accepts X_data_right_censored just as KaplanMeier, NelsonAalen and RankAdjustment will also accept right censored data. If the fitted distribution is a good fit the PP plot will follow the 45 degree diagonal line. Assessing goodness of fit in a graphical way is the main purpose of this type of plot. The <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Fitting%20all%20available%20distributions%20to%20data.html">Fit_everything</a> function also uses a semiparametric PP plot to show the goodness of fit in a graphical way.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Probability_plotting/PP_plot_semiparametric.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In the example below, we create 100 random samples from a Weibull distribution. We hypothesise that a Normal distribution may fit this data well so we fit the Normal distribution and then plot the CDF of the fitted distribution against the empirical CDF (obtained using the Kaplan-Meier estimate). We see that the plot follows the 45 degree diagonal quite well so we may consider that the fitted Normal distribution is reasonably good at describing this data. Ideally, this comparison should be made against other distributions as well and the graphical results are often hard to tell apart which is why we often use quantitative goodness of fit measures like AICc and BIC.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">PP_plot_semiparametric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Normal_2P</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Fit_Normal_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">distribution</span>
+<span class="n">PP_plot_semiparametric</span><span class="p">(</span><span class="n">X_data_failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">Y_dist</span><span class="o">=</span><span class="n">dist</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/PPsemiparametric2.png" src="_images/PPsemiparametric2.png"/>
+<p>To see how semiparametric PP plots compare with semiparametric QQ plots as a graphical goodness of fit test, please see the second example in the section on <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Quantile-Quantile%20plots.html#comparing-pp-plots-with-qq-plots">comparing PP plots with QQ plots</a>.</p>
+</section>
+</section>
+</div>
+</div>

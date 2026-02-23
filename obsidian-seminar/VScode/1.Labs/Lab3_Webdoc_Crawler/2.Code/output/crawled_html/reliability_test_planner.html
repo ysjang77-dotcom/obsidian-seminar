@@ -1,0 +1,69 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="reliability-test-planner">
+<h1>reliability_test_planner<a class="headerlink" href="#reliability-test-planner" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.reliability_test_planner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">reliability_test_planner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MTBF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_sided</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_terminated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.reliability_test_planner" title="Link to this definition"></a></dt>
+<dd><p>The function reliability_test_planner is used to solves for unknown test
+planning variables, given known variables. The Chi-squared distribution is
+used to find the lower confidence bound on MTBF for a given test duration,
+number of failures, and specified confidence interval.</p>
+<p>The function will solve for any of the 4 variables, given the other 3. For
+example, you may want to know how many failures you are allowed to have in a
+given test duration to achieve a particular MTBF. The user must specify any
+3 out of the 4 variables (not including one_sided, print_results, or
+time_terminated) and the remaining variable will be calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MTBF</strong> (<em>float, int, optional</em>) – Mean Time Between Failures. This is the lower confidence bound on the
+MTBF. Units given in same units as the test_duration.</p></li>
+<li><p><strong>number_of_failures</strong> (<em>int, optional</em>) – The number of failures recorded (or allowed) to achieve the MTBF. Must
+be &gt;= 0.</p></li>
+<li><p><strong>test_duration</strong> (<em>float, int, optional</em>) – The amount of time on test required (or performed) to achieve the MTBF.
+May also be distance, rounds fires, cycles, etc. Units given in same
+units as MTBF.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence interval at which the lower confidence bound on the MTBF
+is given. Must be between 0.5 and 1. For example, specify 0.95 for 95%
+confidence interval.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed. Default = True.</p></li>
+<li><p><strong>one_sided</strong> (<em>bool, optional</em>) – Use True for one-sided confidence interval and False for two-sided
+confidence interval. Default = True.</p></li>
+<li><p><strong>time_terminated</strong> (<em>bool, optional</em>) – Use True for time-terminated test and False for failure-terminated test.
+Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>MTBF</strong> (<em>float</em>) – The lower bound on the MTBF.</p></li>
+<li><p><strong>number_of_failures</strong> (<em>int</em>) – The number of failures allowed to achieve the MTBF at the specified CI
+and test_duration</p></li>
+<li><p><strong>test_duration</strong> (<em>float</em>) – The required test duration</p></li>
+<li><p><strong>CI</strong> (<em>float</em>) – The confidence interval.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Please see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Reliability%20test%20planner.html">documentation</a>
+for more detail on the equations used.</p>
+<p>The returned values will match the input values with the exception of the
+input that was not provided.</p>
+<p>The following example demonstrates how the MTBF is calculated:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_test_planner</span>
+<span class="n">reliability_test_planner</span><span class="p">(</span><span class="n">test_duration</span><span class="o">=</span><span class="mi">19520</span><span class="p">,</span> <span class="n">CI</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">number_of_failures</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Reliability</span> <span class="n">Test</span> <span class="n">Planner</span> <span class="n">results</span> <span class="k">for</span> <span class="n">time</span><span class="o">-</span><span class="n">terminated</span> <span class="n">test</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Solving</span> <span class="k">for</span> <span class="n">MTBF</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Test</span> <span class="n">duration</span><span class="p">:</span> <span class="mi">19520</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">MTBF</span> <span class="p">(</span><span class="n">lower</span> <span class="n">confidence</span> <span class="n">bound</span><span class="p">):</span> <span class="mf">1907.6398111904953</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">failures</span><span class="p">:</span> <span class="mi">7</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Confidence</span> <span class="n">interval</span> <span class="p">(</span><span class="mi">2</span> <span class="n">sided</span><span class="p">):</span><span class="mf">0.8</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

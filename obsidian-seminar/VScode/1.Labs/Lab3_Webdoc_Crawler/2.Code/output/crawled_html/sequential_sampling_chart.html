@@ -1,0 +1,61 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="sequential-sampling-chart">
+<h1>sequential_sampling_chart<a class="headerlink" href="#sequential-sampling-chart" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.sequential_sampling_chart">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">sequential_sampling_chart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.sequential_sampling_chart" title="Link to this definition"></a></dt>
+<dd><p>This function plots the accept/reject boundaries for a given set of quality
+and risk levels. If supplied, the test results are also plotted on the
+chart.</p>
+<p>A sequential sampling chart provides decision boundaries so that a
+success/failure test may be stopped as soon as there have been enough
+successes or enough failures to exceed the decision boundary. The decision
+boundary is calculated based on four parameters; producer’s quality,
+consumer’s quality, producer’s risk, and consumer’s risk. Producer’s risk
+is the chance that the consumer rejects a batch when they should have
+accepted it. Consumer’s risk is the chance that the consumer accepts a batch
+when they should have rejected it. We can also consider the producer’s and
+consumer’s quality to be the desired reliability of the sample, and the
+producer’s and consumer’s risk to be 1-confidence interval that the sample
+test result matches the population test result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<em>float</em>) – The producer’s quality. This is the acceptable failure rate for the
+producer. Must be between 0 and 1 but is usually very small, typically
+around 0.01.</p></li>
+<li><p><strong>p2</strong> (<em>float</em>) – The consumer’s quality. This is the acceptable failure rate for the
+consumer. Must be between 0 and 1 but is usually very small, typically
+around 0.1.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – The producer’s risk. The probability of accepting a batch when it should
+have been rejected. Producer’s CI = 1-alpha. Must be between 0 and 1 but
+is usually very small, typically 0.05.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The consumer’s risk. The probability of the consumer rejecting a batch
+when it should have been accepted. Consumer’s CI = 1-beta. Must be
+between 0 and 1 but is usually very small, typically 0.1.</p></li>
+<li><p><strong>test_results</strong> (<em>array, list, optional</em>) – The binary test results. eg. [0,0,0,1] represents 3 successes and 1
+failure. Default=None. Use 0 for success and 1 for failure as this test
+is counting the number of failures.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True the plot will be produced. Default = True.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed to the console. Default = True.</p></li>
+<li><p><strong>max_samples</strong> (<em>int, optional</em>) – The upper x-limit of the plot. Default = 100.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> (<em>dataframe</em>) – A dataframe of tabulated decision results with the columns “Samples”,
+“Failures to accept”, “Failures to reject”. This is independent of the
+test_results provided.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If show_plot is True, the sequential sampling chart with decision boundaries
+will be produced. The test_results are only plotted on the chart if provided
+as an input. The chart will display automatically so plt.show() is not
+required.</p>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,38 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="sample-size-no-failures">
+<h1>sample_size_no_failures<a class="headerlink" href="#sample-size-no-failures" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.sample_size_no_failures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">sample_size_no_failures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reliability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lifetimes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weibull_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.sample_size_no_failures" title="Link to this definition"></a></dt>
+<dd><p>This is used to determine the sample size required for a test in which no
+failures are expected, and the desired outcome is the lower bound on the
+reliability based on the sample size and desired confidence interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reliability</strong> (<em>float</em>) – The lower bound on product reliability. Must be between 0 and 1.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The confidence interval of the result. Must be between 0.5 and 1 since
+a confidence less than 50% is not meaningful. Default = 0.95 for 95% CI.</p></li>
+<li><p><strong>lifetimes</strong> (<em>int, float, optional</em>) – If testing the product for multiple lifetimes then more failures are
+expected so a smaller sample size will be required to demonstrate the
+desired reliability (assuming no failures). Conversely, if testing for
+less than one full lifetime then a larger sample size will be required.
+Default = 1. Must be greater than 0. No more than 5 is recommended due
+to test feasibility.</p></li>
+<li><p><strong>weibull_shape</strong> (<em>int, float, optional</em>) – If the weibull shape (beta) of the failure mode is known, specify it
+here. Otherwise leave the default of 1 for the exponential distribution.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed to the console. Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>n</strong> (<em>int</em>) – The number of items required in the test. This will always be an integer
+(rounded up).</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

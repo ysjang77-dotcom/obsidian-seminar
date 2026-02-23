@@ -1,0 +1,7 @@
+streamlit
+langchain
+langchain-google-genai
+pandas
+openpyxl
+reliability
+matplotlib

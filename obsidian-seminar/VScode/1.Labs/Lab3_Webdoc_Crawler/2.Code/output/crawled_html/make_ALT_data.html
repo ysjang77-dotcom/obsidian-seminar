@@ -1,0 +1,68 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="make-alt-data">
+<h1>make_ALT_data<a class="headerlink" href="#make-alt-data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Other_functions.make_ALT_data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Other_functions.</span></span><span class="sig-name descname"><span class="pre">make_ALT_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">life_stress_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_level_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Other_functions.make_ALT_data" title="Link to this definition"></a></dt>
+<dd><p>Generates Accelerated Life Test (ALT) data based on model parameters. This
+function is primarily used when testing the functions in ALT_fitters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>str</em>) – Must be either “Weibull”, “Exponential”, “Lognormal”, or “Normal”.</p></li>
+<li><p><strong>life_stress_model</strong> (<em>str</em>) – Must be either “Exponential”, “Eyring”, “Power”, “Dual_Exponential”,
+“Power_Exponential”, or “Dual_Power”</p></li>
+<li><p><strong>stress_1</strong> (<em>array, list</em>) – The stresses for the ALT data. eg. [100,50,10].</p></li>
+<li><p><strong>stress_2</strong> (<em>array, list</em>) – The stresses for the ALT data. eg. [0.8,0.6,0.4]. Required only if using
+a dual stress model. Must match the length of stress_1.</p></li>
+<li><p><strong>a</strong> (<em>float, int</em>) – Parameter from all models.</p></li>
+<li><p><strong>b</strong> (<em>float, int, optional</em>) – Parameter from Exponential and Dual_Exponential models.</p></li>
+<li><p><strong>c</strong> (<em>float, int, optional</em>) – Parameter from Eyring, Dual_Exponential, Power_Exponential, and
+Dual_Power models.</p></li>
+<li><p><strong>n</strong> (<em>float, int, optional</em>) – Parameter from Power, Power_Exponential, and Dual_Power models.</p></li>
+<li><p><strong>m</strong> (<em>float, int, optional</em>) – Parameter from Dual_Power model.</p></li>
+<li><p><strong>beta</strong> (<em>float, int, optional</em>) – Shape parameter for Weibull distribution.</p></li>
+<li><p><strong>sigma</strong> (<em>float, int, optional</em>) – Shape parameter for Normal or Lognormal distributions.</p></li>
+<li><p><strong>use_level_stress</strong> (<em>float, int, list, array, optional</em>) – A float or int (if single stress) or a list or array (if dual stress).
+Optional input. Default = None.</p></li>
+<li><p><strong>number_of_samples</strong> (<em>int, optional</em>) – The number of samples to generate for each stress. Default = 100. The
+total data points will be equal to the number of samples x number of
+stress levels</p></li>
+<li><p><strong>fraction_censored</strong> (<em>int, float, optional</em>) – Use 0 for no censoring or specify a float between 0 and 1 for right
+censoring. Censoring is “multiply censored” meaning that there is no
+threshold above which all the right censored values will occur. Default
+= 0.5.</p></li>
+<li><p><strong>seed</strong> (<em>int, optional</em>) – The random seed for repeatability. Default = None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>failures</strong> (<em>list</em>) – The failure data.</p></li>
+<li><p><strong>failure_stresses</strong> (<em>list</em>) – The failure stresses that are paired with the failure data. Only
+provided if using a single stress model.</p></li>
+<li><p><strong>failure_stresses_1</strong> (<em>list</em>) – The failure stresses for stress_1 that are paired with the failure data.
+Only provided if using a dual stress model.</p></li>
+<li><p><strong>failure_stresses_2</strong> (<em>list</em>) – The failure stresses for stress_2 that are paired with the failure data.
+Only provided if using a dual stress model.</p></li>
+<li><p><strong>right_censored</strong> (<em>list</em>) – The right censored data. This is only provided if fraction_censored &gt; 0.</p></li>
+<li><p><strong>right_censored_stresses</strong> (<em>list</em>) – The failure stresses that are paired with the right censored data. This
+is only provided if fraction_censored &gt; 0. Only provided if using a
+single stress model.</p></li>
+<li><p><strong>right_censored_stresses_1</strong> (<em>list</em>) – The failure stresses that are paired with the right censored data. This
+is only provided if fraction_censored &gt; 0. Only provided if using a
+dual stress model.</p></li>
+<li><p><strong>right_censored_stresses_2</strong> (<em>list</em>) – The failure stresses that are paired with the right censored data. This
+is only provided if fraction_censored &gt; 0. Only provided if using a
+dual stress model.</p></li>
+<li><p><strong>mean_life_at_use_stress</strong> (<em>float</em>) – This is only provided if use_level_stress is provided.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

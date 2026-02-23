@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Lab 3] 신뢰성 분석을 위한 AI 기반 웹 문서 크롤러 개발 실습</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="lab-3-신뢰성-분석을-위한-ai-기반-웹-문서-크롤러-개발-실습">[Lab 3] 신뢰성 분석을 위한 AI 기반 웹 문서 크롤러 개발 실습</h1>
+<h2 id="프로젝트-개요">1. 프로젝트 개요</h2>
+<p>본 실습은 신뢰성 공학 분야의 전문가들이 AI 기술을 활용하여 어떻게 연구 및 업무 효율성을 높일 수 있는지 체험하는 것을 목표로 합니다. Python이나 프로그래밍에 익숙하지 않은 분들을 위해, **생성형 AI(Generative AI)**를 활용하여 웹에 흩어져 있는 기술 문서를 수집하고, 이를 하나의 통합된 문서로 만드는 자동화된 '웹 크롤러’를 개발하는 전 과정을 상세히 안내합니다.</p>
+<p>이 과정을 통해 수작업으로 문서를 복사하고 붙여넣는 번거로움을 해결하고, AI 에이전트에게 명확한 지시(프롬프트)를 통해 어떻게 원하는 소프트웨어를 만들 수 있는지 학습하게 됩니다.</p>
+<h3 id="최종-목표">최종 목표</h3>
+<blockquote>
+<p>특정 웹사이트(신뢰성 공학 라이브러리 기술 문서)의 모든 하위 페이지를 자동으로 방문하여 내용을 수집하고, 오프라인에서 쉽게 검색하고 읽을 수 있는 단일 마크다운(Markdown) 파일로 만드는 것입니다.</p>
+</blockquote>
+<h2 id="ai를-활용한-전체-개발-프로세스">2. AI를 활용한 전체 개발 프로세스</h2>
+<p>본 프로젝트는 사람이 직접 코드를 한 줄씩 작성하는 대신, AI에게 명확한 요구사항을 전달하여 코드를 생성하도록 하는 방식으로 진행되었습니다. 전체 프로세스는 다음과 같은 흐름을 가집니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-IG7A4cZ6NQ0CZJBA" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1619.9765625" style="max-width: 284.09375px;" viewBox="0 0 284.09375 1619.9765625"><style>#mermaid-svg-IG7A4cZ6NQ0CZJBA{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .error-icon{fill:#552222;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .marker{fill:#666;stroke:#666;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .marker.cross{stroke:#666;}#mermaid-svg-IG7A4cZ6NQ0CZJBA svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .cluster-label text{fill:#333;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .cluster-label span{color:#333;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .label text,#mermaid-svg-IG7A4cZ6NQ0CZJBA span{fill:#000000;color:#000000;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .node rect,#mermaid-svg-IG7A4cZ6NQ0CZJBA .node circle,#mermaid-svg-IG7A4cZ6NQ0CZJBA .node ellipse,#mermaid-svg-IG7A4cZ6NQ0CZJBA .node polygon,#mermaid-svg-IG7A4cZ6NQ0CZJBA .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .node .label{text-align:center;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .node.clickable{cursor:pointer;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .arrowheadPath{fill:#333333;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .cluster text{fill:#333;}#mermaid-svg-IG7A4cZ6NQ0CZJBA .cluster span{color:#333;}#mermaid-svg-IG7A4cZ6NQ0CZJBA div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-IG7A4cZ6NQ0CZJBA:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-IG7A4cZ6NQ0CZJBA flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"><g class="cluster" id="flowchart-subGraph3-1302" style="opacity: 1;" transform="translate(142.046875,1563.6171875)"><rect width="229.484375" height="96.71875" x="-114.7421875" y="-48.359375"></rect><g class="label" transform="translate(0, -34.359375)" id="mermaid-svg-IG7A4cZ6NQ0CZJBAText"><g transform="translate(-24.265625,-13.359375)"><foreignObject width="48.53125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. 결과</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph2-1303" style="opacity: 1;" transform="translate(142.046875,1089.0617218017578)"><rect width="268.09375" height="752.3921813964844" x="-134.046875" y="-376.1960906982422"></rect><g class="label" transform="translate(0, -362.1960754394531)" id="mermaid-svg-IG7A4cZ6NQ0CZJBAText"><g transform="translate(-73.25,-13.359375)"><foreignObject width="146.5" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. 자동화된 실행 과정</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph1-1304" style="opacity: 1;" transform="translate(142.046875,566.1468811035156)"><rect width="215.953125" height="193.4375" x="-107.9765625" y="-96.71875"></rect><g class="label" transform="translate(0, -82.71875)" id="mermaid-svg-IG7A4cZ6NQ0CZJBAText"><g transform="translate(-85.4296875,-13.359375)"><foreignObject width="170.859375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">2. 코드 생성 및 실행 준비</div></foreignObject></g></g></g><g class="cluster" id="flowchart-subGraph0-1305" style="opacity: 1;" transform="translate(142.046875,213.7140655517578)"><rect width="257.203125" height="411.4281311035156" x="-128.6015625" y="-205.7140655517578"></rect><g class="label" transform="translate(0, -191.7140655517578)" id="mermaid-svg-IG7A4cZ6NQ0CZJBAText"><g transform="translate(-98.25,-13.359375)"><foreignObject width="196.5" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. 기획 및 설계 (AI와의 소통)</div></foreignObject></g></g></g></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M142.046875,79.71875L142.046875,104.71875L142.546875,130.21875305175786" marker-end="url(https://stackedit.io/app#arrowhead161)" style="fill:none"></path><defs><marker id="arrowhead161" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M142.546875,298.2093719482423L142.046875,322.7093811035156L142.046875,347.7093811035156" marker-end="url(https://stackedit.io/app#arrowhead162)" style="fill:none"></path><defs><marker id="arrowhead162" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M142.046875,394.4281311035156L142.046875,419.4281311035156L142.046875,444.4281311035156L142.046875,469.4281311035156L142.046875,494.4281311035156" marker-end="url(https://stackedit.io/app#arrowhead163)" style="fill:none"></path><defs><marker id="arrowhead163" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-E" style="opacity: 1;" id="L-D-E"><path class="path" d="M142.046875,541.1468811035156L142.046875,566.1468811035156L142.046875,591.1468811035156" marker-end="url(https://stackedit.io/app#arrowhead164)" style="fill:none"></path><defs><marker id="arrowhead164" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E LE-F" style="opacity: 1;" id="L-E-F"><path class="path" d="M142.046875,637.8656311035156L142.046875,662.8656311035156L142.046875,687.8656311035156L142.046875,712.8656311035156L142.046875,737.8656311035156" marker-end="url(https://stackedit.io/app#arrowhead165)" style="fill:none"></path><defs><marker id="arrowhead165" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" style="opacity: 1;" id="L-F-G"><path class="path" d="M142.046875,784.5843811035156L142.046875,809.5843811035156L142.54687500000003,835.0843841552735" marker-end="url(https://stackedit.io/app#arrowhead166)" style="fill:none"></path><defs><marker id="arrowhead166" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-G LE-H" style="opacity: 1;" id="L-G-H"><path class="path" d="M142.54687500000003,1007.4062530517581L142.046875,1031.90625L142.046875,1056.90625" marker-end="url(https://stackedit.io/app#arrowhead167)" style="fill:none"></path><defs><marker id="arrowhead167" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-H LE-I" style="opacity: 1;" id="L-H-I"><path class="path" d="M142.046875,1103.625L142.046875,1128.625L142.546875,1154.125" marker-end="url(https://stackedit.io/app#arrowhead168)" style="fill:none"></path><defs><marker id="arrowhead168" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-I LE-J" style="opacity: 1;" id="L-I-J"><path class="path" d="M142.546875,1344.0390625L142.046875,1368.5390625L142.046875,1393.5390625" marker-end="url(https://stackedit.io/app#arrowhead169)" style="fill:none"></path><defs><marker id="arrowhead169" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-J LE-K" style="opacity: 1;" id="L-J-K"><path class="path" d="M142.046875,1440.2578125L142.046875,1465.2578125L142.046875,1490.2578125L142.046875,1515.2578125L142.046875,1540.2578125" marker-end="url(https://stackedit.io/app#arrowhead170)" style="fill:none"></path><defs><marker id="arrowhead170" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-E" class="edgeLabel L-LS-D' L-LE-E"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E-F" class="edgeLabel L-LS-E' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-G-H" class="edgeLabel L-LS-G' L-LE-H"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-H-I" class="edgeLabel L-LS-H' L-LE-I"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-I-J" class="edgeLabel L-LS-I' L-LE-J"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-J-K" class="edgeLabel L-LS-J' L-LE-K"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-K-1290" transform="translate(142.046875,1563.6171875)"><rect rx="0" ry="0" x="-79.7421875" y="-23.359375" width="159.484375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-69.7421875,-13.359375)"><foreignObject width="139.484375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">✅ 최종 산출물 확인</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-F-1280" transform="translate(142.046875,761.2250061035156)"><rect rx="0" ry="0" x="-69.96875" y="-23.359375" width="139.9375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-59.96875,-13.359375)"><foreignObject width="119.9375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">▶️ 스크립트 실행</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-G-1282" transform="translate(142.046875,920.7453155517578)"><polygon points="86.1609375,0 172.321875,-86.1609375 86.1609375,-172.321875 0,-86.1609375" transform="translate(-86.1609375,86.1609375)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-62.375,-13.359375)"><foreignObject width="124.75" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">🌐 웹 크롤링 시작</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-H-1284" transform="translate(142.046875,1080.265625)"><rect rx="0" ry="0" x="-99.046875" y="-23.359375" width="198.09375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-89.046875,-13.359375)"><foreignObject width="178.09375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">📄 HTML 페이지 다운로드</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-I-1286" transform="translate(142.046875,1248.58203125)"><polygon points="94.95703125,0 189.9140625,-94.95703125 94.95703125,-189.9140625 0,-94.95703125" transform="translate(-94.95703125,94.95703125)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-72.1484375,-13.359375)"><foreignObject width="144.296875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">🧩 내용 파싱 및 변환</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-J-1288" transform="translate(142.046875,1416.8984375)"><rect rx="0" ry="0" x="-79.7421875" y="-23.359375" width="159.484375" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-69.7421875,-13.359375)"><foreignObject width="139.484375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">💾 통합 문서로 저장</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-1276" transform="translate(142.046875,517.7875061035156)"><rect rx="5" ry="5" x="-72.9765625" y="-23.359375" width="145.953125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-62.9765625,-13.359375)"><foreignObject width="125.953125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">(👨‍💻 AI, 코드 생성)</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E-1278" transform="translate(142.046875,614.5062561035156)"><rect rx="0" ry="0" x="-72.375" y="-23.359375" width="144.75" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-62.375,-13.359375)"><foreignObject width="124.75" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">🛠️ 개발 환경 설정</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-A-1271" transform="translate(142.046875,56.359375)"><rect rx="0" ry="0" x="-87.1015625" y="-23.359375" width="174.203125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-77.1015625,-13.359375)"><foreignObject width="154.203125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">🎯 프로젝트 목표 설정</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-1272" transform="translate(142.046875,213.7140655517578)"><polygon points="83.9953125,0 167.990625,-83.9953125 83.9953125,-167.990625 0,-83.9953125" transform="translate(-83.9953125,83.9953125)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-59.96875,-13.359375)"><foreignObject width="119.9375" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">📝 프롬프트 설계</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-1274" transform="translate(142.046875,371.0687561035156)"><rect rx="0" ry="0" x="-93.6015625" y="-23.359375" width="187.203125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-83.6015625,-13.359375)"><foreignObject width="167.203125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">🤖 AI에게 프롬프트 전달</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<hr>
+<h2 id="단계별-상세-개발-과정">3. 단계별 상세 개발 과정</h2>
+<h3 id="단계-ai-요구사항-정의-프롬프트-엔지니어링">1단계: AI 요구사항 정의 (프롬프트 엔지니어링)</h3>
+<p>AI가 우리가 원하는 코드를 정확히 생성하도록 만들기 위해, '프롬프트’라는 명확하고 구조화된 요구사항 명세서를 작성했습니다. 이 과정은 좋은 소프트웨어를 만들기 위한 가장 중요한 첫 단계입니다.</p>
+<ul>
+<li><strong>파일 위치</strong>: <code>1.Prompt/</code></li>
+<li><strong>핵심 내용</strong>:
+<ol>
+<li><strong>역할 부여(Persona)</strong>: AI에게 '숙련된 Python 자동화 엔지니어’의 역할을 부여하여 전문가 수준의 코드를 생성하도록 유도했습니다.</li>
+<li><strong>명확한 목표 설정</strong>: "웹페이지들을 크롤링하여 하나의 마크다운 파일로 통합"이라는 구체적인 목표를 제시했습니다.</li>
+<li><strong>상세 실행 계획</strong>:
+<ul>
+<li>최종 결과물이 저장될 폴더 구조(<code>output/crawled_html</code>, <code>output/integrated_documentation.md</code> 등)를 명시했습니다.</li>
+<li>필요한 Python 라이브러리(<code>requests</code>, <code>beautifulsoup4</code>, <code>html2text</code>)를 지정했습니다.</li>
+<li>코드가 수행해야 할 기능을 함수 단위로 나누어(모듈화), 각 함수가 어떤 역할을 해야 하는지 상세히 설명했습니다. (예: 링크 추출 함수, 페이지 처리 함수)</li>
+<li>실행 기록을 남기는 ‘로깅(Logging)’ 기능과 오류가 발생해도 멈추지 않도록 하는 ‘예외 처리(Error Handling)’ 기능을 필수로 포함하도록 지시했습니다.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p><strong>[for Reliability Experts]</strong><br>
+프롬프트 엔지니어링은 마치 신뢰성 시험 계획을 수립하는 것과 같습니다. 시험 목적, 조건, 절차, 그리고 예상 결과물을 명확히 정의해야 원하는 데이터를 얻을 수 있듯, AI에게도 목표와 절차를 명확히 정의해주어야 원하는 소프트웨어를 얻을 수 있습니다.</p>
+</blockquote>
+<h3 id="단계-개발-환경-설정">2단계: 개발 환경 설정</h3>
+<p>AI가 생성한 Python 스크립트를 실행하기 위해 필요한 라이브러리들을 설치하는 과정입니다.</p>
+<ol>
+<li>
+<p><strong>가상 환경 생성</strong>: 내 컴퓨터의 다른 Python 프로젝트와 충돌하지 않도록, 이 프로젝트만을 위한 독립된 실행 환경을 만듭니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># 'venv'라는 이름의 가상 환경 폴더 생성</span>
+python -m venv venv
+</code></pre>
+</li>
+<li>
+<p><strong>가상 환경 활성화</strong>: 생성된 가상 환경에 진입합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># Windows</span>
+.\venv\Scripts\activate
+
+<span class="token comment"># macOS / Linux</span>
+<span class="token function">source</span> venv/bin/activate
+</code></pre>
+</li>
+<li>
+<p><strong>필요 라이브러리 설치</strong>: <code>requirements.txt</code> 파일은 이 프로젝트에 필요한 모든 라이브러리 목록을 담고 있습니다. 아래 명령어로 한 번에 설치할 수 있습니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">pip <span class="token function">install</span> -r 2.Code/requirements.txt
+</code></pre>
+<ul>
+<li><strong><code>requests</code></strong>: 웹사이트에 접속하여 HTML 문서를 가져오는 역할을 합니다. (HTTP 통신 라이브러리)</li>
+<li><strong><code>beautifulsoup4</code></strong>: 가져온 HTML 문서의 구조를 분석하여 우리가 원하는 정보(예: 제목, 본문, 링크)를 쉽게 추출할 수 있도록 도와줍니다. (HTML 파서)</li>
+<li><strong><code>html2text</code></strong>: HTML 태그들을 깔끔한 마크다운 텍스트 형식으로 변환해주는 역할을 합니다.</li>
+</ul>
+</li>
+</ol>
+<h3 id="단계-ai-생성-코드-분석-webdoc_crawler_v1.py">3단계: AI 생성 코드 분석 (<code>webdoc_crawler_v1.py</code>)</h3>
+<p>AI가 생성한 핵심 코드의 구조와 동작 방식을 이해하는 단계입니다. 코드는 각 기능별로 잘 분리된 함수들로 구성되어 있습니다.</p>
+<ul>
+<li><strong>파일 위치</strong>: <code>2.Code/webdoc_crawler_v1.py</code></li>
+</ul>
+<h4 id="코드의-주요-구성-요소">코드의 주요 구성 요소:</h4>
+<ol>
+<li>
+<p><strong>설정 (Configuration)</strong></p>
+<ul>
+<li>스크립트 상단에는 <code>OUTPUT_DIR</code>, <code>LOG_FILE</code> 등 결과물이 저장될 위치나 파일명을 미리 정의해두어, 나중에 수정하기 쉽도록 만들었습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>setup_project_structure()</code> 함수</strong></p>
+<ul>
+<li>스크립트 실행 시 결과물을 저장할 <code>output</code> 폴더와 <code>output/crawled_html</code> 폴더가 없으면 자동으로 생성합니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>setup_logging()</code> 함수</strong></p>
+<ul>
+<li>스크립트의 모든 실행 과정을 터미널 화면과 <code>crawl_log.log</code> 파일에 동시에 기록하도록 설정합니다. 어떤 페이지를 수집 중인지, 오류는 없는지 쉽게 확인할 수 있습니다.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>extract_main_links(base_url)</code> 함수</strong></p>
+<ul>
+<li><strong>역할</strong>: 가장 먼저 실행되는 핵심 기능 중 하나입니다.</li>
+<li><strong>동작</strong>:
+<ol>
+<li>입력받은 시작 URL(<code>base_url</code>)에 접속합니다.</li>
+<li><code>BeautifulSoup</code>을 이용해 페이지의 모든 링크(<code>&lt;a&gt;</code> 태그)를 수집합니다.</li>
+<li>그중에서 우리가 원하는 내부 기술문서 링크(<code>.html</code>로 끝나는 링크)만 선별하여 목록으로 반환합니다.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>process_and_save_subpage(page_url)</code> 함수</strong></p>
+<ul>
+<li><strong>역할</strong>: <code>extract_main_links</code>에서 찾은 각 문서 링크를 처리합니다.</li>
+<li><strong>동작</strong>:
+<ol>
+<li>문서 URL에 접속하여 HTML 전체를 다운로드합니다.</li>
+<li><code>CONTENT_SELECTOR</code> 설정(<code>div[role='main']</code>)을 이용해 웹페이지의 광고, 메뉴 등 불필요한 부분을 제외하고 실제 본문 내용만 정확히 추출합니다.</li>
+<li>추출한 본문 HTML을 <code>output/crawled_html</code> 폴더에 백업용으로 저장합니다.</li>
+<li><code>html2text</code>를 사용해 HTML을 마크다운 텍스트로 변환하여 반환합니다.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>main()</code> 함수</strong></p>
+<ul>
+<li><strong>역할</strong>: 이 모든 과정을 순서대로 지휘하는 오케스트라의 지휘자입니다.</li>
+<li><strong>동작</strong>:
+<ol>
+<li>폴더 생성, 로깅 설정 등 사전 준비 작업을 합니다.</li>
+<li><code>extract_main_links</code>를 호출해 수집할 문서 목록을 가져옵니다.</li>
+<li>문서 목록을 하나씩 돌면서 <code>process_and_save_subpage</code>를 호출해 내용을 마크다운으로 변환합니다.</li>
+<li>변환된 모든 마크다운 내용을 하나로 합쳐 <code>integrated_documentation.md</code> 파일에 최종 저장합니다.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="단계-스크립트-실행-및-결과-확인">4단계: 스크립트 실행 및 결과 확인</h3>
+<p>이제 모든 준비가 끝났습니다. 아래 명령어를 통해 스크립트를 실행하여 웹 크롤링을 시작합니다.</p>
+<ol>
+<li>
+<p><strong>스크립트 실행</strong>:</p>
+<ul>
+<li>터미널에서 <code>2.Code</code> 폴더로 이동합니다.<pre class=" language-bash"><code class="prism  language-bash"><span class="token function">cd</span> 2.Code
+</code></pre>
+</li>
+<li>크롤링할 대상 URL을 인자로 넣어 스크립트를 실행합니다.<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># 예시: reliability 라이브러리의 index.html 페이지를 크롤링</span>
+python webdoc_crawler_v1.py https://reliability.readthedocs.io/en/latest/index.html
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>결과물 확인</strong>:</p>
+<ul>
+<li>실행이 완료되면 <code>2.Code/output/</code> 폴더에 다음과 같은 결과물들이 생성됩니다.
+<ul>
+<li><code>crawled_html/</code>: 각 웹페이지의 원본 HTML 본문이 개별 파일로 저장되어 있습니다.</li>
+<li><code>crawl_log.log</code>: 스크립트가 실행되면서 어떤 작업을 했는지, 오류는 없었는지 모든 기록이 담겨 있습니다.</li>
+<li><strong><code>integrated_documentation.md</code></strong>: <strong>최종 목표 산출물입니다.</strong> 모든 기술 문서가 이 하나의 파일에 통합되어 있어, 인터넷 연결 없이도 내용을 확인하고 검색할 수 있습니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="결론-및-고찰">4. 결론 및 고찰</h2>
+<p>본 실습을 통해 우리는 생성형 AI가 단순한 대화 상대를 넘어, 복잡한 요구사항을 이해하고 실제 동작하는 소프트웨어를 만들어내는 강력한 개발 도구임을 확인했습니다. 신뢰성 전문가들은 이제 코딩 기술을 깊이 있게 배우지 않더라도, 자신의 전문 분야 지식을 바탕으로 AI에게 명확한 지시를 내림으로써 데이터 수집, 분석, 리포팅 등 반복적인 업무를 자동화하는 프로그램을 만들 수 있습니다.</p>
+<p>앞으로는 여러분의 연구 및 업무 현장에서 마주치는 다양한 문제들을 'AI 에이전트에게 어떻게 지시하여 해결할 수 있을까?'라는 관점으로 바라보는 새로운 시각을 갖게 되기를 바랍니다.</p>
+</div>
+</body>
+
+</html>

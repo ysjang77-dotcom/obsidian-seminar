@@ -1,0 +1,34 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="stress-strength-normal">
+<h1>stress_strength_normal<a class="headerlink" href="#stress-strength-normal" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Other_functions.stress_strength_normal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Other_functions.</span></span><span class="sig-name descname"><span class="pre">stress_strength_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stress</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Other_functions.stress_strength_normal" title="Link to this definition"></a></dt>
+<dd><p>Given the probability distributions for stress and strength, this module
+will find the probability of failure due to stress-strength interference.
+Failure is defined as when stress&gt;strength. Uses the exact formula method
+which is only valid for two Normal Distributions. If you have distributions
+that are not both Normal Distributions, use the function stress_strength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stress</strong> (<em>object</em>) – A probability distribution from the Distributions module</p></li>
+<li><p><strong>strength</strong> (<em>object</em>) – A probability distribution from the Distributions module</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True the distribution plot will be shown. Default = True.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True, the results will be printed to console. Default = True.</p></li>
+<li><p><strong>warn</strong> (<em>bool, optional</em>) – A warning will be issued if the stress.mean &gt; strength.mean as the user
+may have assigned the distributions to the wrong variables. You can
+supress this using warn=False. Default = True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>probability_of_failure</strong> (<em>float</em>) – The probability of failure due to stress-strength interference</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

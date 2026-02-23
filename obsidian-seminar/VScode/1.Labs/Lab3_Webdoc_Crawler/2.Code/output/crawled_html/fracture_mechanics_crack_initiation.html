@@ -1,0 +1,77 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fracture-mechanics-crack-initiation">
+<h1>fracture_mechanics_crack_initiation<a class="headerlink" href="#fracture-mechanics-crack-initiation" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.fracture_mechanics_crack_initiation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">fracture_mechanics_crack_initiation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_stress_correction_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'modified_morrow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.fracture_mechanics_crack_initiation" title="Link to this definition"></a></dt>
+<dd><p>This function uses the material properties, the local cross sectional area,
+and force applied to the component to determine how many cycles until crack
+initiation (of a 1mm crack).</p>
+<p>Units should always be in MPa (and mm^2 for area). This function may be used
+for an un-notched or notched component. If the component is un-notched, the
+parameters q and Kt may be left as their default values of 1.</p>
+<p>While there are formulas to find the parameters q and Kt, these formulas
+have not been included here so that the function is reasonably generic to
+different materials and geometries. Resources for finding some of these
+parameters if they are not given to you:</p>
+<ul class="simple">
+<li><p>q = 1/(1+a/r) Where r is the notch radius of curvature (in mm), and a is 0.025*(2070/Su).</p></li>
+<li><p>Su is the ultimate strength in MPa. This only applies to high strength steels where Su&gt;550MPa.</p></li>
+<li><p>Kt can be calculated using the <a class="reference external" href="https://www.efatigue.com/constantamplitude/stressconcentration/">efatigue website</a>. This website will provide you with the appropriate Kt for your notched geometry.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<em>float, int</em>) – Force applied on the component [units of MPa].</p></li>
+<li><p><strong>A</strong> (<em>float, int</em>) – Cross sectional area of the component (at the point of crack initiation)
+[units of mm^2].</p></li>
+<li><p><strong>Sy</strong> (<em>float, int</em>) – Yield strength of the material [units of MPa].</p></li>
+<li><p><strong>E</strong> (<em>float, int</em>) – Elastic modulus (Young’s modulus) [units of MPa]</p></li>
+<li><p><strong>K</strong> (<em>float, int</em>) – Strength coefficient of the material</p></li>
+<li><p><strong>n</strong> (<em>float, int</em>) – Strain hardening exponent of the material</p></li>
+<li><p><strong>b</strong> (<em>float, int</em>) – Elastic strain exponent of the material</p></li>
+<li><p><strong>c</strong> (<em>float, int</em>) – Plastic strain exponent of the material</p></li>
+<li><p><strong>sigma_f</strong> (<em>float, int</em>) – Fatigue strength coefficient of the material</p></li>
+<li><p><strong>epsilon_f</strong> (<em>float, int</em>) – Fatigue strain coefficient of the material</p></li>
+<li><p><strong>q</strong> (<em>float, int, optional</em>) – Notch sensitivity factor. Default is 1 for no notch.</p></li>
+<li><p><strong>Kt</strong> (<em>float, int, optional</em>) – Stress concentration factor. Default is 1 for no notch.</p></li>
+<li><p><strong>mean_stress_correction_method</strong> (<em>str, optional</em>) – Must be either ‘morrow’, ’modified_morrow’, or ‘SWT’. Default is
+‘modified_morrow’ as this is the same as the uncorrected Coffin-Manson
+relationship when mean stress is zero.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – The results will be printed to the console if print_results is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sigma_max</strong> (<em>float</em>) – The maximum stress</p></li>
+<li><p><strong>sigma_min</strong> (<em>float</em>) – The minimum stress</p></li>
+<li><p><strong>sigma_mean</strong> (<em>float</em>) – The mean stress</p></li>
+<li><p><strong>epsilon_max</strong> (<em>float</em>) – The maximum strain</p></li>
+<li><p><strong>epsilon_min</strong> (<em>float</em>) – The minimim strain</p></li>
+<li><p><strong>epsilon_mean</strong> (<em>float</em>) – The mean strain</p></li>
+<li><p><strong>cycles_to_failure</strong> (<em>float</em>) – The number of cycles until failure due to fatigue</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">fracture_mechanics_crack_initiation</span>
+<span class="n">fracture_mechanics_crack_initiation</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="mi">5</span><span class="o">*</span><span class="mi">80</span><span class="p">,</span> <span class="n">Kt</span><span class="o">=</span><span class="mf">2.41</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.9857</span><span class="p">,</span> <span class="n">Sy</span><span class="o">=</span><span class="mi">690</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="mi">210000</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mi">1060</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mf">0.081</span><span class="p">,</span> <span class="n">c</span><span class="o">=-</span><span class="mf">0.65</span><span class="p">,</span> <span class="n">sigma_f</span><span class="o">=</span><span class="mi">1160</span><span class="p">,</span> <span class="n">epsilon_f</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span><span class="n">mean_stress_correction_method</span><span class="o">=</span><span class="s1">'SWT'</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from fracture_mechanics_crack_initiation:</span>
+<span class="sd">A crack of 1 mm will be formed after: 2919.91 cycles (5839.82 reversals).</span>
+<span class="sd">Stresses in the component: Min = -506.7291 MPa , Max = 506.7291 MPa , Mean = -5.684341886080802e-14 MPa.</span>
+<span class="sd">Strains in the component: Min = -0.0075 , Max = 0.0075 , Mean = 8.673617379884035e-19</span>
+<span class="sd">Mean stress correction method used: SWT</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

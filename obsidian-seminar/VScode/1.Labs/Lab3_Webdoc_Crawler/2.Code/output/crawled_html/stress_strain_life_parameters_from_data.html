@@ -1,0 +1,51 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="stress-strain-life-parameters-from-data">
+<h1>stress_strain_life_parameters_from_data<a class="headerlink" href="#stress-strain-life-parameters-from-data" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.stress_strain_life_parameters_from_data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">stress_strain_life_parameters_from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.stress_strain_life_parameters_from_data" title="Link to this definition"></a></dt>
+<dd><p>This function will use stress and strain data to calculate the stress-strain
+parameters: K, n.
+If cycles is provided it will also calculate the strain-life parameters:
+sigma_f, epsilon_f, b, c.</p>
+<p>It is not posible to calculate the strain-life parameters without stress
+because stress is needed to find elastic strain.</p>
+<p>If you already have the parameters K, n, sigma_f, epsilon_f, b, c, then you
+can use the function ‘stress_strain_diagram’ for the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strain</strong> (<em>array, list</em>) – The strain values</p></li>
+<li><p><strong>stress</strong> (<em>array, list</em>) – The stress values</p></li>
+<li><p><strong>E</strong> (<em>int, float</em>) – The modulus of elasticity. Ensure this is in the same units as stress
+(typically MPa).</p></li>
+<li><p><strong>cycles</strong> (<em>array, list, optional</em>) – The number of cycles to failure. Optional input. This is required if you
+want to obtain the parameters sigma_f, epsilon_f, b, c</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed to console. Default is True.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True the stress strain diagram will be produced. Default is True. Use
+plt.show() to show it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>K</strong> (<em>float</em>) – The cyclic strength coefficient</p></li>
+<li><p><strong>n</strong> (<em>float</em>) – The cyclic strain hardening exponent</p></li>
+<li><p><strong>sigma_f</strong> (<em>float</em>) – The fatigue strength coefficient. This is only generated if cycles is
+provided.</p></li>
+<li><p><strong>epsilon_f</strong> (<em>float</em>) – The fatigue strain coefficient. This is only generated if cycles is
+provided.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – The elastic strain exponent. This is only generated if cycles is
+provided.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – The plastic strain exponent. This is only generated if cycles is
+provided.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

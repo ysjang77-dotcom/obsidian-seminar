@@ -1,0 +1,46 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+
+# Obsidian (keep settings, ignore local caches)
+.obsidian/workspace*
+.obsidian/cache/
+.obsidian/graph.json
+.obsidian/backlink.json
+.obsidian/starred.json
+.obsidian/hotkeys.json
+.obsidian/appearance.json
+.obsidian/plugins/
+.trash/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Node / Vite / React
+**/node_modules/
+**/dist/
+**/.vite/
+
+# Environment / secrets
+.env
+.env.*
+
+# LTspice / simulation outputs (keep schematics, ignore generated outputs)
+*.raw
+*.op.raw
+*.log
+*.net
+*.fft
+*.db
+
+# Optional: temp files
+*.tmp
+*.bak

@@ -1,0 +1,83 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="what-does-an-alt-probability-plot-show-me">
+<h1>What does an ALT probability plot show me<a class="headerlink" href="#what-does-an-alt-probability-plot-show-me" title="Link to this heading"></a></h1>
+<p>An ALT probability plot shows us how well our dataset can be modeled by the chosen distribution. This is more than just a goodness of fit at each stress level, because the distribution needs to be a good fit at all stress levels and be able to fit well with a common shape parameter. If you find the shape parameter changes significantly as the stress increases then it is likely that your accelerated life test is experiencing a different failure mode at higher stresses. When examining an ALT probability plot, the main things we are looking for are:</p>
+<ul class="simple">
+<li><p>Does the model appear to fit the data well at all stress levels (ie. the dashed lines pass reasonably well through all the data points)</p></li>
+<li><p>Examine the AICc and BIC values when comparing multiple models. A lower value suggests a better fit.</p></li>
+<li><p>Is the amount of change to the shape parameter within the acceptable limits (generally less than 50% for each distribution).</p></li>
+</ul>
+<p>The following example fits 2 models to ALT data that is generated from a Normal_Exponential model. The first plot is an example of a good fit. The second plot is an example of a very bad fit. Notice how a warning is printed in the output telling the user that the shape parameter is changing too much, indicating the model may be a poor fit for the data. Also note that the total AIC and total BIC for the Exponential_Power model is higher (worse) than for the Normal_Exponential model.</p>
+<p>If you are uncertain about which model you should fit, try <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Fitting%20all%20available%20models%20to%20ALT%20data.html">fitting everything</a> and select the best fitting model.</p>
+<p>If you find that none of the models work without large changes to the shape parameter at the higher stresses, then you can conclude that there must be a change in the failure mode for higher stresses and you may need to look at changing the design of your accelerated test to keep the failure mode consistent across tests.</p>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_ALT_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Normal_Exponential</span><span class="p">,</span> <span class="n">Fit_Exponential_Power</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">ALT_data</span> <span class="o">=</span> <span class="n">make_ALT_data</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">,</span><span class="n">life_stress_model</span><span class="o">=</span><span class="s1">'Exponential'</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">stress_1</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">350</span><span class="p">],</span><span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">fraction_censored</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Fit_Normal_Exponential</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span><span class="n">show_life_stress_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'---------------------------------------------------'</span><span class="p">)</span>
+<span class="n">Fit_Exponential_Power</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span><span class="n">show_life_stress_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Normal_Exponential (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 240/60 (20% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">        a         501.729         27.5897   447.654   555.804</span>
+<span class="sd">        b         985.894         70.4156   857.107   1134.03</span>
+<span class="sd">    sigma         487.321         22.1255   445.829   532.674</span>
+
+<span class="sd"> stress  original mu  original sigma  new mu  common sigma sigma change</span>
+<span class="sd">    500       2733.7         482.409 2689.22       487.321       +1.02%</span>
+<span class="sd">    400      3369.57         432.749 3456.02       487.321      +12.61%</span>
+<span class="sd">    350      4176.89         531.769 4134.25       487.321       -8.36%</span>
+
+<span class="sd"> Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -1833.41</span>
+<span class="sd">           AICc  3672.89</span>
+<span class="sd">            BIC  3683.93</span>
+
+<span class="sd">If this model is being used for the Arrhenius Model, a = Ea/K_B ==&gt; Ea = 0.04324 eV</span>
+
+<span class="sd">---------------------------------------------------</span>
+<span class="sd">Results from Fit_Exponential_Power (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 240/60 (20% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI   Upper CI</span>
+<span class="sd">        a     4.23394e+06     1.10593e+07   25314.2 7.0815e+08</span>
+<span class="sd">        n        -1.16747        0.433666  -2.01744  -0.317497</span>
+
+<span class="sd"> stress  weibull alpha  weibull beta  new 1/Lambda  common shape shape change</span>
+<span class="sd">    500         2937.9       5.99874       2990.79             1      -83.33%</span>
+<span class="sd">    400           3561       8.20311       3880.84             1      -87.81%</span>
+<span class="sd">    350        4415.41        8.3864       4535.54             1      -88.08%</span>
+<span class="sd">The shape parameter has been found to change significantly (&gt;50%) when fitting the ALT model.</span>
+<span class="sd">This may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.</span>
+
+<span class="sd"> Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -2214.94</span>
+<span class="sd">           AICc  4433.93</span>
+<span class="sd">            BIC   4441.3</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/ALT_probplot_goodfit.png" src="_images/ALT_probplot_goodfit.png"/>
+<img alt="_images/ALT_probplot_badfit.png" src="_images/ALT_probplot_badfit.png"/>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 136-168</p></li>
+<li><p>Accelerated Life Testing Data Analysis Reference - ReliaWiki, Reliawiki.com, 2019. [<a class="reference external" href="http://reliawiki.com/index.php/Accelerated_Life_Testing_Data_Analysis_Reference">Online</a>].</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

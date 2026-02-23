@@ -1,0 +1,28 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="two-proportion-test">
+<h1>Two proportion test<a class="headerlink" href="#two-proportion-test" title="Link to this heading"></a></h1>
+<p>This function determines if there is a statistically significant difference in the results from two different tests. Similar to the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/One%20sample%20proportion.html">One_sample_proportion</a>, we are interested in using results from a success/failure test, but we are now interested in whether the difference in results is significant when comparing results between two tests.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Reliability_testing/two_proportion_test.html">API reference</a>.</p>
+</div>
+<p>In this example, consider that sample 1 and sample 2 are batches of items that two suppliers sent you as part of their contract bidding process. You test everything each supplier sent you and need to know whether the reliability difference between suppliers is significant. At first glance, the reliability for sample 1 is 490/500 = 98%, and for sample 2 is 770/800 = 96.25%. Without considering the confidence intervals, we might be inclined to think that sample 1 is almost 2% better than sample 2. Lets run the two proportion test with the 95% confidence interval.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Reliability_testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">two_proportion_test</span>
+<span class="n">two_proportion_test</span><span class="p">(</span><span class="n">sample_1_trials</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">sample_1_successes</span><span class="o">=</span><span class="mi">490</span><span class="p">,</span><span class="n">sample_2_trials</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span><span class="n">sample_2_successes</span><span class="o">=</span><span class="mi">770</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from two_proportion_test:</span>
+<span class="sd">Sample 1 test results (successes/tests): 490/500</span>
+<span class="sd">Sample 2 test results (successes/tests): 770/800</span>
+<span class="sd">The 95% confidence bounds on the difference in these results is: -0.0004972498915250083 to 0.03549724989152493</span>
+<span class="sd">Since the confidence bounds contain 0 the result is statistically non-significant.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<p>Because the lower and upper bounds on the confidence interval includes 0, we can say with 95% confidence that there is no statistically significant difference between the suppliers based on the results from the batches supplied.</p>
+</section>
+</div>
+</div>

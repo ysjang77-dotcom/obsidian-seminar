@@ -1,0 +1,121 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fracture-mechanics-crack-growth">
+<h1>fracture_mechanics_crack_growth<a class="headerlink" href="#fracture-mechanics-crack-growth" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.fracture_mechanics_crack_growth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">fracture_mechanics_crack_growth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_initial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_final</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crack_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'edge'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.fracture_mechanics_crack_growth" title="Link to this definition"></a></dt>
+<dd><p>This function uses the principles of fracture mechanics to find the number
+of cycles required to grow a crack from an initial length until a final
+length. The final length (a_final) may be specified, but if not specified
+then a_final will be set as the critical crack length (a_crit) which causes
+failure due to rapid fracture.</p>
+<p>This functions performs the same calculation using two methods; similified
+and iterative. The simplified method assumes that the geometry factor
+(f(g)), the stress (S_net), and the critical crack length (a_crit) are
+constant. This method is the way most textbooks show these problems solved
+as they can be done in a few steps. The iterative method does not make the
+assumptions that the simplified method does and as a result, the parameters
+f(g), S_net and a_crit must be recalculated based on the current crack
+length at every cycle.</p>
+<p>This function is applicable only to thin plates with an edge crack or a
+centre crack (which is to be specified using the parameter crack_type).</p>
+<p>You may also use this function for notched components by specifying the
+parameters Kt and D which are based on the geometry of the notch.
+For any notched components, this method assumes the notched component has
+a “shallow notch” where the notch depth (D) is much less than the plate
+width (W). The value of Kt for notched components may be found using the
+<a class="reference external" href="https://www.efatigue.com/constantamplitude/stressconcentration/">efatigue website</a>.
+In the case of notched components, the local stress concentration from the
+notch will often cause slower crack growth. In these cases, the crack length
+is calculated in two parts (stage 1 and stage 2) which can clearly be seen
+on the plot using the iterative method. The only geometry this function is
+designed for is unnotched and notched thin flat plates. No centre holes are
+allowed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Kc</strong> (<em>float, int</em>) – fracture toughness</p></li>
+<li><p><strong>Kt</strong> (<em>float, int, optional</em>) – The stress concentration factor. Default is 1 for no notch.</p></li>
+<li><p><strong>D</strong> (<em>float, int, None, optional</em>) – Depth of the notch. Default is None for no notch. A notched specimen is
+assumed to be doubly-notched (equal notches on both sides).</p></li>
+<li><p><strong>C</strong> (<em>float, int</em>) – Material constant (sometimes referred to as A).</p></li>
+<li><p><strong>m</strong> (<em>float, int</em>) – Material constant (sometimes referred to as n). This value must not be
+2 due to the way the formula works.</p></li>
+<li><p><strong>P</strong> (<em>float, int</em>) – External load on the material (MPa)</p></li>
+<li><p><strong>t</strong> (<em>float, int</em>) – Plate thickness (mm)</p></li>
+<li><p><strong>W</strong> (<em>float, int</em>) – Plate width (mm)</p></li>
+<li><p><strong>a_initial</strong> (<em>float, int, optional</em>) – Initial crack length (mm). Default is 1 mm.</p></li>
+<li><p><strong>a_final</strong> (<em>float, int, None, optional</em>) – Final crack length (mm) - default is None in which case a_final is
+assumed to be a_crit (length at failure). It is useful to be able to
+enter a_final in cases where there are multiple loading regimes over
+time.</p></li>
+<li><p><strong>crack_type</strong> (<em>str, optional</em>) – Must be either ‘edge’ or ‘center’. Default is ‘edge’. The geometry
+factor used for each of these in the simplified method is 1.12 for edge
+and 1.0 for center. The iterative method calculates these values exactly
+using a_initial and W (plate width).</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Default is True. If True, the results will be printed to the console.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – Default is True. If True the iterative method’s crack growth will be
+plotted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Nf_stage_1_simplified</strong> (<em>float</em>) – Number of cycles in stage 1 of crack growth using the simplified method.</p></li>
+<li><p><strong>Nf_stage_2_simplified</strong> (<em>float</em>) – Number of cycles in stage 2 of crack growth using the simplified method.</p></li>
+<li><p><strong>Nf_total_simplified</strong> (<em>float</em>) – Total number of cycles (Nf_stage_1_simplified + Nf_stage_2_simplified)</p></li>
+<li><p><strong>final_crack_length_simplified</strong> (<em>float</em>) – Final crack length using the simplified method</p></li>
+<li><p><strong>transition_length_simplified</strong> (<em>float</em>) – The transition length (stage 1 - 2 interface) using the simplified
+method.</p></li>
+<li><p><strong>Nf_stage_1_iterative</strong> (<em>float</em>) – Number of cycles in stage 1 of crack growth using the iterative method.</p></li>
+<li><p><strong>Nf_stage_2_iterative</strong> (<em>float</em>) – Number of cycles in stage 2 of crack growth using the iterative method.</p></li>
+<li><p><strong>Nf_total_iterative</strong> (<em>float</em>) – Total number of cycles (Nf_stage_1_iterative + Nf_stage_2_iterative)</p></li>
+<li><p><strong>final_crack_length_iterative</strong> (<em>float</em>) – Final crack length using the iterative method</p></li>
+<li><p><strong>transition_length_iterative</strong> (<em>float</em>) – The transition length (stage 1 - 2 interface) using the iterative
+method.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">fracture_mechanics_crack_growth</span>
+<span class="n">fracture_mechanics_crack_growth</span><span class="p">(</span><span class="n">Kc</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mf">6.91</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">12</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">Kt</span><span class="o">=</span><span class="mf">2.41</span><span class="p">,</span><span class="n">a_initial</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">crack_type</span><span class="o">=</span><span class="s1">'edge'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+<span class="n">fracture_mechanics_crack_growth</span><span class="p">(</span><span class="n">Kc</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mf">3.81</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">12</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="mf">0.103</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">crack_type</span><span class="o">=</span><span class="s1">'center'</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from fracture_mechanics_crack_growth:</span>
+<span class="sd">SIMPLIFIED METHOD (keeping f(g), S_max, and a_crit as constant):</span>
+<span class="sd">Crack growth was found in two stages since the transition length ( 2.08 mm ) due to the notch, was greater than the initial crack length ( 1 mm ).</span>
+<span class="sd">Stage 1 (a_initial to transition length): 6802 cycles</span>
+<span class="sd">Stage 2 (transition length to a_final): 1133 cycles</span>
+<span class="sd">Total cycles to failure: 7935 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 7.86 mm.</span>
+
+<span class="sd">ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):</span>
+<span class="sd">Crack growth was found in two stages since the transition length ( 2.45 mm ) due to the notch, was greater than the initial crack length ( 1 mm ).</span>
+<span class="sd">Stage 1 (a_initial to transition length): 7576 cycles</span>
+<span class="sd">Stage 2 (transition length to a_final): 671 cycles</span>
+<span class="sd">Total cycles to failure: 8247 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 6.39 mm.</span>
+
+<span class="sd">Results from fracture_mechanics_crack_growth:</span>
+<span class="sd">SIMPLIFIED METHOD (keeping f(g), S_max, and a_crit as constant):</span>
+<span class="sd">Crack growth was found in a single stage since the transition length ( 0.0 mm ) was less than the initial crack length 1.0 mm.</span>
+<span class="sd">Total cycles to failure: 281359 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 32.67 mm.</span>
+
+<span class="sd">ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):</span>
+<span class="sd">Crack growth was found in a single stage since the transition length ( 0.0 mm ) was less than the initial crack length 1.0 mm.</span>
+<span class="sd">Total cycles to failure: 225827 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 18.3 mm.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

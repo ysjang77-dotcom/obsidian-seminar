@@ -1,0 +1,83 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="fracture-mechanics">
+<h1>Fracture mechanics<a class="headerlink" href="#fracture-mechanics" title="Link to this heading"></a></h1>
+<p>Fracture mechanics is an approach to fatigue analysis that involves calculating the number of cycles until failure of a component that is undergoing cyclic loading. We are generally interested in two values; the number of cycles needed to initiate a crack, and the number of cycles to grow the crack to a certain size (usually the size for brittle fracture to occur). The fracture mechanics functions described below are useful for solving typical fatigue problems given to students. Unfortunately, the limitation of these functions is that they are only applicable to thin plates with through-thickness cracks. As soon as you encounter a component that is not a thin plate, then the formulas required for analysis will be different from those used below. This is part of what makes fracture mechanics such a complex topic that is better handled by purpose-built fatigue analysis software such as <a class="reference external" href="https://www.altair.com/hyperlife/">Altair Hyperlife</a>. Even in the relatively simple thin flat plate geometry, there are many complications that make fracture mechanics a challenging subject. These include variable amplitude loading, surface roughness, frequency effect, environmental effects (temperature, corrosion) and other miscellaneous factors. Solving fracture mechanics problems for flat plates can still provide engineers with an appreciation for how fatigue operates and the factors affecting fatigue so that they can incorporate these lessons learned into their work.</p>
+<p>Most textbooks (including Probabilistic Physics of Failure Approach to Reliability (2017) which was used to design the functions below) apply a few simplifications for solving crack growth problems. These simplifications involve an assumption that the stress in the component is constant, that the geometry factor is constant, and that the crack length to cause failure (which has the geometry factor in its formula) is constant. These simplifications are necessary for hand calculations, but in reality we know that they all must change as the crack length grows which necessitates an iterative calculation. Both the simplified and iterative methods are included in the crack growth function. Also included in both functions is the ability to solve these problems for notched components by providing the appropriate correction factors for the notched geometry.</p>
+<section id="crack-initiation">
+<h2>Crack initiation<a class="headerlink" href="#crack-initiation" title="Link to this heading"></a></h2>
+<p>The function <cite>fracture_mechanics_crack_initiation</cite> uses the material properties, the local cross-sectional area, and force applied to the component to determine how many cycles until crack initiation (of a 1 mm crack). Units should always be in MPa (and mm^2 for area). This function may be used for an un-notched or notched component. If the component is un-notched, the parameters q and Kt may be left as their default values of 1.</p>
+<p>While there are formulas to find the parameters q and Kt, these formulas have not been included here so that the function is reasonably generic to different materials and geometries. Resources for finding some of these parameters if they are not given to you:</p>
+<p><span class="math notranslate nohighlight">\(q = \frac{1}{1+\frac{a}{r}}\)</span> Where r is the notch radius of curvature (in mm), and a is <span class="math notranslate nohighlight">\(0.025\times\frac{2070}{S_{u}}\)</span>. <span class="math notranslate nohighlight">\(S_{u}\)</span> is the ultimate strength in MPa. This only applies to high strength steels where <span class="math notranslate nohighlight">\(S_{u}&gt;550MPa\)</span>.</p>
+<p>Kt can be found from the <a class="reference external" href="https://www.efatigue.com/constantamplitude/stressconcentration/">eFatigue website</a> which has an online calculator that will provide you with the appropriate Kt for your notched geometry.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/fracture_mechanics_crack_initiation.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In the following example we will provide the function with the appropriate inputs for our problem (taken from Example 2.8 in Probabilistic Physics of Failure Approach to Reliability (2017)). The mean_stress_correction_method is changed to ‘SWT’ and the results will be printed to the console.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">fracture_mechanics_crack_initiation</span>
+<span class="n">fracture_mechanics_crack_initiation</span><span class="p">(</span><span class="n">P</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="mi">5</span><span class="o">*</span><span class="mi">80</span><span class="p">,</span> <span class="n">Kt</span><span class="o">=</span><span class="mf">2.41</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.9857</span><span class="p">,</span> <span class="n">Sy</span><span class="o">=</span><span class="mi">690</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="mi">210000</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mi">1060</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mf">0.081</span><span class="p">,</span> <span class="n">c</span><span class="o">=-</span><span class="mf">0.65</span><span class="p">,</span> <span class="n">sigma_f</span><span class="o">=</span><span class="mi">1160</span><span class="p">,</span> <span class="n">epsilon_f</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span><span class="n">mean_stress_correction_method</span><span class="o">=</span><span class="s1">'SWT'</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from fracture_mechanics_crack_initiation:</span>
+<span class="sd">A crack of 1 mm will be formed after: 2919.91 cycles (5839.82 reversals).</span>
+<span class="sd">Stresses in the component: Min = -506.7291 MPa , Max = 506.7291 MPa , Mean = -5.684341886080802e-14 MPa.</span>
+<span class="sd">Strains in the component: Min = -0.0075 , Max = 0.0075 , Mean = 8.673617379884035e-19</span>
+<span class="sd">Mean stress correction method used: SWT</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+<section id="crack-growth">
+<h2>Crack growth<a class="headerlink" href="#crack-growth" title="Link to this heading"></a></h2>
+<p>The function <cite>fracture_mechanics_crack_growth</cite> uses the principles of fracture mechanics to find the number of cycles required to grow a crack from an initial length until a final length.
+The final length (a_final) may be specified, but if not specified then a_final will be set as the critical crack length (a_crit) which causes failure due to rapid fracture.
+This function performs the same calculation using two methods: similified and iterative.
+The simplified method assumes that the geometry factor (f(g)), the stress (S_net), and the critical crack length (a_crit) are constant. This method is the way most textbooks show these problems solved as they can be done by hand in a few steps.
+The iterative method does not make those assumptions and as a result, the parameters f(g), S_net and a_crit must be recalculated based on the current crack length at every cycle.</p>
+<p>This function is applicable only to thin plates with a through thickness edge crack or a centre crack (which is to be specified using the parameter crack_type). You may also use this function for notched components (edge notches only, not centre holes) by specifying the parameters Kt and D which are based on the geometry of the notch. For any notched components, this method assumes the notched component has a “shallow notch” where the notch depth (D) is much less than the plate width (W). The value of Kt for notched components may be found on the <a class="reference external" href="https://www.efatigue.com/constantamplitude/stressconcentration/">eFatigue website</a>. In the case of notched components, the local stress concentration from the notch will often cause slower crack growth. In these cases, the crack length is calculated in two parts (stage 1 and stage 2) which can clearly be seen on the plot using the iterative method (as shown in the example below).</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/fracture_mechanics_crack_growth.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In the following example, a crack of 1mm is grown to failure. The function determines that the notch (described by Kt and D) causes a local stress concentration which initially slows the propogation of the crack until the crack reaches the transition length. Once past the transition length, the crack grows much faster and results in brittle fracture of the material. This change in crack growth rate is evident on the plot from the iterative method. The reason for the different transition lengths between the simplified and iterative methods is that the simplified method uses 1.12 for the geometry factor whereas the iterative method finds the geometry factor using the local geometry (using W and D).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">fracture_mechanics_crack_growth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">fracture_mechanics_crack_growth</span><span class="p">(</span><span class="n">Kc</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mf">6.91</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">12</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">Kt</span><span class="o">=</span><span class="mf">2.41</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from fracture_mechanics_crack_growth:</span>
+<span class="sd">SIMPLIFIED METHOD (keeping f(g), S_max, and a_crit as constant):</span>
+<span class="sd">Crack growth was found in two stages since the transition length ( 2.08 mm ) due to the notch, was greater than the initial crack length ( 1.0 mm ).</span>
+<span class="sd">Stage 1 (a_initial to transition length): 6802 cycles</span>
+<span class="sd">Stage 2 (transition length to a_final): 1133 cycles</span>
+<span class="sd">Total cycles to failure: 7935 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 7.86 mm.</span>
+
+<span class="sd">ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):</span>
+<span class="sd">Crack growth was found in two stages since the transition length ( 2.45 mm ) due to the notch, was greater than the initial crack length ( 1.0 mm ).</span>
+<span class="sd">Stage 1 (a_initial to transition length): 7576 cycles</span>
+<span class="sd">Stage 2 (transition length to a_final): 671 cycles</span>
+<span class="sd">Total cycles to failure: 8247 cycles.</span>
+<span class="sd">Critical crack length to cause failure was found to be: 6.39 mm.</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/fracture_mechanics_growth.png" src="_images/fracture_mechanics_growth.png"/>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 37-57</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

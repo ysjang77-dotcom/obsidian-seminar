@@ -1,0 +1,37 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="two-proportion-test">
+<h1>two_proportion_test<a class="headerlink" href="#two-proportion-test" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.two_proportion_test">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">two_proportion_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_1_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_1_successes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_2_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_2_successes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.two_proportion_test" title="Link to this definition"></a></dt>
+<dd><p>Calculates whether the difference in test results between two samples is
+statistically significant.</p>
+<p>For example, assume we have a poll of respondents in which 27/40 people
+agreed, and another poll in which 42/80 agreed. This test will determine if
+the difference is statistically significant for the given sample sizes at
+the specified confidence level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_1_trials</strong> (<em>int</em>) – The number of trials in the first sample.</p></li>
+<li><p><strong>sample_1_successes</strong> (<em>int</em>) – The number of successes in the first sample.</p></li>
+<li><p><strong>sample_2_trials</strong> (<em>int</em>) – The number of trials in the second sample.</p></li>
+<li><p><strong>sample_2_successes</strong> (<em>int</em>) – The number of successes in the second sample.</p></li>
+<li><p><strong>CI</strong> (<em>float, optional</em>) – The desired confidence interval. Must be between 0 and 1. Default = 0.95
+for 95% CI.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed to the console. Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lower,upper,result</strong> (<em>tuple</em>) – The lower and upper are bounds on the difference. The result is either
+‘significant’ or ‘non-significant’. If the bounds do not include 0 then
+it is a statistically significant difference.</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

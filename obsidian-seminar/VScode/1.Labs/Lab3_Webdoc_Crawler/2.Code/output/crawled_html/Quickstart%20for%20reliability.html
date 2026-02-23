@@ -1,0 +1,62 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="quickstart-for-reliability">
+<h1>Quickstart for reliability<a class="headerlink" href="#quickstart-for-reliability" title="Link to this heading"></a></h1>
+<section id="installation-and-upgrading">
+<h2>Installation and upgrading<a class="headerlink" href="#installation-and-upgrading" title="Link to this heading"></a></h2>
+<p>If you are new to using Python, you will first need to install a <a class="reference external" href="https://www.python.org/downloads/">Python 3</a> interpreter and also install an IDE so that you can interact with the code. There are many <a class="reference external" href="https://www.guru99.com/python-ide-code-editor.html">good IDEs</a> available including <a class="reference external" href="https://www.jetbrains.com/pycharm/">Pycharm</a>, <a class="reference external" href="https://www.spyder-ide.org/">Spyder</a> and <a class="reference external" href="https://jupyter.org/install.html">Jupyter</a>.</p>
+<p>Once you have Python installed, to install <em>reliability</em> for the first time, open your command prompt and type:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install reliability</span>
+</pre></div>
+</div>
+<p>To upgrade a previous installation of <em>reliability</em> to the most recent version, open your command prompt and type:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install --upgrade reliability</span>
+</pre></div>
+</div>
+<p>If you would like to be notified by email of when a new release of <cite>reliability</cite> is uploaded to PyPI, there is a free service to do exactly that called <a class="reference external" href="https://newreleases.io/">NewReleases.io</a>.</p>
+</section>
+<section id="a-quick-example">
+<h2>A quick example<a class="headerlink" href="#a-quick-example" title="Link to this heading"></a></h2>
+<p>In this example, we will create a Weibull Distribution, and from that distribution we will draw 20 random samples. Using those samples we will Fit a 2-parameter Weibull Distribution. The fitting process generates the probability plot. We can then access the distribution object to plot the survival function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Weibull_2P</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Probability_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># creates the distribution object</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">random_samples</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># draws 20 samples from the distribution. Seeded for repeatability</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">Fit_Weibull_2P</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># fits a Weibull distribution to the data and generates the probability plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'fitted distribution'</span><span class="p">)</span>  <span class="c1"># uses the distribution object from Fit_Weibull_2P and plots the survival function</span>
+<span class="n">dist</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">'original distribution'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">)</span> <span class="c1"># plots the survival function of the original distribution</span>
+<span class="n">plot_points</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s1">'SF'</span><span class="p">)</span>  <span class="c1"># overlays the original data on the survival function</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Weibull_2P (95% CI):</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 20/0 (0% right censored)</span>
+
+<span class="sd">Parameter  Point Estimate  Standard Error  Lower CI  Upper CI</span>
+<span class="sd">    Alpha         28.1696         3.57032   21.9733   36.1131</span>
+<span class="sd">     Beta         1.86309         0.32449   1.32428   2.62111</span>
+
+<span class="sd">Goodness of fit    Value</span>
+<span class="sd"> Log-likelihood -79.5482</span>
+<span class="sd">           AICc  163.802</span>
+<span class="sd">            BIC  165.088</span>
+<span class="sd">             AD 0.837278</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/quickstart3.png" src="_images/quickstart3.png"/>
+<p>A key feature of <cite>reliability</cite> is that probability distributions are created as objects, and these objects have many properties (such as the mean) that are set once the parameters of the distribution are defined. Using the dot operator allows us to access these properties as well as a large number of methods (such as drawing random samples as seen in the example above).</p>
+<p>Each distribution may be visualised in five different plots. These are the Probability Density Function (PDF), Cumulative Distribution Function (CDF), Survival Function (SF) [also known as the reliabilty function], Hazard Function (HF), and the Cumulative Hazard Function (CHF). Accessing the plot of any of these is as easy as any of the other methods. Eg. <code class="docutils literal notranslate"><span class="pre">dist.SF()</span></code> in the above example is what plots the survival function using the distribution object that was returned from the fitter.</p>
+</section>
+</section>
+</div>
+</div>

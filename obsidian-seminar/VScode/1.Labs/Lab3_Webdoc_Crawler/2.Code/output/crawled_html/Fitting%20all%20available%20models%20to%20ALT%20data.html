@@ -1,0 +1,121 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="fitting-all-available-models-to-alt-data">
+<h1>Fitting all available models to ALT data<a class="headerlink" href="#fitting-all-available-models-to-alt-data" title="Link to this heading"></a></h1>
+<p>Just as the function <cite>Fitters.Fit_Everything</cite> provides users with a quick way to <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Fitting%20all%20available%20distributions%20to%20data.html">fit all available distributions</a> to their dataset, we can do a similar thing using <cite>ALT_fitters.Fit_Everything_ALT</cite> to fit all of the ALT models to an ALT dataset.</p>
+<p>There are 24 ALT models available within <cite>reliability</cite>; 12 single stress models and 12 dual stress models. <cite>Fit_Everything_ALT</cite> will automatically fit the single stress or dual stress models based on whether the input includes single or dual stress data. Manual exclusion of certain models is also possible using the <cite>exclude</cite> argument. From the results, the models are sorted based on their goodness of fit test results, where the smaller the goodness of fit value, the better the fit of the model to the data.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/ALT_fitters/Fit_Everything_ALT.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In this first example, we will use <cite>Fit_Everything_ALT</cite> on some data that is generated using the function <cite>make_ALT_data</cite>. We can then compare the fitted results to the input parameters used to create the data. <cite>Fit_Everything_ALT</cite> produces two plots; a grid of all the fitted models (usually 12 models unless you have excluded some) and a larger plot of the best fitting model’s probability plot. These are shown by default, so using plt.show() is not required to display the plots.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_ALT_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Everything_ALT</span>
+
+<span class="n">ALT_data</span> <span class="o">=</span> <span class="n">make_ALT_data</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s1">'Normal'</span><span class="p">,</span><span class="n">life_stress_model</span><span class="o">=</span><span class="s1">'Exponential'</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">stress_1</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">350</span><span class="p">],</span><span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">fraction_censored</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Fit_Everything_ALT</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress_1</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress_1</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Everything_ALT:</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 240/60 (20% right censored)</span>
+
+<span class="sd">              ALT_model           a       b        c        n    beta    sigma  Log-likelihood    AICc     BIC optimizer</span>
+<span class="sd">     Normal_Exponential     510.328 973.822                            486.137        -1832.21 3670.51 3681.54       TNC</span>
+<span class="sd">          Normal_Eyring     97.5819         -13.9143                   489.775        -1834.07 3674.22 3685.25       TNC</span>
+<span class="sd">           Normal_Power 5.47181e+06                  -1.22605           490.81        -1834.59 3675.26 3686.29       TNC</span>
+<span class="sd">  Lognormal_Exponential     511.939 960.359                           0.148961        -1838.87 3683.82 3694.85       TNC</span>
+<span class="sd">       Lognormal_Eyring     93.8622          -13.914                  0.149853        -1840.35 3686.78 3697.81       TNC</span>
+<span class="sd">        Lognormal_Power 5.12115e+06                  -1.21668         0.150092        -1840.74 3687.57  3698.6       TNC</span>
+<span class="sd">    Weibull_Exponential     452.154 1196.63                   7.06525                 -1852.39 3710.87  3721.9       TNC</span>
+<span class="sd">         Weibull_Eyring     35.0269         -14.1323           6.9927                  -1854.7 3715.47  3726.5       TNC</span>
+<span class="sd">          Weibull_Power 5.56179e+06                  -1.21792 6.85258                 -1857.75 3721.58 3732.61  L-BFGS-B</span>
+<span class="sd">Exponential_Exponential     503.344 1098.06                                           -2216.57 4437.17 4444.54       TNC</span>
+<span class="sd">     Exponential_Eyring     85.4578         -14.0477                                  -2216.62 4437.27 4444.64       TNC</span>
+<span class="sd">      Exponential_Power 5.56179e+06                  -1.21159                         -2216.63  4437.3 4444.66  L-BFGS-B</span>
+
+<span class="sd">At the use level stress of 300, the Normal_Exponential model has a mean life of 5336.48499</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/Fit_everything_ALT_example1_grid.png" src="_images/Fit_everything_ALT_example1_grid.png"/>
+<img alt="_images/Fit_everything_ALT_example1_single.png" src="_images/Fit_everything_ALT_example1_single.png"/>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In this second example, we will repeat what we saw in Example 1, but this time we will use a dual stress dataset generated using a Weibull_Dual_Power model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_ALT_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Everything_ALT</span>
+
+<span class="n">ALT_data</span> <span class="o">=</span> <span class="n">make_ALT_data</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="s1">'Weibull'</span><span class="p">,</span> <span class="n">life_stress_model</span><span class="o">=</span><span class="s1">'Dual_Power'</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">1e15</span><span class="p">,</span> <span class="n">m</span><span class="o">=-</span><span class="mi">4</span><span class="p">,</span> <span class="n">n</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">stress_1</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">420</span><span class="p">,</span> <span class="mi">245</span><span class="p">],</span> <span class="n">stress_2</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">number_of_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fraction_censored</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Fit_Everything_ALT</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress_1</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses_1</span><span class="p">,</span> <span class="n">failure_stress_2</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">failure_stresses_2</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress_1</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses_1</span><span class="p">,</span><span class="n">right_censored_stress_2</span><span class="o">=</span><span class="n">ALT_data</span><span class="o">.</span><span class="n">right_censored_stresses_2</span><span class="p">,</span> <span class="n">use_level_stress</span><span class="o">=</span><span class="p">[</span><span class="mi">250</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Everything_ALT:</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 400/100 (20% right censored)</span>
+
+<span class="sd">                    ALT_model       a       b           c        m        n    beta    sigma  Log-likelihood    AICc     BIC optimizer</span>
+<span class="sd">           Weibull_Dual_Power                 1.46794e+15 -4.09472 -1.89863 2.49644                 -2815.87 5639.82 5656.59       TNC</span>
+<span class="sd">    Weibull_Power_Exponential 1348.44             2675.53          -2.33209 2.49569                 -2816.33 5640.73 5657.51       TNC</span>
+<span class="sd">     Weibull_Dual_Exponential 1362.97 18.8418     1.79306                   2.45183                 -2822.88 5653.84 5670.62       TNC</span>
+<span class="sd">         Lognormal_Dual_Power                 1.47649e+15 -4.12473 -1.92408         0.510416        -2841.82 5691.72  5708.5       TNC</span>
+<span class="sd">  Lognormal_Power_Exponential 1358.86                2217          -2.36348         0.510473        -2841.93 5691.93 5708.71       TNC</span>
+<span class="sd">   Lognormal_Dual_Exponential 1378.59 19.2034     1.30704                           0.514815        -2845.56  5699.2 5715.98       TNC</span>
+<span class="sd">       Exponential_Dual_Power                 1.76808e+15 -4.13272 -1.89779                         -3007.17  6020.4 6032.99       TNC</span>
+<span class="sd">Exponential_Power_Exponential 1361.03             2510.92          -2.33605                         -3007.29 6020.62 6033.22       TNC</span>
+<span class="sd"> Exponential_Dual_Exponential 1378.66 18.9113     1.63804                                           -3008.35 6022.75 6035.34       TNC</span>
+<span class="sd">      Normal_Dual_Exponential 1174.43 14.8298     5.00316                            604.207        -3172.69 6353.45 6370.23       TNC</span>
+<span class="sd">     Normal_Power_Exponential 1203.19             1954.03          -1.99859          604.571        -3173.15 6354.38 6371.16       TNC</span>
+<span class="sd">            Normal_Dual_Power                 1.13695e+15 -4.08012 -1.94369          450.658        -3256.12 6520.32 6537.09  L-BFGS-B</span>
+
+<span class="sd">At the use level stress of 250, 7, the Weibull_Dual_Power model has a mean life of 4912.81077</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/Fit_everything_ALT_example2_grid.png" src="_images/Fit_everything_ALT_example2_grid.png"/>
+<img alt="_images/Fit_everything_ALT_example2_single.png" src="_images/Fit_everything_ALT_example2_single.png"/>
+</section>
+<section id="example-3">
+<h2>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h2>
+<p>In this third example, we will look at how to extract specific parameters from the output. This example uses a dataset from <cite>reliability.Datasets</cite>. The plots are turned off for this example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALT_temperature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.ALT_fitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fit_Everything_ALT</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Fit_Everything_ALT</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n">ALT_temperature</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">failure_stress_1</span><span class="o">=</span><span class="n">ALT_temperature</span><span class="p">()</span><span class="o">.</span><span class="n">failure_stresses</span><span class="p">,</span> <span class="n">right_censored</span><span class="o">=</span><span class="n">ALT_temperature</span><span class="p">()</span><span class="o">.</span><span class="n">right_censored</span><span class="p">,</span> <span class="n">right_censored_stress_1</span><span class="o">=</span><span class="n">ALT_temperature</span><span class="p">()</span><span class="o">.</span><span class="n">right_censored_stresses</span><span class="p">,</span><span class="n">show_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">show_best_distribution_probability_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The Lognormal_Power model parameters are:</span><span class="se">\n</span><span class="s1"> a:'</span><span class="p">,</span><span class="n">model</span><span class="o">.</span><span class="n">Lognormal_Power_a</span><span class="p">,</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> n:'</span><span class="p">,</span><span class="n">model</span><span class="o">.</span><span class="n">Lognormal_Power_n</span><span class="p">,</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> sigma:'</span><span class="p">,</span><span class="n">model</span><span class="o">.</span><span class="n">Lognormal_Power_sigma</span><span class="p">)</span>
+
+<span class="sd">'''</span>
+<span class="sd">Results from Fit_Everything_ALT:</span>
+<span class="sd">Analysis method: Maximum Likelihood Estimation (MLE)</span>
+<span class="sd">Failures / Right censored: 35/102 (74.45255474452554% right censored)</span>
+
+<span class="sd">              ALT_model           a       b        c        n    beta    sigma  Log-likelihood    AICc     BIC optimizer</span>
+<span class="sd">        Lognormal_Power 1.21036e+10                  -3.64018         0.961968        -339.183 684.546 693.126       TNC</span>
+<span class="sd">       Lognormal_Eyring     142.294         -9.94803                  0.976603        -339.835 685.851  694.43  L-BFGS-B</span>
+<span class="sd">  Lognormal_Exponential     197.357 134.732                           0.986886        -340.144 686.468 695.047       TNC</span>
+<span class="sd">          Weibull_Power 2.52681e+10                  -3.73732 1.44776                  -340.39  686.96  695.54       TNC</span>
+<span class="sd">      Exponential_Power 3.08769e+12                  -4.85419                         -343.274 690.639 696.389       TNC</span>
+<span class="sd">         Weibull_Eyring     151.091         -10.1367          1.42117                 -341.206 688.592 697.171       TNC</span>
+<span class="sd">     Exponential_Eyring     211.096         -9.31393                                  -343.795 691.679  697.43       TNC</span>
+<span class="sd">Exponential_Exponential     266.147 71.2215                                           -343.991 692.071 697.821       TNC</span>
+<span class="sd">    Weibull_Exponential     208.334 157.573                   1.39983                 -341.591 689.363 697.942       TNC</span>
+<span class="sd">          Normal_Eyring     37.0335         -11.7653                   2464.82        -353.919 714.018 722.598  L-BFGS-B</span>
+<span class="sd">     Normal_Exponential     89.9058 855.015                            2439.04        -354.496 715.172 723.751  L-BFGS-B</span>
+<span class="sd">           Normal_Power      772496                  -1.48137          2464.97        -465.464 937.109 945.688  L-BFGS-B</span>
+
+<span class="sd">The Lognormal_Power model parameters are:</span>
+<span class="sd"> a: 12103627516.445246</span>
+<span class="sd"> n: -3.6401834647746396</span>
+<span class="sd"> sigma: 0.9619680090329055</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+</section>
+</section>
+</div>
+</div>

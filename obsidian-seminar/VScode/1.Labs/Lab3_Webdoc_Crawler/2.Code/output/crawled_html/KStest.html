@@ -1,0 +1,42 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="kstest">
+<h1>KStest<a class="headerlink" href="#kstest" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.KStest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">KStest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">significance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.KStest" title="Link to this definition"></a></dt>
+<dd><p>Performs the Kolmogorov-Smirnov goodness of fit test to determine whether we
+can accept or reject the hypothesis that the data is from the specified
+distribution at the specified level of significance.</p>
+<p>This method is not a means of comparing distributions (which can be done
+with AICc, BIC, and AD), but instead allows us to accept or reject a
+hypothesis that data come from a distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>object</em>) – A distribution object created using the reliability.Distributions
+module.</p></li>
+<li><p><strong>data</strong> (<em>array, list</em>) – The data that are hypothesised to come from the distribution.</p></li>
+<li><p><strong>significance</strong> (<em>float</em>) – This is the complement of confidence. 0.05 significance is the same as
+95% confidence. Must be between 0 and 0.5. Default = 0.05.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed. Default = True</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True a plot of the distribution CDF and empirical CDF will be
+generated. Default = True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>KS_statistic</strong> (<em>float</em>) – The Kolmogorov-Smirnov statistic.</p></li>
+<li><p><strong>KS_critical_value</strong> (<em>float</em>) – The Kolmogorov-Smirnov critical value.</p></li>
+<li><p><strong>hypothesis</strong> (<em>string</em>) – ‘ACCEPT’ or ‘REJECT’. If KS_statistic &lt; KS_critical_value then we can
+accept the hypothesis that the data is from the specified distribution.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

@@ -1,0 +1,141 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="equations-of-supported-distributions">
+<h1>Equations of supported distributions<a class="headerlink" href="#equations-of-supported-distributions" title="Link to this heading"></a></h1>
+<p>The following expressions provide the equations for the Probability Density Function (PDF), Cumulative Distribution Function (CDF), Survival Function (SF) (this is the same as the reliability function R(t)), Hazard Function (HF), and Cumulative Hazard Function (CHF) of all supported distributions. Readers should note that there are many ways to write the equations for probability distributions and careful attention should be afforded to the parametrization to ensure you understand each parameter. For more equations of these distributions, see the textbook “Probability Distributions Used in Reliability Engineering” listed in <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Recommended%20resources.html">recommended resources</a>.</p>
+<section id="weibull-distribution">
+<h2>Weibull Distribution<a class="headerlink" href="#weibull-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\alpha\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \alpha &gt; 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\beta\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \beta &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( t \geq 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{\beta t^{ \beta - 1}}{ \alpha^ \beta} {\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \frac{\beta}{\alpha}\left(\frac{t}{\alpha}\right)^{(\beta-1)}{\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = 1 - {\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = {\rm e}^{-(\frac{t}{\alpha })^ \beta }\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{\beta}{\alpha} (\frac{t}{\alpha})^{\beta -1}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = (\frac{t}{\alpha})^{\beta}\)</span></p>
+</section>
+<section id="exponential-distribution">
+<h2>Exponential Distribution<a class="headerlink" href="#exponential-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\lambda\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \lambda &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( t \geq 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \lambda {\rm e}^{-\lambda t}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = 1 - {\rm e}^{-\lambda t}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = {\rm e}^{-\lambda t}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \lambda\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = \lambda t\)</span></p>
+<p>Note that some parametrizations of the Exponential distribution (such as the one in <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.expon.html">scipy.stats</a>) use <span class="math notranslate nohighlight">\(\frac{1}{\lambda}\)</span> in place of <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
+</section>
+<section id="normal-distribution">
+<h2>Normal Distribution<a class="headerlink" href="#normal-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\mu\)</span> = location parameter <span class="math notranslate nohighlight">\(( -\infty &lt; \mu &lt; \infty )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sigma\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \sigma &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( -\infty &lt; t &lt; \infty )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{1}{\sigma \sqrt{2 \pi}}{\rm exp}\left[-\frac{1}{2}\left(\frac{t - \mu}{\sigma}\right)^2\right]\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \frac{1}{\sigma}\phi \left[ \frac{t - \mu}{\sigma} \right]\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\phi\)</span> is the standard normal PDF with <span class="math notranslate nohighlight">\(\mu = 0\)</span> and <span class="math notranslate nohighlight">\(\sigma=1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \frac{1}{\sigma \sqrt{2 \pi}} \int^t_{-\infty} {\rm exp}\left[-\frac{1}{2}\left(\frac{\theta - \mu}{\sigma}\right)^2\right] {\rm d} \theta\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} =\frac{1}{2}+\frac{1}{2}{\rm erf}\left(\frac{t - \mu}{\sigma \sqrt{2}}\right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \Phi \left( \frac{t - \mu}{\sigma} \right)\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Phi\)</span> is the standard normal CDF with <span class="math notranslate nohighlight">\(\mu = 0\)</span> and <span class="math notranslate nohighlight">\(\sigma=1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = 1 - \Phi \left( \frac{t - \mu}{\sigma} \right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \Phi \left( \frac{\mu - t}{\sigma} \right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{\phi \left[\frac{t-\mu}{\sigma}\right]}{\sigma \left( \Phi \left[ \frac{\mu - t}{\sigma} \right] \right)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = -{\rm ln}\left[\Phi \left(\frac{\mu - t}{\sigma}\right)\right]\)</span></p>
+</section>
+<section id="lognormal-distribution">
+<h2>Lognormal Distribution<a class="headerlink" href="#lognormal-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\mu\)</span> = scale parameter <span class="math notranslate nohighlight">\(( -\infty &lt; \mu &lt; \infty )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sigma\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \sigma &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( t \geq 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{1}{\sigma t \sqrt{2\pi}} {\rm exp} \left[-\frac{1}{2} \left(\frac{{\rm ln}(t)-\mu}{\sigma}\right)^2\right]\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \frac{1}{\sigma t}\phi \left[ \frac{{\rm ln}(t) - \mu}{\sigma} \right]\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\phi\)</span> is the standard normal PDF with <span class="math notranslate nohighlight">\(\mu = 0\)</span> and <span class="math notranslate nohighlight">\(\sigma=1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \frac{1}{\sigma \sqrt{2\pi}} \int^t_0 \frac{1}{\theta} {\rm exp} \left[-\frac{1}{2} \left(\frac{{\rm ln}(\theta)-\mu}{\sigma}\right)^2\right] {\rm d}\theta\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} =\frac{1}{2}+\frac{1}{2}{\rm erf}\left(\frac{{\rm ln}(t) - \mu}{\sigma \sqrt{2}}\right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \Phi \left( \frac{{\rm ln}(t) - \mu}{\sigma} \right)\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Phi\)</span> is the standard normal CDF with <span class="math notranslate nohighlight">\(\mu = 0\)</span> and <span class="math notranslate nohighlight">\(\sigma=1\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = 1 - \Phi \left( \frac{{\rm ln}(t) - \mu}{\sigma} \right)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{\phi \left[ \frac{{\rm ln}(t) - \mu}{\sigma} \right]}{t \sigma \left(1 - \Phi \left( \frac{{\rm ln}(t) - \mu}{\sigma} \right)\right)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = -{\rm ln}\left[1 - \Phi \left( \frac{{\rm ln}(t) - \mu}{\sigma} \right)\right]\)</span></p>
+</section>
+<section id="gamma-distribution">
+<h2>Gamma Distribution<a class="headerlink" href="#gamma-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\alpha\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \alpha &gt; 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\beta\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \beta &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( t \geq 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{t^{\beta-1}}{\Gamma(\beta)\alpha^\beta}{\rm e}^{-\frac{t}{\alpha}}\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(x)\)</span> is the complete gamma function. <span class="math notranslate nohighlight">\(\Gamma (x) = \int^\infty_0 t^{x-1}{\rm e}^{-t} {\rm d}t\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \frac{1}{\Gamma (\beta)} \gamma\left(\beta,\frac{t}{\alpha}\right)\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\gamma(x,y)\)</span> is the lower incomplete gamma function. <span class="math notranslate nohighlight">\(\gamma (x,y) = \frac{1}{\Gamma(x)} \int^y_0 t^{x-1}{\rm e}^{-t} {\rm d}t\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = \frac{1}{\Gamma (\beta)} \Gamma\left(\beta,\frac{t}{\alpha}\right)\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(x,y)\)</span> is the upper incomplete gamma function. <span class="math notranslate nohighlight">\(\Gamma (x,y) = \frac{1}{\Gamma(x)} \int^\infty_y t^{x-1}{\rm e}^{-t} {\rm d}t\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{t^{\beta-1}{\rm exp}\left(-\frac{t}{\alpha}\right)}{\alpha^\beta\Gamma\left(\beta,\frac{t}{\alpha}\right)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = -{\rm ln}\left[\frac{1}{\Gamma (\beta)} \Gamma\left(\beta,\frac{t}{\alpha}\right)\right]\)</span></p>
+<p>Note that some parametrizations of the Gamma distribution use <span class="math notranslate nohighlight">\(\frac{1}{\alpha}\)</span> in place of <span class="math notranslate nohighlight">\(\alpha\)</span>. There is also an alternative parametrization which uses shape and rate instead of shape and scale. See <a class="reference external" href="https://en.wikipedia.org/wiki/Gamma_distribution">Wikipedia</a> for an example of this.</p>
+</section>
+<section id="beta-distribution">
+<h2>Beta Distribution<a class="headerlink" href="#beta-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\alpha\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \alpha &gt; 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\beta\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \beta &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\((0 \leq t \leq 1 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}.t^{\alpha-1}(1-t)^{\beta-1}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} =\frac{1}{B(\alpha,\beta)}.t^{\alpha-1}(1-t)^{\beta-1}\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(x)\)</span> is the complete gamma function. <span class="math notranslate nohighlight">\(\Gamma (x) = \int^\infty_0 t^{x-1}{\rm e}^{-t} {\rm d}t\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(B(x,y)\)</span> is the complete beta function. <span class="math notranslate nohighlight">\(B(x,y) = \int^1_0 t^{x-1}(1-t)^{y-1} {\rm d}t\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} \int^t_0 \theta^{\alpha-1}(1-\theta)^{\beta-1} {\rm d}\theta\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} =\frac{B_t(t|\alpha,\beta)}{B(\alpha,\beta)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} =I_t(t|\alpha,\beta)\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(B_t(t|x,y)\)</span> is the incomplete beta function. <span class="math notranslate nohighlight">\(B_t(t|x,y) = \int^t_0 \theta^{x-1}(1-\theta)^{y-1} {\rm d}\theta\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(I_t(t|x,y)\)</span> is the regularized incomplete beta function which is defined in terms of the incomplete beta function and the complete beta function. <span class="math notranslate nohighlight">\(I_t(t|x,y)=\frac{B_t(t|x,y)}{B(x,y)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = 1 - I_t(t|\alpha,\beta)\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{t^{\alpha-1}(1-t)}{B(\alpha,\beta)-B_t(t|\alpha,\beta)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = -{\rm ln}\left[1 - I_t(t|\alpha,\beta)\right]\)</span></p>
+<p>Note that there is a parameterization of the Beta distribution that changes the lower and upper limits beyond 0 and 1. For this parametrization, see the reference listed in the opening paragraph of this page.</p>
+</section>
+<section id="loglogistic-distribution">
+<h2>Loglogistic Distribution<a class="headerlink" href="#loglogistic-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\alpha\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \alpha &gt; 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\beta\)</span> = shape parameter <span class="math notranslate nohighlight">\(( \beta &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( t \geq 0 )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{\left( \frac{\beta}{\alpha}\right) {\left( \frac{t}{\alpha} \right)}^{\beta - 1}}{{\left(1+{\left(\frac{t}{\alpha}\right)}^{\beta} \right)}^{2}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = \frac{1}{1+{\left(\frac{t}{\alpha} \right)}^{-\beta}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \frac{{\left(\frac{t}{\alpha} \right)}^{\beta}}{1+{\left(\frac{t}{\alpha} \right)}^{\beta}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\hspace{31mm} = \frac{{t}^{\beta}}{{\alpha}^{\beta}+{t}^{\beta}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = \frac{1}{1+{\left(\frac{t}{\alpha} \right)}^{\beta}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{\left( \frac{\beta}{\alpha}\right) {\left( \frac{t}{\alpha} \right)}^{\beta - 1}}{1+{\left(\frac{t}{\alpha} \right)}^{\beta}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = ln \left(1+{\left(\frac{t}{\alpha} \right)}^{\beta} \right)\)</span></p>
+<p>There is another parameterization of the loglogistic distribution using <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> which is designed to look more like the parametrization of the <a class="reference external" href="https://en.wikipedia.org/wiki/Logistic_distribution">logistic distribution</a> and is related to the above parametrization by <span class="math notranslate nohighlight">\(\mu = ln(\alpha)\)</span> and <span class="math notranslate nohighlight">\(\sigma = \frac{1}{\beta}\)</span>. This parametrisation can be found <a class="reference external" href="http://reliawiki.org/index.php/The_Loglogistic_Distribution">here</a>.</p>
+</section>
+<section id="gumbel-distribution">
+<h2>Gumbel Distribution<a class="headerlink" href="#gumbel-distribution" title="Link to this heading"></a></h2>
+<p><span class="math notranslate nohighlight">\(\mu\)</span> = location parameter <span class="math notranslate nohighlight">\(( -\infty &lt; \mu &lt; \infty )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sigma\)</span> = scale parameter <span class="math notranslate nohighlight">\(( \sigma &gt; 0 )\)</span></p>
+<p>Limits <span class="math notranslate nohighlight">\(( -\infty &lt; t &lt; \infty )\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{PDF:} \hspace{11mm} f(t) = \frac{1}{\sigma}{\rm e}^{z-{\rm e}^{z}}\)</span></p>
+<p>where <span class="math notranslate nohighlight">\(z = \frac{t-\mu}{\sigma}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CDF:} \hspace{10mm} F(t) = 1-{\rm e}^{-{\rm e}^{z}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{SF:} \hspace{14mm} R(t) = {\rm e}^{-{\rm e}^{z}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{HF:} \hspace{14mm} h(t) = \frac{{\rm e}^{z}}{\sigma}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\text{CHF:} \hspace{9mm} H(t) = {\rm e}^{z}\)</span></p>
+<p>The parametrization of the Gumbel Distribution shown above is also known as the Smallest Extreme Value (SEV) distribution. There are several types of extreme value distributions, and the article on <a class="reference external" href="https://en.wikipedia.org/wiki/Gumbel_distribution">Wikipedia</a> is for the Largest Extreme Value (LEV) distribution. There is only a slight difference in the parametrisation between SEV and LEV distributions, but this change effectively flips the PDF about <span class="math notranslate nohighlight">\(\mu\)</span> to give the LEV positive skewness (a longer tail to the right), while the SEV has negative skewness (a longer tail to the left).</p>
+</section>
+<section id="location-shifting-the-distributions">
+<h2>Location shifting the distributions<a class="headerlink" href="#location-shifting-the-distributions" title="Link to this heading"></a></h2>
+<p>Within <em>reliability</em> the parametrization of the Exponential, Weibull, Gamma, Lognormal, and Loglogistic distributions allows for location shifting using the gamma parameter. This will simply shift the distribution’s lower limit to the right from 0 to <span class="math notranslate nohighlight">\(\gamma\)</span>. In the location shifted form of the distributions, the equations listed above are almost identical, except everywhere you see <span class="math notranslate nohighlight">\(t\)</span> replace it with <span class="math notranslate nohighlight">\(t - \gamma\)</span>. The reason for using the location shifted form of the distribution is because some phenomena that can be modelled well by a certain probability distribution do not begin to occur immediately, so it becomes necessary to shift the lower limit of the distribution so that the data can be accurately modelled by the distribution.</p>
+<p>If implementing this yourself, ensure you set all y-values to 0 for <span class="math notranslate nohighlight">\(t \leq \gamma\)</span> as the raw form of the location shifted distributions above will not automatically zeroise these values for you and may result in negative values. This zeroizing is done automatically within <em>reliability</em>.</p>
+</section>
+<section id="relationships-between-the-five-functions">
+<h2>Relationships between the five functions<a class="headerlink" href="#relationships-between-the-five-functions" title="Link to this heading"></a></h2>
+<p>The PDF, CDF, SF, HF, CHF of a probability distribution are inter-related and any of these functions can be obtained by applying the correct transformation to any of the others. The following list of transformations are some of the most useful:</p>
+<p><span class="math notranslate nohighlight">\({\rm PDF} = \frac{d}{dt} {\rm CDF}\)</span></p>
+<p><span class="math notranslate nohighlight">\({\rm CDF} = \int_{-\infty}^t {\rm PDF}\)</span></p>
+<p><span class="math notranslate nohighlight">\({\rm SF} = 1 - {\rm CDF}\)</span></p>
+<p><span class="math notranslate nohighlight">\({\rm HF} = \frac{{\rm PDF}}{{\rm SF}}\)</span></p>
+<p><span class="math notranslate nohighlight">\({\rm CHF} = -{\rm ln} \left({\rm SF} \right)\)</span></p>
+</section>
+</section>
+</div>
+</div>

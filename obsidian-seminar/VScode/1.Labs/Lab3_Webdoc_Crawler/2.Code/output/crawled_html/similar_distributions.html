@@ -1,0 +1,51 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="similar-distributions">
+<h1>similar_distributions<a class="headerlink" href="#similar-distributions" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Other_functions.similar_distributions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Other_functions.</span></span><span class="sig-name descname"><span class="pre">similar_distributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_location_shifted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_distributions_to_show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Other_functions.similar_distributions" title="Link to this definition"></a></dt>
+<dd><p>This is a tool to find similar distributions when given an input
+distribution. It is useful to see how similar one distribution is to
+another. For example, you may look at a Weibull distribution and think it
+looks like a Normal distribution. Using this tool you can determine the
+parameters of the Normal distribution that most closely matches your Weibull
+distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>object</em>) – A distribution object created using the reliability.Distributions
+module.</p></li>
+<li><p><strong>include_location_shifted</strong> (<em>bool, optional</em>) – When set to True it will include Weibull_3P, Lognormal_3P, Gamma_3P,
+Exponential_2P, and Loglogistic_3P. Default = True</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – If True it will show the PDF and CDF of the input distributions and the
+most similar distributions. Default = True.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – If True the results will be printed to the console. Default = True.</p></li>
+<li><p><strong>number_of_distributions_to_show</strong> (<em>int, optional</em>) – The number of similar distributions to show. Default = 3. If the number
+specified exceeds the number available (typically 10), then the number
+specified will automatically be reduced. Must be &gt; 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>results</strong> (<em>array</em>) – An array of distributions objects ranked in order of best fit.</p></li>
+<li><p><strong>most_similar_distribution</strong> (<em>object</em>) – A distribution object. This is the first item from results.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The following example shows the distributions most similar to the input
+Weibull Distribution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Weibull_Distribution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Other_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">similar_distributions</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">Weibull_Distribution</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="mf">3.3</span><span class="p">)</span>
+<span class="n">similar_distributions</span><span class="p">(</span><span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

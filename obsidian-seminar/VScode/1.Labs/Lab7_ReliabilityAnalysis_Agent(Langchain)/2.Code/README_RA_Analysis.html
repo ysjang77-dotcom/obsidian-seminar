@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RA_code_v6.py 코드 상세 분석 보고서</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="ra_code_v6.py-코드-상세-분석-보고서">RA_code_v6.py 코드 상세 분석 보고서</h1>
+<h2 id="코드의-목적">1. 코드의 목적</h2>
+<p>이 파이썬 스크립트(<code>RA_code_v6.py</code>)는 <strong>수명 데이터 분석을 자동화</strong>하기 위해 설계되었습니다. 신뢰성 엔지니어나 데이터 분석가가 제품의 고장 데이터를 통계적으로 분석하여 수명 특성을 파악하고, 신뢰성을 예측할 수 있도록 돕는 것을 목표로 합니다.</p>
+<p>특히, 이 코드는 일반적인 수명 데이터뿐만 아니라, 짧은 시간 안에 제품의 수명을 예측하기 위해 가혹한 조건에서 시험하는 <strong>가속 수명 시험(Accelerated Life Test, ALT) 데이터</strong> 분석까지 체계적으로 수행할 수 있도록 구성되어 있습니다.</p>
+<p>주요 기능은 다음과 같습니다.</p>
+<ul>
+<li>
+<p><strong>데이터 자동 처리</strong>: <code>.csv</code> 또는 <code>.xlsx</code> 형식의 수명 데이터를 읽어와 분석에 적합한 형태로 가공합니다.</p>
+</li>
+<li>
+<p><strong>최적 수명 분포 탐색</strong>: 와이블(Weibull), 대수정규(Lognormal) 등 여러 통계 분포 모델을 데이터에 적합(fitting)시켜, 데이터의 수명 특성을 가장 잘 설명하는 최적의 분포를 추천합니다.</p>
+</li>
+<li>
+<p><strong>상세 신뢰성 척도 계산</strong>: B10 수명(제품의 10%가 고장 나는 시점)과 같은 신뢰성 척도를 계산하고, 특정 시간에서의 고장 확률을 예측합니다.</p>
+</li>
+<li>
+<p><strong>가속 시험 데이터 분석 지원</strong>: 여러 스트레스 조건에서의 시험 데이터를 분석하고, 가속 모델링의 타당성을 검증하는 ‘모수 동일성 검토’ 기능을 제공합니다.</p>
+</li>
+<li>
+<p><strong>시각화 자료 생성</strong>: 분석 결과를 쉽게 이해할 수 있도록 확률도(Probability Plot) 등 다양한 그래프를 자동으로 생성하고 파일로 저장합니다.</p>
+</li>
+</ul>
+<p>이 스크립트는 <code>reliability</code>라는 전문적인 신뢰성 분석 라이브러리를 활용하여, 복잡한 통계 계산을 자동화하고 분석 과정을 표준화함으로써 사용자가 데이터 해석에 더 집중할 수 있도록 지원합니다.</p>
+<hr>
+<h2 id="구현-내용-및-분석-절차">2. 구현 내용 및 분석 절차</h2>
+<p>코드는 총 4단계의 체계적인 분석 파이프라인(Pipeline)으로 구성되어 있습니다. 각 단계는 독립적인 함수로 구현되어 있어 코드의 재사용성과 확장성을 높였습니다.</p>
+<h3 id="분석-절차-요약">분석 절차 요약</h3>
+<ol>
+<li><strong>1단계: 데이터 전처리 및 요약 (<code>preprocess_and_summarize_data</code>)</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>입력</strong>: 분석할 데이터 파일 경로, 데이터 컬럼 정보, 고장/관측중단 구분자.</p>
+</li>
+<li>
+<p><strong>수행</strong>:</p>
+</li>
+<li>
+<p>CSV 또는 XLSX 파일을 읽어옵니다.</p>
+</li>
+<li>
+<p>사용자가 정의한 컬럼명(예: ‘고장시간’, ‘상태’)을 스크립트가 인식하는 표준 컬럼명(‘time’, ‘status’)으로 변경합니다.</p>
+</li>
+<li>
+<p>고장(failure)과 관측 중단(censored) 데이터를 명확히 구분합니다.</p>
+</li>
+<li>
+<p>가속 수명 시험(ALT) 데이터인 경우, 스트레스 수준(예: 온도, 전압)별로 데이터를 그룹화합니다.</p>
+</li>
+<li>
+<p><strong>출력</strong>: 그룹별로 정리된 데이터 요약 테이블과 분석용 데이터 구조. 이 단계는 데이터의 상태를 파악하고 분석의 방향을 설정하는 기초가 됩니다.</p>
+</li>
+</ul>
+<ol start="2">
+<li><strong>2단계: 최적 수명분포 탐색 (<code>find_best_distribution</code>)</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>입력</strong>: 1단계에서 처리된 그룹별 데이터.</p>
+</li>
+<li>
+<p><strong>수행</strong>:</p>
+</li>
+<li>
+<p>각 데이터 그룹에 대해 와이블, 대수정규, 정규 등 여러 수명 분포 모델을 적용합니다.</p>
+</li>
+<li>
+<p>각 모델의 적합도를 **BIC(Bayesian Information Criterion)**라는 통계 지표를 사용하여 평가합니다. BIC는 모델의 복잡도와 데이터 설명력을 동시에 고려하며, 값이 작을수록 더 우수한 모델로 판단합니다.</p>
+</li>
+<li>
+<p>BIC 값이 가장 낮은 분포를 해당 데이터 그룹의 '최적 수명 분포’로 추천합니다.</p>
+</li>
+<li>
+<p><strong>출력</strong>: 각 분포 모델의 적합도 비교 테이블, 최적 분포 추천 결과, 그리고 분포별 확률도, 히스토그램 등 다양한 시각화 자료.</p>
+</li>
+</ul>
+<ol start="3">
+<li><strong>3단계: 단일 분포 상세 분석 (<code>analyze_single_distribution</code>)</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>입력</strong>: 그룹별 데이터, 2단계에서 선택된 최적 분포 모델.</p>
+</li>
+<li>
+<p><strong>수행</strong>:</p>
+</li>
+<li>
+<p>선택된 분포 모델을 사용하여 데이터 그룹을 심층적으로 분석합니다.</p>
+</li>
+<li>
+<p>분포의 모수(Parameter, 예: 와이블 분포의 형상모수와 척도모수)를 추정하고 95% 신뢰구간을 계산합니다.</p>
+</li>
+<li>
+<p><strong>B-수명(B-Life)</strong>: 사용자가 지정한 B%(예: B1, B10, B50)에 해당하는 수명을 계산합니다. (예: B10 수명은 10%의 제품이 고장 나는 시간)</p>
+</li>
+<li>
+<p><strong>누적 고장 확률</strong>: 특정 시간(예: 100시간, 500시간)이 경과했을 때 제품이 고장 났을 누적 확률을 계산합니다.</p>
+</li>
+<li>
+<p><strong>출력</strong>: 모수 추정 테이블, B-수명 테이블, 누적 고장 확률 테이블, 그리고 선택된 분포의 확률도. 이 결과는 제품의 보증 기간 설정, 교체 주기 결정 등에 직접적으로 활용됩니다.</p>
+</li>
+</ul>
+<ol start="4">
+<li><strong>4단계: 모수 동일성 검토 (<code>check_parameter_homogeneity</code>)</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>입력</strong>: 여러 스트레스 그룹에 대한 3단계 분석 결과.</p>
+</li>
+<li>
+<p><strong>수행</strong>:</p>
+</li>
+<li>
+<p>이 단계는 <strong>가속 수명 시험(ALT) 데이터 분석 시 필수적인 과정</strong>입니다.</p>
+</li>
+<li>
+<p>ALT 분석의 핵심 가정은 '스트레스 수준이 달라도 고장 메커니즘은 동일하다’는 것입니다. 이를 통계적으로 검증하기 위해, 모든 스트레스 그룹에서 <strong>수명 분포의 형상모수(Shape Parameter)가 동일한지</strong>를 검토합니다.</p>
+</li>
+<li>
+<p>각 그룹별 형상모수의 신뢰구간을 시각화하여 비교합니다.</p>
+</li>
+<li>
+<p><strong>출력</strong>: 그룹별 형상모수 비교 테이블 및 신뢰구간 비교 그래프. 만약 모든 그룹의 신뢰구간이 서로 겹친다면, 형상모수가 동일하다는 가정을 만족한다고 볼 수 있으며, 이는 가속 모델의 타당성을 뒷받침합니다.</p>
+</li>
+</ul>
+<h3 id="버전별-주요-개선사항">버전별 주요 개선사항</h3>
+<p>이 스크립트는 v1부터 v6까지 여러 차례 개선되었습니다.</p>
+<ul>
+<li>
+<p><strong>v2</strong>: 엑셀(<code>.xlsx</code>) 파일 지원, 사용자 정의 컬럼명 매핑 기능 추가.</p>
+</li>
+<li>
+<p><strong>v3</strong>: 고장/관측중단 상태를 나타내는 값을 사용자가 직접 지정하는 기능 추가 (예: 고장=0, 중단=1).</p>
+</li>
+<li>
+<p><strong>v4</strong>: 분석할 분포 목록 내에서만 최적 분포를 선택하도록 로직 수정, 안정성 강화.</p>
+</li>
+<li>
+<p><strong>v5</strong>: 시각화 자료 저장 시 발생하던 오류 해결.</p>
+</li>
+<li>
+<p><strong>v6</strong>: 그래프의 한글 폰트 깨짐 문제 해결, 운영체제(OS)별 폰트 자동 설정 기능 추가.</p>
+</li>
+</ul>
+<hr>
+<h2 id="구현-함수-상세-설명">3. 구현 함수 상세 설명</h2>
+<h3 id="setup_environment">1. <code>setup_environment()</code></h3>
+<ul>
+<li>
+<p><strong>기능</strong>: 스크립트 실행에 필요한 기본 환경을 설정합니다.</p>
+</li>
+<li>
+<p><strong>입력</strong>: 없음</p>
+</li>
+<li>
+<p><strong>출력</strong>: 없음</p>
+</li>
+<li>
+<p><strong>구현 내용</strong>:</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>분석 결과(그림, 로그)를 저장할 <code>results</code> 폴더가 없으면 새로 생성합니다.</p>
+</li>
+<li>
+<p>분석 과정과 결과를 기록할 로그(<code>analysis_log.log</code>) 파일을 설정합니다.</p>
+</li>
+<li>
+<p><code>matplotlib</code> 라이브러리에서 그래프를 그릴 때 한글이 깨지지 않도록 운영체제(Windows, macOS)에 맞는 한글 폰트를 자동으로 설정합니다.</p>
+</li>
+</ol>
+<h3 id="preprocess_and_summarize_data">2. <code>preprocess_and_summarize_data()</code></h3>
+<ul>
+<li>
+<p><strong>기능</strong>: 원본 데이터 파일을 읽어와 분석 가능한 데이터 구조로 변환하고, 기초 통계량을 요약하여 보여줍니다.</p>
+</li>
+<li>
+<p><strong>입력</strong>:</p>
+</li>
+<li>
+<p><code>file_path (str)</code>: 분석할 데이터 파일의 경로 (예: “ALT_Chip_temperature.xlsx”).</p>
+</li>
+<li>
+<p><code>column_map (Dict)</code>: 스크립트 표준 컬럼명과 실제 파일의 컬럼명을 연결하는 딕셔너리. (예: <code>{'time': '수명시간', 'status': '상태', 'stress': '온도'}</code>)</p>
+</li>
+<li>
+<p><code>status_indicators (Dict)</code>: 데이터 파일에서 고장과 관측 중단을 나타내는 값을 지정하는 딕셔너리. (예: <code>{'failure': 0, 'censored': 1}</code>)</p>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+</li>
+<li>
+<p><code>Dict</code>: 스트레스 그룹별로 <code>failures</code>(고장 시간 리스트)와 <code>right_censored</code>(관측 중단 시간 리스트)를 담고 있는 딕셔너리.</p>
+</li>
+<li>
+<p><strong>구현 내용</strong>:</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>파일 확장자를 확인하여 <code>.csv</code> 또는 <code>.xlsx</code>에 맞는 <code>pandas</code> 함수로 데이터를 불러옵니다.</p>
+</li>
+<li>
+<p><code>column_map</code>을 참조하여 데이터프레임의 컬럼명을 <code>time</code>, <code>status</code>, <code>stress</code> 등 표준 이름으로 변경합니다.</p>
+</li>
+<li>
+<p><code>status_indicators</code>를 참조하여 <code>status</code> 컬럼의 값을 'failure’와 'censored’라는 표준 문자열로 변환합니다.</p>
+</li>
+<li>
+<p><code>stress</code> 컬럼이 없는 경우, 일반 수명 데이터로 간주하고 'group_1’이라는 단일 그룹으로 처리합니다.</p>
+</li>
+<li>
+<p><code>stress</code> 값을 기준으로 데이터를 그룹화하고, 각 그룹의 총 샘플 수, 고장 수, 관측 중단 수, 관측 중단 비율을 계산하여 표로 출력합니다.</p>
+</li>
+<li>
+<p>분석의 다음 단계를 위해 그룹별 고장/관측중단 데이터를 딕셔너리 형태로 가공하여 반환합니다.</p>
+</li>
+</ol>
+<h3 id="find_best_distribution">3. <code>find_best_distribution()</code></h3>
+<ul>
+<li>
+<p><strong>기능</strong>: 각 데이터 그룹에 가장 적합한 수명 분포 모델을 찾고, 관련 시각화 자료를 생성합니다.</p>
+</li>
+<li>
+<p><strong>입력</strong>:</p>
+</li>
+<li>
+<p><code>grouped_data (Dict)</code>: <code>preprocess_and_summarize_data</code> 함수로부터 전달받은 그룹별 데이터.</p>
+</li>
+<li>
+<p><code>distributions_to_fit (List)</code>: 분석 대상이 될 분포 이름의 리스트 (예: <code>["Weibull_2P", "Lognormal_2P"]</code>).</p>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+</li>
+<li>
+<p><code>Dict</code>: 각 그룹별 분석 결과를 담은 딕셔너리. 내부에는 <code>best_dist</code>(최적 분포 이름), <code>results_df</code>(적합도 결과 테이블), <code>fitter_object</code>(상세 분석 객체)가 포함됩니다.</p>
+</li>
+<li>
+<p><strong>구현 내용</strong>:</p>
+</li>
+</ul>
+<ol>
+<li>
+<p><code>reliability</code> 라이브러리의 <code>Fit_Everything</code> 함수를 사용하여 각 데이터 그룹에 대해 가능한 모든 수명 분포를 적합시킵니다.</p>
+</li>
+<li>
+<p>적합 결과 중에서 사용자가 <code>distributions_to_fit</code>에 지정한 분포들의 결과만 필터링합니다.</p>
+</li>
+<li>
+<p>필터링된 결과 내에서 BIC(Bayesian Information Criterion) 값이 가장 작은 분포를 최적 분포로 선정하고, 그 결과를 출력합니다.</p>
+</li>
+<li>
+<p>분포별 확률도, 데이터 히스토그램, PP-Plot 등 다양한 분석 그래프를 생성하여 <code>results</code> 폴더에 이미지 파일로 저장합니다.</p>
+</li>
+<li>
+<p>최종적으로 선택된 최적 분포 모델로 다시 한번 데이터를 적합시켜, 상세 분석이 가능한 객체(<code>fitter_object</code>)를 생성하고 결과 딕셔너리에 저장하여 반환합니다.</p>
+</li>
+</ol>
+<h3 id="analyze_single_distribution">4. <code>analyze_single_distribution()</code></h3>
+<ul>
+<li>
+<p><strong>기능</strong>: 특정 분포 모델을 사용하여 데이터 그룹을 상세 분석하고, 주요 신뢰성 척도를 계산합니다.</p>
+</li>
+<li>
+<p><strong>입력</strong>:</p>
+</li>
+<li>
+<p><code>grouped_data (Dict)</code>: 전처리된 그룹별 데이터.</p>
+</li>
+<li>
+<p><code>group_name (str)</code>: 분석할 그룹의 이름.</p>
+</li>
+<li>
+<p><code>distribution_name (str)</code>: 분석에 사용할 분포의 이름.</p>
+</li>
+<li>
+<p><code>b_lives (List[float])</code>: 계산할 B-수명 목록 (예: <code>[1, 5, 10]</code>).</p>
+</li>
+<li>
+<p><code>failure_prob_times (List[float])</code>: 누적 고장 확률을 계산할 시간 목록 (예: <code>[100, 200]</code>).</p>
+</li>
+<li>
+<p><strong>출력</strong>:</p>
+</li>
+<li>
+<p><code>Dict</code>: 상세 분석 결과(<code>fitter_object</code>)를 담은 딕셔너리.</p>
+</li>
+<li>
+<p><strong>구현 내용</strong>:</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>지정된 분포 이름에 해당하는 <code>reliability</code> 라이브러리의 Fitter 함수(예: <code>Fit_Weibull_2P</code>)를 호출합니다.</p>
+</li>
+<li>
+<p>해당 Fitter를 사용하여 데이터를 분석하고, 분포의 모수(형상, 척도 등)와 95% 신뢰구간을 추정하여 표로 출력합니다.</p>
+</li>
+<li>
+<p><code>b_lives</code> 입력값을 기반으로 B-수명을 계산하고 결과를 표로 출력합니다.</p>
+</li>
+<li>
+<p><code>failure_prob_times</code> 입력값을 기반으로 각 시간에서의 누적 고장 확률을 신뢰구간과 함께 계산하여 표로 출력합니다.</p>
+</li>
+<li>
+<p>해당 분포에 대한 확률도(Probability Plot)를 생성하여 <code>results</code> 폴더에 이미지 파일로 저장합니다.</p>
+</li>
+<li>
+<p>모든 분석 정보가 담긴 Fitter 객체를 딕셔너리 형태로 반환합니다.</p>
+</li>
+</ol>
+<h3 id="check_parameter_homogeneity">5. <code>check_parameter_homogeneity()</code></h3>
+<ul>
+<li>
+<p><strong>기능</strong>: 가속 수명 시험(ALT) 데이터의 여러 스트레스 그룹 간 형상모수가 통계적으로 동일한지 검토합니다.</p>
+</li>
+<li>
+<p><strong>입력</strong>:</p>
+</li>
+<li>
+<p><code>analysis_results (Dict)</code>: 여러 그룹에 대한 <code>analyze_single_distribution</code>의 결과 딕셔너리.</p>
+</li>
+<li>
+<p><code>parameter_to_check (str)</code>: 비교할 모수의 이름 (예: 와이블 분포의 경우 ‘beta’, 대수정규분포의 경우 ‘sigma’).</p>
+</li>
+<li>
+<p><strong>출력</strong>: 없음</p>
+</li>
+<li>
+<p><strong>구현 내용</strong>:</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>분석할 그룹이 2개 미만이면 검토가 무의미하므로 함수를 종료합니다.</p>
+</li>
+<li>
+<p><code>analysis_results</code>에서 각 그룹의 Fitter 객체를 가져와 지정된 모수(<code>parameter_to_check</code>)의 점추정치와 95% 신뢰구간(하한, 상한)을 추출합니다.</p>
+</li>
+<li>
+<p>추출된 데이터를 <code>pandas</code> 데이터프레임으로 만들어 표 형태로 출력합니다.</p>
+</li>
+<li>
+<p><code>matplotlib</code>을 사용하여 각 그룹의 모수 추정치와 신뢰구간을 에러 바(Error Bar) 형태로 시각화합니다.</p>
+</li>
+<li>
+<p>생성된 그래프를 <code>results</code> 폴더에 <code>homogeneity_check_모수이름.png</code> 파일로 저장합니다. 이 그래프를 통해 모든 그룹의 신뢰구간이 겹치는지 직관적으로 확인할 수 있습니다.</p>
+</li>
+</ol>
+<hr>
+<h2 id="부록-신뢰성-분석-핵심-배경지식">4. 부록: 신뢰성 분석 핵심 배경지식</h2>
+<p>신뢰성 분석을 처음 접하는 교육생을 위해 코드 이해에 필요한 핵심 용어와 개념을 설명합니다.</p>
+<h3 id="수명-데이터-life-data">1. 수명 데이터 (Life Data)</h3>
+<p>제품이 고장 날 때까지의 시간을 기록한 데이터입니다. 두 가지 주요 유형이 있습니다.</p>
+<ul>
+<li>
+<p><strong>고장 데이터 (Failure Data)</strong>: 제품이 실제로 고장 난 시간을 기록한 데이터입니다.</p>
+</li>
+<li>
+<p><strong>관측 중단 데이터 (Censored Data)</strong>: 시험이 끝나거나 다른 이유로 인해 제품이 고장 나기 전에 시험을 중단한 경우의 데이터입니다. 예를 들어, 1000시간의 시험 동안 고장 나지 않았다면, 이 제품의 수명은 '최소 1000시간 이상’이라는 정보만 알 수 있습니다. 이처럼 정확한 고장 시간은 모르지만 특정 시간까지는 고장 나지 않았다는 정보도 수명 분석에 매우 중요하게 사용됩니다. 이 코드에서는 ‘Right Censored’ 데이터를 처리합니다.</p>
+</li>
+</ul>
+<h3 id="수명-분포-life-distribution">2. 수명 분포 (Life Distribution)</h3>
+<p>제품의 고장 시간을 확률적으로 모델링하는 데 사용되는 통계 분포입니다. 대표적인 수명 분포는 다음과 같습니다.</p>
+<ul>
+<li>
+<p><strong>와이블 분포 (Weibull Distribution)</strong>: 신뢰성 분석에서 가장 널리 사용되는 분포입니다. **형상모수(beta, β)**와 <strong>척도모수(alpha, α)</strong> 두 가지 모수를 가집니다.</p>
+</li>
+<li>
+<p><strong>형상모수 (β)</strong>: 고장 패턴을 나타냅니다.</p>
+</li>
+<li>
+<p>β &lt; 1: 초기 고장 (Failures decrease over time)</p>
+</li>
+<li>
+<p>β = 1: 우발 고장 (Failures are random and constant)</p>
+</li>
+<li>
+<p>β &gt; 1: 마모 고장 (Failures increase over time)</p>
+</li>
+<li>
+<p><strong>척도모수 (α)</strong>: 특성 수명(Characteristic Life)이라고도 하며, 제품의 63.2%가 고장 나는 시간을 의미합니다.</p>
+</li>
+<li>
+<p><strong>대수정규분포 (Lognormal Distribution)</strong>: 수명 데이터가 대칭이 아닌 오른쪽으로 긴 꼬리를 가질 때 자주 사용됩니다. 특히 화학 반응이나 재료의 피로 파괴와 관련된 고장 메커니즘에 적합합니다.</p>
+</li>
+<li>
+<p><strong>정규분포 (Normal Distribution)</strong>, <strong>지수분포 (Exponential Distribution)</strong> 등도 특정 상황에서 사용됩니다.</p>
+</li>
+</ul>
+<h3 id="확률도-probability-plot">3. 확률도 (Probability Plot)</h3>
+<p>수집된 데이터가 특정 통계 분포를 잘 따르는지 시각적으로 확인하는 그래프입니다.</p>
+<ul>
+<li><strong>해석 방법</strong>: 데이터 포인트들이 직선에 가깝게 배열될수록, 해당 데이터는 그 분포를 잘 따른다고 할 수 있습니다. 만약 점들이 직선에서 크게 벗어나거나 특정 패턴을 보인다면, 그 분포는 데이터를 잘 설명하지 못하는 것입니다.</li>
+</ul>
+<h3 id="bic-bayesian-information-criterion">4. BIC (Bayesian Information Criterion)</h3>
+<p>여러 통계 모델 중에서 최적의 모델을 선택하기 위한 지표입니다.</p>
+<ul>
+<li>
+<p><strong>특징</strong>: 데이터에 대한 모델의 적합도(얼마나 잘 설명하는가)와 모델의 복잡도(사용된 모수의 개수) 사이에 균형을 맞춥니다. 복잡한 모델이 데이터를 더 잘 설명하는 경향이 있지만, 과적합(overfitting)의 위험이 있습니다. BIC는 불필요하게 복잡한 모델에 페널티를 부여합니다.</p>
+</li>
+<li>
+<p><strong>선택 기준</strong>: <strong>BIC 값이 가장 작은 모델</strong>을 최적의 모델로 선택합니다.</p>
+</li>
+</ul>
+<h3 id="b-수명-b-life">5. B-수명 (B-Life)</h3>
+<p>모집단의 B%가 고장 날 것으로 예상되는 시간을 의미합니다. 신뢰성 목표를 설정하거나 보증 기간을 결정하는 데 중요한 척도입니다.</p>
+<ul>
+<li><strong>예시</strong>: <strong>B10 수명</strong>은 전체 제품 중 10%가 고장 나는 시점을 의미합니다. 만약 어떤 제품의 B10 수명이 5,000시간이라면, 5,000시간 사용 시점까지 제품의 90%는 여전히 작동할 것이라고 기대할 수 있습니다.</li>
+</ul>
+<h3 id="가속-수명-시험-accelerated-life-test-alt">6. 가속 수명 시험 (Accelerated Life Test, ALT)</h3>
+<p>제품의 정상 사용 조건보다 더 가혹한 스트레스(온도, 습도, 전압 등)를 가하여 고장을 인위적으로 가속시키는 시험입니다. 이를 통해 단기간에 제품의 장기 수명을 예측할 수 있습니다.</p>
+<ul>
+<li>
+<p><strong>핵심 가정</strong>: “가혹한 조건에서의 고장 메커니즘과 정상 조건에서의 고장 메커니즘은 동일하다.”</p>
+</li>
+<li>
+<p><strong>형상모수 동일성 검토</strong>: 위 핵심 가정을 통계적으로 확인하는 절차입니다. 수명 분포의 형상모수(예: 와이블의 beta)는 고장 메커니즘을 반영하므로, 모든 스트레스 수준에서 형상모수가 통계적으로 동일하다면 핵심 가정이 타당하다고 볼 수 있습니다. 이 스크립트의 4단계가 바로 이 역할을 수행합니다.</p>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

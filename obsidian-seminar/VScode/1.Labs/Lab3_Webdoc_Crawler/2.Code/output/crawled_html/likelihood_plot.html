@@ -1,0 +1,46 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="likelihood-plot">
+<h1>likelihood_plot<a class="headerlink" href="#likelihood-plot" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Reliability_testing.likelihood_plot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Reliability_testing.</span></span><span class="sig-name descname"><span class="pre">likelihood_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MLE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Reliability_testing.likelihood_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
+differences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<em>str</em>) – The probability distribution to use for the likelihood plot. Must be one of Weibull, Normal, Gamma,
+Loglogistic, Lognormal, Gumbel, Beta.</p></li>
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data. Must have at least 2 failures.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data. Optional input. Default = None.</p></li>
+<li><p><strong>CI</strong> (<em>float, array, list, optional</em>) – The confidence interval or an array of confidence intervals. All CI must be between 0.5 and 1. If an array of CI
+is specified there will be a controur at each CI. Default = 0.95 for 95% confidence intervals.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – The method used by the fitter. Must be either MLE, LS, RRX, RRY. Default is MLE.</p></li>
+<li><p><strong>color</strong> (<em>str, optional</em>) – The color for the plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>figure</strong> (<em>object</em>) – The figure handle of the likelihood plot is returned as an object.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This plot is used to test for statistically significant differences between two or more distributions. If there is
+no overlap in the contours then there is a statistically significant difference between the distributions.</p>
+<p>If your plot does not appear automatically, use plt.show() to show it.</p>
+<dl>
+<dt>Example usage:</dt><dd><p>from reliability.Reliability_testing import likelihood_plot
+import matplotlib.pyplot as plt</p>
+<p>old_design = [2,9,23,38,67,2,11,28,40,76,3,17,33,45,90,4,17,34,55,115,6,19,34,56,126,9,21,37,57,197]
+new_design = [15,116,32,148,61,178,67,181,75,183]
+likelihood_plot(distribution=”Weibull”,failures=old_design,CI=[0.9,0.95])
+likelihood_plot(distribution=”Weibull”,failures=new_design,CI=[0.9,0.95])
+plt.show()</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div>
+</div>

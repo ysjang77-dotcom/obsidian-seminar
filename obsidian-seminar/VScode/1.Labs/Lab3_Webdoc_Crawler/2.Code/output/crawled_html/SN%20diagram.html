@@ -1,0 +1,46 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="sn-diagram">
+<h1>SN diagram<a class="headerlink" href="#sn-diagram" title="Link to this heading"></a></h1>
+<p>This function will plot the stress vs number of cycles (S-N) diagram when supplied with data from a series of fatigue tests. An S-N diagram is a common procedure used to model the fatigue life of metals which are subject to known cyclic loads. Typically, the plot is done using a semilog scale where the number of cycles is scaled logarithmically. This has the effect of linearizing the plot and making the accuracy of the model much easier to visualize. For steels, titanium alloys, and some other metals, there exists an endurance limit. This limit is the minimum stress required to propagate faigue cracks, and all stresses below this endurance limit do not contribute to fatigue growth. The plot can be adjusted to use an endurance limit using the optional inputs, however, there must be runout data (equivalent to right censored data) supplied in order for the program to determine where to set the endurance limit.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/PoF/SN_diagram.html">API reference</a>.</p>
+</div>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In this first example, we use the data for stress and cycles to produce an S-N diagram. We will not provide any runout data here so the endurance limit will not be calculated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">stress</span> <span class="o">=</span> <span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">275</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">210</span><span class="p">]</span>
+<span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15000</span><span class="p">,</span> <span class="mi">24000</span><span class="p">,</span> <span class="mi">36000</span><span class="p">,</span> <span class="mi">80000</span><span class="p">,</span> <span class="mi">177000</span><span class="p">,</span> <span class="mi">162000</span><span class="p">,</span> <span class="mi">301000</span><span class="p">,</span> <span class="mi">290000</span><span class="p">,</span> <span class="mi">361000</span><span class="p">,</span> <span class="mi">881000</span><span class="p">,</span> <span class="mi">1300000</span><span class="p">,</span> <span class="mi">2500000</span><span class="p">]</span>
+<span class="n">SN_diagram</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="n">stress</span><span class="p">,</span> <span class="n">cycles</span><span class="o">=</span><span class="n">cycles</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/Fatigue_1.png" src="_images/Fatigue_1.png"/>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In this second example, we will use the same data as above, but also supply runout data so that the endurance limit will be calculated. We will also adjust the method_for_bounds to be ‘residual’. We are also going to find the life (in cycles) at a stress of 260 by using stress_trace, and the stress required to achieve a life of 5x10^5 cycles using cycles_trace.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_diagram</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">stress</span> <span class="o">=</span> <span class="p">[</span><span class="mi">340</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">290</span><span class="p">,</span> <span class="mi">275</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">210</span><span class="p">]</span>
+<span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15000</span><span class="p">,</span> <span class="mi">24000</span><span class="p">,</span> <span class="mi">36000</span><span class="p">,</span> <span class="mi">80000</span><span class="p">,</span> <span class="mi">177000</span><span class="p">,</span> <span class="mi">162000</span><span class="p">,</span> <span class="mi">301000</span><span class="p">,</span> <span class="mi">290000</span><span class="p">,</span> <span class="mi">361000</span><span class="p">,</span> <span class="mi">881000</span><span class="p">,</span> <span class="mi">1300000</span><span class="p">,</span> <span class="mi">2500000</span><span class="p">]</span>
+<span class="n">stress_runout</span> <span class="o">=</span> <span class="p">[</span><span class="mi">210</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">205</span><span class="p">,</span> <span class="mi">205</span><span class="p">]</span>
+<span class="n">cycles_runout</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">SN_diagram</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="n">stress</span><span class="p">,</span> <span class="n">cycles</span><span class="o">=</span><span class="n">cycles</span><span class="p">,</span> <span class="n">stress_runout</span><span class="o">=</span><span class="n">stress_runout</span><span class="p">,</span> <span class="n">cycles_runout</span><span class="o">=</span><span class="n">cycles_runout</span><span class="p">,</span><span class="n">method_for_bounds</span><span class="o">=</span><span class="s1">'residual'</span><span class="p">,</span><span class="n">cycles_trace</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">5</span><span class="p">],</span> <span class="n">stress_trace</span><span class="o">=</span><span class="p">[</span><span class="mi">260</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/Fatigue_2.png" src="_images/Fatigue_2.png"/>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Probabilistic Physics of Failure Approach to Reliability (2017), by M. Modarres, M. Amiri, and C. Jackson. pp. 17-21.</p></li>
+</ul>
+</section>
+</section>
+</div>
+</div>

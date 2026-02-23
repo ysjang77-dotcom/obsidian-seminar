@@ -1,0 +1,46 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="creep-rupture-curves">
+<h1>creep_rupture_curves<a class="headerlink" href="#creep-rupture-curves" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.creep_rupture_curves">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">creep_rupture_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TTF_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stress_trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.creep_rupture_curves" title="Link to this definition"></a></dt>
+<dd><p>This function plots the creep rupture curves for a given set of creep data.
+It also fits the lines of best fit to each temperature.</p>
+<p>The time to failure for a given temperature can be found by specifying
+stress_trace and temp_trace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp_array</strong> (<em>array, list</em>) – The temperatures</p></li>
+<li><p><strong>stress_array</strong> (<em>array, list</em>) – The stresses</p></li>
+<li><p><strong>TTF_array</strong> (<em>array, list</em>) – The times to failure at the given temperatures and stresses</p></li>
+<li><p><strong>stress_trace</strong> (<em>float, int, optional</em>) – The stress value used to determine the time to failure. Both
+stress_trace and temp_trace must be provided to calculate the time to
+failure.</p></li>
+<li><p><strong>temp_trace</strong> (<em>float, int</em>) – The temperature value used to determine the time to failure. Both
+stress_trace and temp_trace must be provided to calculate the time to
+failure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – The plot is the only output. Use plt.show() to show it.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.PoF</span><span class="w"> </span><span class="kn">import</span> <span class="n">creep_rupture_curves</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">TEMP</span> <span class="o">=</span> <span class="p">[</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">900</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1350</span><span class="p">,</span><span class="mi">1350</span><span class="p">,</span><span class="mi">1350</span><span class="p">]</span>
+<span class="n">STRESS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span><span class="mi">82</span><span class="p">,</span><span class="mi">78</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">68</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">56</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">38</span><span class="p">,</span><span class="mf">60.5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">TTF</span> <span class="o">=</span> <span class="p">[</span><span class="mi">37</span><span class="p">,</span><span class="mi">975</span><span class="p">,</span><span class="mi">3581</span><span class="p">,</span><span class="mi">9878</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">213</span><span class="p">,</span><span class="mi">1493</span><span class="p">,</span><span class="mi">2491</span><span class="p">,</span><span class="mi">5108</span><span class="p">,</span><span class="mi">7390</span><span class="p">,</span><span class="mi">10447</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">167</span><span class="p">,</span><span class="mi">615</span><span class="p">,</span><span class="mi">2220</span><span class="p">,</span><span class="mi">6637</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">331</span><span class="p">,</span><span class="mf">3.7</span><span class="p">,</span><span class="mf">8.9</span><span class="p">,</span><span class="mf">31.8</span><span class="p">]</span>
+<span class="n">creep_rupture_curves</span><span class="p">(</span><span class="n">temp_array</span><span class="o">=</span><span class="n">TEMP</span><span class="p">,</span> <span class="n">stress_array</span><span class="o">=</span><span class="n">STRESS</span><span class="p">,</span> <span class="n">TTF_array</span><span class="o">=</span><span class="n">TTF</span><span class="p">,</span> <span class="n">stress_trace</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">temp_trace</span><span class="o">=</span><span class="mi">1100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

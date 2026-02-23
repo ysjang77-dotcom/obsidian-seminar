@@ -1,0 +1,293 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>브레이크 패드 수명 데이터 분석 코드(lifedata_v6.py) 해설서</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="⚙️-브레이크-패드-수명-데이터-분석-코드lifedata_v6.py-해설서">⚙️ 브레이크 패드 수명 데이터 분석 코드(lifedata_v6.py) 해설서</h1>
+<p>안녕하세요! AI를 활용한 신뢰성 분석 과정에 오신 것을 환영합니다.</p>
+<p>이 문서는 <code>lifedata_v6.py</code> 파이썬 코드를 이해하고 직접 실행해보는 데 도움을 드리기 위해 만들어졌습니다. 우리는 이 코드를 통해 <strong>내구 시험 데이터</strong>와 <strong>실제 필드 데이터</strong>를 통계적으로 비교하여, 두 환경 사이의 **가속 계수(Acceleration Factor)**를 찾아내는 흥미로운 여정을 떠나게 될 것입니다.</p>
+<p>이 해설서를 차근차근 따라오시면, 신뢰성 데이터 분석의 핵심 개념과 파이썬을 활용한 자동화 분석 방법을 모두 익히실 수 있을 것입니다.</p>
+<hr>
+<h2 id="목차">목차</h2>
+<ol>
+<li>
+<p><a href="#1-%EC%BD%94%EB%93%9C%EC%9D%98-%EB%AA%A9%EC%A0%81-%EB%B0%8F-%EB%AA%A9%ED%91%9C">코드의 목적 및 목표</a></p>
+</li>
+<li>
+<p><a href="#2-%EB%B6%84%EC%84%9D-%EC%A0%84%EC%B2%B4-%ED%9D%90%EB%A6%84%EB%8F%84">분석 전체 흐름도</a></p>
+</li>
+<li>
+<p><a href="#3-%ED%95%B5%EC%8B%AC-%EB%B6%84%EC%84%9D-%EB%B0%A9%EB%B2%95%EB%A1%A0">핵심 분석 방법론</a></p>
+</li>
+</ol>
+<ul>
+<li>
+<p><a href="#31-%EC%88%98%EB%AA%85-%EB%B6%84%ED%8F%AC-%ED%94%BC%ED%8C%85">3.1. 수명 분포 피팅</a></p>
+</li>
+<li>
+<p><a href="#32-%EA%B3%B5%ED%86%B5-%ED%98%95%EC%83%81%EB%AA%A8%EC%88%98-%EA%B2%80%EC%A0%95">3.2. 공통 형상모수 검정</a></p>
+</li>
+<li>
+<p><a href="#33-%EA%B0%80%EC%86%8D-%EA%B3%84%EC%88%98af-%EC%82%B0%EC%B6%9C">3.3. 가속 계수(AF) 산출</a></p>
+</li>
+</ul>
+<ol start="4">
+<li><a href="#4-%EC%A3%BC%EC%9A%94-%ED%95%A8%EC%88%98-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85">주요 함수 상세 설명</a></li>
+</ol>
+<ul>
+<li>
+<p><a href="#41-setup_environment">4.1. <code>setup_environment</code></a></p>
+</li>
+<li>
+<p><a href="#42-load_and_prepare_data">4.2. <code>load_and_prepare_data</code></a></p>
+</li>
+<li>
+<p><a href="#43-analyze_dataset">4.3. <code>analyze_dataset</code></a></p>
+</li>
+<li>
+<p><a href="#44-compare_shape_parameters">4.4. <code>compare_shape_parameters</code></a></p>
+</li>
+<li>
+<p><a href="#45-calculate_acceleration_factor">4.5. <code>calculate_acceleration_factor</code></a></p>
+</li>
+<li>
+<p><a href="#46-generate_final_report">4.6. <code>generate_final_report</code></a></p>
+</li>
+<li>
+<p><a href="#47-main">4.7. <code>main</code></a></p>
+</li>
+</ul>
+<ol start="5">
+<li><a href="#5-%EC%BD%94%EB%93%9C-%EC%8B%A4%ED%96%89-%EB%B0%8F-%EC%9E%AC%ED%98%84-%EB%B0%A9%EB%B2%95">코드 실행 및 재현 방법</a></li>
+</ol>
+<ul>
+<li>
+<p><a href="#51-%EC%A4%80%EB%B9%84%EB%AC%BC">5.1. 준비물</a></p>
+</li>
+<li>
+<p><a href="#52-%EC%8B%A4%ED%96%89">5.2. 실행</a></p>
+</li>
+<li>
+<p><a href="#53-%EA%B2%B0%EA%B3%BC-%ED%99%95%EC%9D%B8">5.3. 결과 확인</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="코드의-목적-및-목표">1. 코드의 목적 및 목표</h2>
+<p>이 코드의 핵심 목표는 <strong>“실험실에서 수행한 가혹한 내구 시험이 실제 고객이 사용하는 환경(필드)보다 얼마나 더 가혹한가?”</strong> 라는 질문에 대한 답을 데이터 기반으로 찾는 것입니다.</p>
+<ul>
+<li>
+<p><strong>목적</strong>: 내구 시험과 필드에서 수집된 브레이크 패드의 수명(주행거리) 데이터를 비교 분석하여, 두 환경 간의 상관관계를 나타내는 **가속 계수(AF)**를 정량적으로 산출합니다.</p>
+</li>
+<li>
+<p><strong>최종 목표</strong>: 분석의 모든 과정을 자동화하고, 결과를 담은 최종 보고서(<code>final_report.md</code>)를 생성하여 누구나 쉽게 이해할 수 있도록 합니다.</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>잠깐! 가속 계수(Acceleration Factor, AF)란?</strong></p>
+</blockquote>
+<blockquote></blockquote>
+<blockquote>
+<p>실험실의 가속 시험 조건이 실제 사용 조건에 비해 수명을 얼마나 단축시키는지를 나타내는 비율입니다. 예를 들어 AF가 10이라면, 실험실에서의 1시간은 실제 사용 환경에서의 10시간과 동일한 스트레스를 제품에 가한다는 의미입니다. 이를 통해 우리는 짧은 시간의 내구 시험만으로도 장기간의 필드 수명을 예측할 수 있습니다.</p>
+</blockquote>
+<hr>
+<h2 id="분석-전체-흐름도">2. 분석 전체 흐름도</h2>
+<p>코드는 아래와 같은 체계적인 절차에 따라 분석을 수행합니다. 각 단계는 독립적인 함수로 구현되어 있어 코드의 구조를 이해하기 쉽습니다.</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-mmurL9TXQdVjnd4h" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="1719.1812744140625" style="max-width: 695.76953125px;" viewBox="0 0 695.76953125 1719.1812744140625"><style>#mermaid-svg-mmurL9TXQdVjnd4h{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-mmurL9TXQdVjnd4h .error-icon{fill:#552222;}#mermaid-svg-mmurL9TXQdVjnd4h .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-mmurL9TXQdVjnd4h .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-mmurL9TXQdVjnd4h .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-mmurL9TXQdVjnd4h .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-mmurL9TXQdVjnd4h .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-mmurL9TXQdVjnd4h .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-mmurL9TXQdVjnd4h .marker{fill:#666;stroke:#666;}#mermaid-svg-mmurL9TXQdVjnd4h .marker.cross{stroke:#666;}#mermaid-svg-mmurL9TXQdVjnd4h svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-mmurL9TXQdVjnd4h .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-mmurL9TXQdVjnd4h .cluster-label text{fill:#333;}#mermaid-svg-mmurL9TXQdVjnd4h .cluster-label span{color:#333;}#mermaid-svg-mmurL9TXQdVjnd4h .label text,#mermaid-svg-mmurL9TXQdVjnd4h span{fill:#000000;color:#000000;}#mermaid-svg-mmurL9TXQdVjnd4h .node rect,#mermaid-svg-mmurL9TXQdVjnd4h .node circle,#mermaid-svg-mmurL9TXQdVjnd4h .node ellipse,#mermaid-svg-mmurL9TXQdVjnd4h .node polygon,#mermaid-svg-mmurL9TXQdVjnd4h .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-mmurL9TXQdVjnd4h .node .label{text-align:center;}#mermaid-svg-mmurL9TXQdVjnd4h .node.clickable{cursor:pointer;}#mermaid-svg-mmurL9TXQdVjnd4h .arrowheadPath{fill:#333333;}#mermaid-svg-mmurL9TXQdVjnd4h .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-mmurL9TXQdVjnd4h .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-mmurL9TXQdVjnd4h .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-mmurL9TXQdVjnd4h .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-mmurL9TXQdVjnd4h .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-mmurL9TXQdVjnd4h .cluster text{fill:#333;}#mermaid-svg-mmurL9TXQdVjnd4h .cluster span{color:#333;}#mermaid-svg-mmurL9TXQdVjnd4h div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-mmurL9TXQdVjnd4h:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-mmurL9TXQdVjnd4h flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M276.53125,54.71875L276.53125,79.71875L276.53125,104.71875" marker-end="url(https://stackedit.io/app#arrowhead455)" style="fill:none"></path><defs><marker id="arrowhead455" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M276.53125,204.875L276.53125,229.875L276.53125,254.875" marker-end="url(https://stackedit.io/app#arrowhead456)" style="fill:none"></path><defs><marker id="arrowhead456" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M276.53125,355.03125L276.53125,380.03125L277.03125,405.53125152587904" marker-end="url(https://stackedit.io/app#arrowhead457)" style="fill:none"></path><defs><marker id="arrowhead457" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-E1" style="opacity: 1;" id="L-D-E1"><path class="path" d="M305.5438205375379,543.7718029365832L339.796875,610.1437530517578L339.796875,648.5031280517578" marker-end="url(https://stackedit.io/app#arrowhead458)" style="fill:none"></path><defs><marker id="arrowhead458" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-D LE-Z" style="opacity: 1;" id="L-D-Z"><path class="path" d="M220.30408860739897,515.5572151332777L17.3984375,610.1437530517578L17.3984375,685.2218780517578L17.3984375,746.9406280517578L17.3984375,808.6593780517578L17.3984375,870.3781280517578L17.3984375,956.7117233276367L17.3984375,1056.4046936035156L17.3984375,1144.8421936035156L17.3984375,1219.9203186035156L17.3984375,1306.2539138793945L17.3984375,1405.9468841552734L17.3984375,1481.0250091552734L17.3984375,1542.7437591552734L17.3984375,1591.1031341552734L17.3984375,1639.4625091552734L70.63671875,1672.4847007417757" marker-end="url(https://stackedit.io/app#arrowhead459)" style="fill:none"></path><defs><marker id="arrowhead459" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E1 LE-E2" style="opacity: 1;" id="L-E1-E2"><path class="path" d="M339.796875,721.9406280517578L339.796875,746.9406280517578L339.796875,771.9406280517578" marker-end="url(https://stackedit.io/app#arrowhead460)" style="fill:none"></path><defs><marker id="arrowhead460" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-E2 LE-F" style="opacity: 1;" id="L-E2-F"><path class="path" d="M339.796875,845.3781280517578L339.796875,870.3781280517578L340.29687499999994,895.878129577636" marker-end="url(https://stackedit.io/app#arrowhead461)" style="fill:none"></path><defs><marker id="arrowhead461" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-G" style="opacity: 1;" id="L-F-G"><path class="path" d="M369.829515050116,989.0126739757619L432.37890625,1056.4046936035156L432.37890625,1094.7640686035156" marker-end="url(https://stackedit.io/app#arrowhead462)" style="fill:none"></path><defs><marker id="arrowhead462" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-F LE-Z" style="opacity: 1;" id="L-F-Z"><path class="path" d="M296.73153507818057,974.9799771558178L95.36328125,1056.4046936035156L95.36328125,1144.8421936035156L95.36328125,1219.9203186035156L95.36328125,1306.2539138793945L95.36328125,1405.9468841552734L95.36328125,1481.0250091552734L95.36328125,1542.7437591552734L95.36328125,1591.1031341552734L95.36328125,1639.4625091552734L95.36328125,1664.4625091552734" marker-end="url(https://stackedit.io/app#arrowhead463)" style="fill:none"></path><defs><marker id="arrowhead463" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-G LE-H" style="opacity: 1;" id="L-G-H"><path class="path" d="M432.37890625,1194.9203186035156L432.37890625,1219.9203186035156L432.87890625,1245.420320129395" marker-end="url(https://stackedit.io/app#arrowhead464)" style="fill:none"></path><defs><marker id="arrowhead464" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-H LE-I" style="opacity: 1;" id="L-H-I"><path class="path" d="M395.8532474455769,1331.0618488249713L280.52734375,1405.9468841552734L280.52734375,1444.3062591552734" marker-end="url(https://stackedit.io/app#arrowhead465)" style="fill:none"></path><defs><marker id="arrowhead465" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-H LE-J" style="opacity: 1;" id="L-H-J"><path class="path" d="M469.90456321214833,1331.0618476154887L584.23046875,1405.9468841552734L584.23046875,1444.3062591552734" marker-end="url(https://stackedit.io/app#arrowhead466)" style="fill:none"></path><defs><marker id="arrowhead466" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-I LE-K" style="opacity: 1;" id="L-I-K"><path class="path" d="M280.52734375,1517.7437591552734L280.52734375,1542.7437591552734L359.02895925888527,1567.7437591552734" marker-end="url(https://stackedit.io/app#arrowhead467)" style="fill:none"></path><defs><marker id="arrowhead467" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-J LE-K" style="opacity: 1;" id="L-J-K"><path class="path" d="M584.23046875,1517.7437591552734L584.23046875,1542.7437591552734L505.72885324111473,1567.7437591552734" marker-end="url(https://stackedit.io/app#arrowhead468)" style="fill:none"></path><defs><marker id="arrowhead468" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g><g class="edgePath LS-K LE-Z" style="opacity: 1;" id="L-K-Z"><path class="path" d="M432.37890625,1614.4625091552734L432.37890625,1639.4625091552734L120.08984375,1684.2737961151463" marker-end="url(https://stackedit.io/app#arrowhead469)" style="fill:none"></path><defs><marker id="arrowhead469" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(339.796875,610.1437530517578)"><g transform="translate(-11.328125,-13.359375)" class="label"><rect rx="0" ry="0" width="22.65625" height="26.71875"></rect><foreignObject width="22.65625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-E1" class="edgeLabel L-LS-D' L-LE-E1">Yes</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(17.3984375,1144.8421936035156)"><g transform="translate(-9.3984375,-13.359375)" class="label"><rect rx="0" ry="0" width="18.796875" height="26.71875"></rect><foreignObject width="18.796875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-D-Z" class="edgeLabel L-LS-D' L-LE-Z">No</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E1-E2" class="edgeLabel L-LS-E1' L-LE-E2"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-E2-F" class="edgeLabel L-LS-E2' L-LE-F"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(432.37890625,1056.4046936035156)"><g transform="translate(-11.328125,-13.359375)" class="label"><rect rx="0" ry="0" width="22.65625" height="26.71875"></rect><foreignObject width="22.65625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-G" class="edgeLabel L-LS-F' L-LE-G">Yes</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(95.36328125,1405.9468841552734)"><g transform="translate(-9.3984375,-13.359375)" class="label"><rect rx="0" ry="0" width="18.796875" height="26.71875"></rect><foreignObject width="18.796875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-F-Z" class="edgeLabel L-LS-F' L-LE-Z">No</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-G-H" class="edgeLabel L-LS-G' L-LE-H"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(280.52734375,1405.9468841552734)"><g transform="translate(-11.328125,-13.359375)" class="label"><rect rx="0" ry="0" width="22.65625" height="26.71875"></rect><foreignObject width="22.65625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-H-I" class="edgeLabel L-LS-H' L-LE-I">Yes</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform="translate(584.23046875,1405.9468841552734)"><g transform="translate(-9.3984375,-13.359375)" class="label"><rect rx="0" ry="0" width="18.796875" height="26.71875"></rect><foreignObject width="18.796875" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-H-J" class="edgeLabel L-LS-H' L-LE-J">No</span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-I-K" class="edgeLabel L-LS-I' L-LE-K"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-J-K" class="edgeLabel L-LS-J' L-LE-K"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-K-Z" class="edgeLabel L-LS-K' L-LE-Z"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-A-5768" transform="translate(276.53125,31.359375)"><rect rx="0" ry="0" x="-24.7265625" y="-23.359375" width="49.453125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-14.7265625,-13.359375)"><foreignObject width="29.453125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">시작</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-5769" transform="translate(276.53125,154.796875)"><rect rx="0" ry="0" x="-68.5234375" y="-50.078125" width="137.046875" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-58.5234375,-40.078125)"><foreignObject width="117.046875" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">0. 분석 환경 설정<br>- 결과 폴더 생성<br>- 로그 설정</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-5771" transform="translate(276.53125,304.953125)"><rect rx="0" ry="0" x="-105.328125" y="-50.078125" width="210.65625" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-95.328125,-40.078125)"><foreignObject width="190.65625" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">1. 데이터 준비<br>- 엑셀 파일 로드<br>- 내구시험/필드 데이터 분리</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-5773" transform="translate(276.53125,488.4078140258789)"><polygon points="83.3765625,0 166.753125,-83.3765625 83.3765625,-166.753125 0,-83.3765625" transform="translate(-83.3765625,83.3765625)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-59.28125,-13.359375)"><foreignObject width="118.5625" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">데이터 분리 성공?</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E1-5775" transform="translate(339.796875,685.2218780517578)"><rect rx="0" ry="0" x="-91.53125" y="-36.71875" width="183.0625" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-81.53125,-26.71875)"><foreignObject width="163.0625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">(2) 개별 분석 - 내구시험<br>최적 수명분포 찾기</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-Z-5777" transform="translate(95.36328125,1687.8218841552734)"><rect rx="0" ry="0" x="-24.7265625" y="-23.359375" width="49.453125" height="46.71875" class="label-container" style="fill:#ffcccc;stroke:#333;stroke-width:2px;"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-14.7265625,-13.359375)"><foreignObject width="29.453125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">종료</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-E2-5779" transform="translate(339.796875,808.6593780517578)"><rect rx="0" ry="0" x="-76.8125" y="-36.71875" width="153.625" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-66.8125,-26.71875)"><foreignObject width="133.625" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">(2) 개별 분석 - 필드<br>최적 수명분포 찾기</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-F-5781" transform="translate(339.796875,956.7117233276367)"><polygon points="61.33359375,0 122.6671875,-61.33359375 61.33359375,-122.6671875 0,-61.33359375" transform="translate(-61.33359375,61.33359375)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-34.7890625,-13.359375)"><foreignObject width="69.578125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">분석 성공?</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-G-5783" transform="translate(432.37890625,1144.8421936035156)"><rect rx="0" ry="0" x="-95.78125" y="-50.078125" width="191.5625" height="100.15625" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-85.78125,-40.078125)"><foreignObject width="171.5625" height="80.15625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">3. 공통 형상모수 검정<br>- 두 분포의 '모양'이<br>통계적으로 동일한지 확인</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-H-5787" transform="translate(432.37890625,1306.2539138793945)"><polygon points="61.33359375,0 122.6671875,-61.33359375 61.33359375,-122.6671875 0,-61.33359375" transform="translate(-61.33359375,61.33359375)" class="label-container"></polygon><g class="label" transform="translate(0,0)"><g transform="translate(-34.7890625,-13.359375)"><foreignObject width="69.578125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">가정 타당?</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-I-5789" transform="translate(280.52734375,1481.0250091552734)"><rect rx="0" ry="0" x="-150.1640625" y="-36.71875" width="300.328125" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-140.1640625,-26.71875)"><foreignObject width="280.328125" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. 가속 계수 계산<br>- AF = 필드 척도모수 / 내구시험 척도모수</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-J-5791" transform="translate(584.23046875,1481.0250091552734)"><rect rx="0" ry="0" x="-103.5390625" y="-36.71875" width="207.078125" height="73.4375" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-93.5390625,-26.71875)"><foreignObject width="187.078125" height="53.4375"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">4. 가속 계수 계산 불가<br>- 신뢰성 부족으로 계산 중단</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-K-5793" transform="translate(432.37890625,1591.1031341552734)"><rect rx="0" ry="0" x="-75.890625" y="-23.359375" width="151.78125" height="46.71875" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-65.890625,-13.359375)"><foreignObject width="131.78125" height="26.71875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">5. 최종 보고서 생성</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<hr>
+<h2 id="핵심-분석-방법론">3. 핵심 분석 방법론</h2>
+<p>이 코드는 신뢰성 공학의 3가지 핵심 통계 기법을 사용합니다.</p>
+<h3 id="수명-분포-피팅">3.1. 수명 분포 피팅</h3>
+<ul>
+<li>
+<p><strong>무엇인가요?</strong>: 수집된 수명 데이터(고장 데이터)가 어떤 확률 분포(예: 와이블 분포, 로그정규분포 등)를 가장 잘 따르는지 찾아내는 과정입니다. 제품의 고장 패턴을 수학적 모델로 표현하는 것과 같습니다.</p>
+</li>
+<li>
+<p><strong>어떻게 하나요?</strong>: <code>reliability</code> 라이브러리의 <code>Fit_Everything</code> 함수를 사용해 여러 후보 분포(와이블, 로그정규, 정규, 지수 분포)에 데이터를 피팅해보고, **BIC(Bayesian Information Criterion)**라는 통계적 점수가 가장 낮은, 즉 가장 설명력이 좋은 분포를 최적 분포로 선택합니다.</p>
+</li>
+</ul>
+<h3 id="공통-형상모수-검정">3.2. 공통 형상모수 검정</h3>
+<ul>
+<li>
+<p><strong>왜 필요한가요?</strong>: 가속 계수를 신뢰성 있게 계산하려면, 내구 시험과 필드 데이터의 <strong>고장 메커니즘(패턴)이 동일하다</strong>는 가정이 필요합니다. 수명 분포의 **형상모수(Shape Parameter)**는 바로 이 고장 패턴을 나타냅니다. 따라서 두 데이터 그룹의 형상모수가 통계적으로 같다고 볼 수 있는지 검증해야 합니다.</p>
+</li>
+<li>
+<p><strong>어떻게 하나요?</strong>: 각 데이터 그룹의 형상모수와 그 <strong>신뢰구간</strong>을 계산합니다. 그리고 두 신뢰구간이 <strong>서로 겹치는지</strong>를 확인합니다. 만약 겹친다면, "두 그룹의 형상모수는 통계적으로 유의한 차이가 없으므로, 고장 패턴이 동일하다"는 가정을 받아들일 수 있습니다.</p>
+</li>
+</ul>
+<h3 id="가속-계수af-산출">3.3. 가속 계수(AF) 산출</h3>
+<ul>
+<li>
+<p><strong>무엇인가요?</strong>: 두 데이터 그룹의 고장 패턴(형상모수)이 같다고 확인되면, 수명의 스케일을 나타내는 **척도모수(Scale Parameter)**의 비율을 통해 가속 계수를 계산합니다.</p>
+</li>
+<li>
+<p><strong>어떻게 하나요?</strong>: <code>AF = 필드 데이터의 척도모수 / 내구시험 데이터의 척도모수</code> 공식을 사용합니다. 예를 들어, 와이블 분포에서는 특성 수명(α, 알파)이 척도모수가 됩니다. 이 비율이 바로 실험실 시험이 필드 환경을 얼마나 가속시켰는지를 나타내는 값이 됩니다.</p>
+</li>
+</ul>
+<hr>
+<h2 id="주요-함수-상세-설명">4. 주요 함수 상세 설명</h2>
+<p>이제 코드의 각 함수가 어떤 역할을 하는지 자세히 살펴보겠습니다.</p>
+<h3 id="setup_environment">4.1. <code>setup_environment</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: 분석을 시작하기 전, 결과물을 저장할 환경을 설정합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>os.makedirs('results')</code>: 분석 결과(플롯, 로그, 보고서)를 저장할 <code>results</code> 폴더를 생성합니다.</p>
+</li>
+<li>
+<p><code>logging.basicConfig(...)</code>: 분석의 모든 과정을 기록할 로그(log) 시스템을 설정합니다. 로그는 화면과 <code>results/analysis_log.txt</code> 파일에 동시에 출력되어, 분석 중 어떤 일이 일어났는지 쉽게 추적할 수 있게 해줍니다.</p>
+</li>
+</ul>
+<h3 id="load_and_prepare_data">4.2. <code>load_and_prepare_data</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: <code>Brakepad_lifedata.xlsx</code> 파일에서 데이터를 읽어와, '내구시험’과 ‘필드’ 데이터로 분리하여 분석에 사용할 수 있는 형태로 준비합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>pd.read_excel(file_path)</code>: <code>pandas</code> 라이브러리를 사용해 엑셀 파일을 읽어옵니다.</p>
+</li>
+<li>
+<p><code>df[df[Config.TYPE_COLUMN] == Config.DURABILITY_TYPE_VALUE]</code>: 데이터프레임의 ‘type’ 컬럼 값이 'test’인 행들만 필터링하여 내구시험 데이터로 분리합니다. ('field’도 동일한 방식으로 분리)</p>
+</li>
+<li>
+<p><code>durability_df[Config.LIFETIME_COLUMN].dropna().tolist()</code>: 분리된 데이터에서 수명 값(‘distance(km)’ 컬럼)만 추출하여 파이썬 리스트 형태로 반환합니다.</p>
+</li>
+</ul>
+<h3 id="analyze_dataset">4.3. <code>analyze_dataset</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: 데이터 리스트 하나(내구시험 또는 필드)를 입력받아, 최적의 수명 분포를 찾고 상세 분석 결과를 반환합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>Fitters.Fit_Everything(...)</code>: <code>reliability</code> 라이브러리의 핵심 함수입니다. 입력된 수명 데이터(<code>failures</code>)에 대해 여러 분포를 피팅하고, <code>sort_by='BIC'</code> 옵션에 따라 BIC 값이 가장 낮은 최적의 분포를 찾아줍니다.</p>
+</li>
+<li>
+<p><code>getattr(Fitters, f'Fit_{best_dist_name}')</code>: <code>Fit_Everything</code>으로 찾은 최적 분포(예: ‘Weibull_2P’)의 이름을 이용해, 해당 분포에 대한 상세 분석 함수(예: <code>Fitters.Fit_Weibull_2P</code>)를 동적으로 호출합니다.</p>
+</li>
+<li>
+<p><code>detailed_fit_results = fitter_function(...)</code>: 상세 분석 함수를 재실행하여 파라미터의 신뢰구간(<code>CI=0.95</code>)과 같은 추가 정보를 얻고, 확률도(Probability Plot)를 생성하여 <code>results</code> 폴더에 이미지 파일로 저장합니다.</p>
+</li>
+</ul>
+<h3 id="compare_shape_parameters">4.4. <code>compare_shape_parameters</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: 두 분석 결과(내구시험, 필드)를 입력받아, 형상모수의 신뢰구간이 겹치는지 검정하고 결과를 반환합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>shape_param_name_map = {'Weibull_2P': 'beta', ...}</code>: 분포별로 형상모수의 이름이 다르기 때문에(와이블은 ‘beta’, 로그정규는 ‘sigma’), 딕셔너리를 이용해 이름을 매핑합니다.</p>
+</li>
+<li>
+<p><code>p1_lower = getattr(fit_results_1, f'{shape_param_name}_lower')</code>: 분석 결과 객체에서 형상모수의 신뢰구간 하한값(<code>beta_lower</code>)과 상한값(<code>beta_upper</code>)을 가져옵니다.</p>
+</li>
+<li>
+<p><code>is_overlapping = (p1_lower &lt;= p2_upper) and (p2_lower &lt;= p1_upper)</code>: 두 신뢰구간이 겹치는지 확인하는 핵심 로직입니다. 이 조건이 참(True)이면 공통 형상모수 가정이 타당하다고 판단합니다.</p>
+</li>
+<li>
+<p><code>plt.errorbar(...)</code>: <code>matplotlib</code>을 이용해 두 형상모수의 추정치와 신뢰구간을 막대그래프로 시각화하여 비교하기 쉽게 만들고, 이미지 파일로 저장합니다.</p>
+</li>
+</ul>
+<h3 id="calculate_acceleration_factor">4.5. <code>calculate_acceleration_factor</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: 공통 형상모수 가정이 타당할 경우, 두 분석 결과로부터 척도모수를 추출하여 가속 계수를 계산합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>if not common_shape_plausible:</code>: <code>compare_shape_parameters</code> 함수의 결과가 '타당하지 않음(False)'이면, AF 계산을 건너뜁니다.</p>
+</li>
+<li>
+<p><code>scale_param_field / scale_param_durability</code>: 가속 계수를 계산하는 핵심 공식입니다. 분포의 종류에 따라 척도모수를 가져오는 방식이 다릅니다. (예: 와이블은 <code>alpha</code>, 로그정규는 <code>np.exp(mu)</code>)</p>
+</li>
+<li>
+<p><code>interpretation = f"..."</code>: 계산된 AF 값을 이용해 "내구시험 모드는 필드 주행 환경을 약 X배 가속시킨다"와 같이 사람이 이해하기 쉬운 해석 문장을 생성합니다.</p>
+</li>
+</ul>
+<h3 id="generate_final_report">4.6. <code>generate_final_report</code></h3>
+<ul>
+<li>
+<p><strong>역할</strong>: 지금까지의 모든 분석 단계에서 얻은 결과(최적 분포, 파라미터, 플롯 경로, AF 등)를 종합하여 최종 분석 보고서를 마크다운(<code>.md</code>) 파일 형식으로 생성합니다.</p>
+</li>
+<li>
+<p><strong>주요 코드</strong>:</p>
+</li>
+<li>
+<p><code>report_content = f"""..."""</code>: f-string을 사용하여 마크다운 템플릿 안에 분석 결과 변수들을 동적으로 채워 넣어 전체 보고서 내용을 구성합니다.</p>
+</li>
+<li>
+<p><code>with open(report_path, 'w', ...) as f: f.write(...)</code>: 완성된 보고서 내용을 <code>results/final_report.md</code> 파일에 기록합니다.</p>
+</li>
+</ul>
+<h3 id="main">4.7. <code>main</code></h3>
+<ul>
+<li><strong>역할</strong>: 프로그램의 진입점(Entry Point)으로, 위에서 설명한 모든 함수들을 정해진 순서에 따라 차례대로 호출하여 전체 분석 파이프라인을 실행합니다.</li>
+</ul>
+<hr>
+<h2 id="코드-실행-및-재현-방법">5. 코드 실행 및 재현 방법</h2>
+<p>이제 직접 코드를 실행해보고 분석 결과를 확인해봅시다!</p>
+<h3 id="준비물">5.1. 준비물</h3>
+<ol>
+<li>
+<p><strong>파이썬(Python)</strong>: 컴퓨터에 파이썬이 설치되어 있어야 합니다.</p>
+</li>
+<li>
+<p><strong>필요 라이브러리 설치</strong>: 터미널 또는 명령 프롬프트에서 아래 명령어를 실행하여 분석에 필요한 라이브러리들을 설치합니다.</p>
+</li>
+</ol>
+<pre class=" language-bash"><code class="prism  language-bash">
+pip <span class="token function">install</span> reliability pandas openpyxl matplotlib
+
+</code></pre>
+<ol start="3">
+<li><strong>데이터 파일</strong>: <code>lifedata_v6.py</code> 파일과 동일한 폴더에 <code>Brakepad_lifedata.xlsx</code> 데이터 파일이 있어야 합니다.</li>
+</ol>
+<h3 id="실행">5.2. 실행</h3>
+<p>터미널에서 <code>lifedata_v6.py</code> 파일이 있는 폴더로 이동한 후, 아래 명령어를 입력하여 코드를 실행합니다.</p>
+<pre class=" language-bash"><code class="prism  language-bash">
+python lifedata_v6.py
+
+</code></pre>
+<h3 id="결과-확인">5.3. 결과 확인</h3>
+<p>코드가 성공적으로 실행되면, 현재 폴더 안에 <code>results</code>라는 새로운 폴더가 생성됩니다. 이 폴더 안에서 아래와 같은 결과물들을 확인하실 수 있습니다.</p>
+<ul>
+<li>
+<p>📄 <code>analysis_log.txt</code>: 코드 실행 과정이 모두 기록된 로그 파일.</p>
+</li>
+<li>
+<p>📊 <code>Durability_Test_best_fit_probplot.png</code>: 내구시험 데이터의 최적 분포 확률도.</p>
+</li>
+<li>
+<p>📊 <code>Field_best_fit_probplot.png</code>: 필드 데이터의 최적 분포 확률도.</p>
+</li>
+<li>
+<p>📊 <code>shape_parameter_comparison_plot.png</code>: 두 데이터의 형상모수 신뢰구간 비교 그래프.</p>
+</li>
+<li>
+<p>📑 <code>final_report.md</code>: 모든 분석 결과가 정리된 최종 보고서. 이 파일을 열어 분석의 결론을 확인해보세요!</p>
+</li>
+</ul>
+<hr>
+<p>이 해설서가 여러분의 학습에 도움이 되었기를 바랍니다. 직접 코드를 수정해보거나 다른 데이터에 적용해보면서 신뢰성 분석의 세계를 더 깊이 탐험해보세요! 궁금한 점이 있다면 언제든지 질문해주세요.</p>
+</div>
+</body>
+
+</html>

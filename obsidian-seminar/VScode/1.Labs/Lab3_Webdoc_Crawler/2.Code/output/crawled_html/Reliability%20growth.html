@@ -1,0 +1,160 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="_images/logo.png" src="_images/logo.png"/>
+<hr class="docutils"/>
+<section id="reliability-growth">
+<h1>Reliability growth<a class="headerlink" href="#reliability-growth" title="Link to this heading"></a></h1>
+<p>The reliability of a non-repairable component always decreases with time, but for repairable systems the term “reliability growth” refers to the process of gradual product improvement through the elimination of design deficiencies.
+In repairable systems, reliability growth is observable through an increase in the interarrival times of failures.
+Reliability growth is applicable to all levels of design decomposition from complete systems down to components.
+The maximum achieveable reliability is locked in by design, so reliability growth above the design reliability is only possible through design changes.
+It may be possible to achieve some reliability growth through other improvements (such as optimizing the maintenance program) though these improvements will only help the system to achieve its design reliability.</p>
+<p>The function <cite>Repairable_systems.reliability_growth</cite> fits a model to the failure times so that the growth (or deterioration) of the mean time between failures (MTBF) can be predicted.
+The two models available within <cite>reliability</cite> are the Duane model and the Crow-AMSAA model.</p>
+<p>In both the Duane and Crow-AMSAA models, the input is a list of failure times (actual times not interarrival times).
+The point estimate for the cumulative MTBF is calculated as <span class="math notranslate nohighlight">\(\frac{\textrm{failure times}}{\textrm{failure numbers}}\)</span>.
+This produces the scatter plot shown in the plots below.</p>
+<p>The smooth curve shows the model (Duane or Crow-AMSAA) that is fitted to the data. The forumlation of these models is explained below.</p>
+<section id="duane-model">
+<h2>Duane model<a class="headerlink" href="#duane-model" title="Link to this heading"></a></h2>
+<p>The algorithm to fit the model is as follows:</p>
+<ol class="arabic simple">
+<li><p>accept an input of the failures times and sort the times in ascending order. Let the largest time be <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>create an array of failure numbers from <span class="math notranslate nohighlight">\(1\)</span> to <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+<li><p>calculate <span class="math notranslate nohighlight">\(MTBF_{cumulative} = \frac{\textrm{failure times}}{\textrm{failure numbers}}\)</span>. This is the scatter points seen on the plot.</p></li>
+<li><p>Convert to log space: <span class="math notranslate nohighlight">\(x = ln(\textrm{failure times})\)</span> and <span class="math notranslate nohighlight">\(y = ln(MTBF_{cumulative})\)</span></p></li>
+<li><p>fit a straight line (<span class="math notranslate nohighlight">\(y=m . x + c\)</span>) to the data to get the model parameters.</p></li>
+<li><p>extract the model parameters from the parameters of the straight line, such that <span class="math notranslate nohighlight">\(\alpha = m\)</span> and <span class="math notranslate nohighlight">\(b = exp(c)\)</span></p></li>
+</ol>
+<p>This gives us the model parameters of <span class="math notranslate nohighlight">\(b\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span>. The formulas for the other reported values are:</p>
+<p><span class="math notranslate nohighlight">\(DMTBF_C = b.T^{\alpha}\)</span>. This is the demonstrated MTBF (cumulative) and is reported in the results as DMTBF_C.</p>
+<p><span class="math notranslate nohighlight">\(DFI_C = \frac{1}{DMTBF_C}\)</span>. This is the demonstrated failure intensity (cumulative) and is reported in the results as DFI_C.</p>
+<p><span class="math notranslate nohighlight">\(DFI_I = DFI_C . (1 - \alpha)\)</span>. This is the demonstrated failure intensity (instantaneous) and is reported in the results as DFI_I.</p>
+<p><span class="math notranslate nohighlight">\(DMTBF_I = \frac{1}{DFI_I}\)</span>. This is the demonstrated MTBF (instantaneous) and is reported in the results as DMTBF_I.</p>
+<p><span class="math notranslate nohighlight">\(A = \frac{1}{b}\)</span>. This is reported in the results as A.</p>
+<p>The time to reach the target MTBF is calculated as <span class="math notranslate nohighlight">\(t_{target} = \left( \frac{\textrm{target MTBF}}{b} \right)^{\frac{1}{\alpha}}\)</span></p>
+<p>For more information see <a class="reference external" href="http://reliawiki.org/index.php/Duane_Model">reliawiki</a>.</p>
+</section>
+<section id="crow-amsaa-model">
+<h2>Crow-AMSAA model<a class="headerlink" href="#crow-amsaa-model" title="Link to this heading"></a></h2>
+<p>The algorithm to fit the model is as follows:</p>
+<ol class="arabic simple">
+<li><p>accept an input of the failures times and sort the times in ascending order. Let the largest time be <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>create an array of failure numbers from <span class="math notranslate nohighlight">\(1\)</span> to <span class="math notranslate nohighlight">\(n\)</span>.</p></li>
+<li><p>calculate <span class="math notranslate nohighlight">\(MTBF_{cumulative} = \frac{\textrm{failure times}}{\textrm{failure numbers}}\)</span>. This is the scatter points seen on the plot.</p></li>
+<li><p>calculate <span class="math notranslate nohighlight">\(\beta = \frac{n}{n . ln(T) - \sum ln(\textrm{failure times})}\)</span></p></li>
+<li><p>calculate <span class="math notranslate nohighlight">\(\lambda = \frac{n}{T^{\beta}}\)</span></p></li>
+</ol>
+<p>This gives us the model parameters <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>. The formulas for the other reported values are:</p>
+<p><span class="math notranslate nohighlight">\(growth rate = 1 - \beta\)</span>. This is reported in the results as growth_rate.</p>
+<p><span class="math notranslate nohighlight">\(DMTBF_I = \frac{1}{\lambda . \beta . T^{\beta - 1}}\)</span>. This is the demonstrated MTBF (instantaneous) and is reported in the results as DMTBF_I.</p>
+<p><span class="math notranslate nohighlight">\(DFI_I = \frac{1}{DMTBF_I}\)</span>. This is the demonstrated failure intensity (instantaneous) and is reported in the results as DFI_I.</p>
+<p><span class="math notranslate nohighlight">\(DMTBF_C = \frac{T^{1 - \beta}}{\lambda}\)</span>. This is the demonstrated MTBF (cumulative) and is reported in the results as DMTBF_C.</p>
+<p><span class="math notranslate nohighlight">\(DFI_C = \frac{1}{DMTBF_C}\)</span>. This is the demonstrated failure intensity (cumulative) and is reported in the results as DFI_C.</p>
+<p>The time to reach the target MTBF is calculated as <span class="math notranslate nohighlight">\(t_{target} = \left(\frac{1}{\lambda . (\textrm{target MTBF}}) \right)^ \frac{1}{\beta - 1}\)</span></p>
+<p>For more information see <a class="reference external" href="http://reliawiki.org/index.php/Crow-AMSAA_(NHPP)">reliawiki</a>.</p>
+<div class="admonition-api-reference admonition">
+<p class="admonition-title">API Reference</p>
+<p>For inputs and outputs see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/API/Repairable_systems/reliability_growth.html">API reference</a>.</p>
+</div>
+</section>
+<section id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Link to this heading"></a></h2>
+<p>In this first example, we import a dataset and fit the Duane model. For the plot log_scale is set to True. The target MTBF is 35 which will give us the time to reach the target MTBF based on the model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_growth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">system_growth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">system_growth</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Duane"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Duane reliability growth model parameters:</span>
+<span class="sd">Alpha: 0.42531</span>
+<span class="sd">A: 0.57338</span>
+<span class="sd">Demonstrated MTBF (cumulative): 26.86511</span>
+<span class="sd">Demonstrated MTBF (instantaneous): 46.74719</span>
+<span class="sd">Demonstrated failure intensity (cumulative): 0.037223</span>
+<span class="sd">Demonstrated failure intensity (instantaneous): 0.021392</span>
+<span class="sd">Time to reach target MTBF: 1154.77862</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/reliability_growth_Duane.png" src="_images/reliability_growth_Duane.png"/>
+</section>
+<section id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Link to this heading"></a></h2>
+<p>In this second example, we are using the same failure times as the example above, but now we are fitting the Crow-AMSAA model. The MTBF plot is in linear scale since log_scale has not been specified and it defaults to False.
+Once again, the target MTBF of 35 is specified and the results tell us the time to reach this target.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_growth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">system_growth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">system_growth</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Crow-AMSAA"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Crow-AMSAA reliability growth model parameters:</span>
+<span class="sd">Beta: 0.61421</span>
+<span class="sd">Lambda: 0.42394</span>
+<span class="sd">Growth rate: 0.38579</span>
+<span class="sd">Demonstrated MTBF (cumulative): 28.18182</span>
+<span class="sd">Demonstrated MTBF (instantaneous): 45.883</span>
+<span class="sd">Demonstrated failure intensity (cumulative): 0.035484</span>
+<span class="sd">Demonstrated failure intensity (instantaneous): 0.021795</span>
+<span class="sd">Time to reach target MTBF: 1087.18769</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/reliability_growth_CrowAMSAA.png" src="_images/reliability_growth_CrowAMSAA.png"/>
+</section>
+<section id="example-3">
+<h2>Example 3<a class="headerlink" href="#example-3" title="Link to this heading"></a></h2>
+<p>In this third example, we will compare the two models in both linear space (left plot) and log space (right plot).
+The fit of the Duane model through the points seems much better than is achieved by the Crow-AMSAA model, though this depends on the dataset.
+The Crow-AMSAA model places a strong emphasis on the last data point and will always ensure the model passes through this point.
+Depending on whether the last data point sits above or below the average will affect whether the Crow-AMSAA model is more optimistic (higher) or pessimistic (lower) in its prediction of the achieved MTBF than that which is predicted by the Duane model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Repairable_systems</span><span class="w"> </span><span class="kn">import</span> <span class="n">reliability_growth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reliability.Datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">automotive</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">automotive</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Crow-AMSAA"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">14000</span><span class="p">)</span>
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">automotive</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Duane"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">14000</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'darkorange'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">automotive</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Crow-AMSAA"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">14000</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">reliability_growth</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="n">automotive</span><span class="p">()</span><span class="o">.</span><span class="n">failures</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"Duane"</span><span class="p">,</span> <span class="n">target_MTBF</span><span class="o">=</span><span class="mi">14000</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">'darkorange'</span><span class="p">,</span><span class="n">print_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">log_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'MTBF vs Time (log scale)'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="sd">'''</span>
+<span class="sd">Crow-AMSAA reliability growth model parameters:</span>
+<span class="sd">Beta: 0.67922</span>
+<span class="sd">Lambda: 0.0033282</span>
+<span class="sd">Growth rate: 0.32078</span>
+<span class="sd">Demonstrated MTBF (cumulative): 13190</span>
+<span class="sd">Demonstrated MTBF (instantaneous): 19419.22019</span>
+<span class="sd">Demonstrated failure intensity (cumulative): 7.5815e-05</span>
+<span class="sd">Demonstrated failure intensity (instantaneous): 5.1495e-05</span>
+<span class="sd">Time to reach target MTBF: 158830.62457</span>
+
+<span class="sd">Duane reliability growth model parameters:</span>
+<span class="sd">Alpha: 0.3148</span>
+<span class="sd">A: 0.0038522</span>
+<span class="sd">Demonstrated MTBF (cumulative): 10620.71841</span>
+<span class="sd">Demonstrated MTBF (instantaneous): 15500.20608</span>
+<span class="sd">Demonstrated failure intensity (cumulative): 9.4156e-05</span>
+<span class="sd">Demonstrated failure intensity (instantaneous): 6.4515e-05</span>
+<span class="sd">Time to reach target MTBF: 317216.14347</span>
+<span class="sd">'''</span>
+</pre></div>
+</div>
+<img alt="_images/reliability_growth_both.png" src="_images/reliability_growth_both.png"/>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">reliability_growth</span></code> was completely rewritten in v0.8.0 to match the method used by Reliasoft. Prior to v0.8.0, only the Duane model was available, and the values returned were for a model with a completely different parameterisation.</p>
+</div>
+</section>
+</section>
+</div>
+</div>

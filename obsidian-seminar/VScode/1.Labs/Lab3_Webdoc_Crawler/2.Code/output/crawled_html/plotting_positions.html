@@ -1,0 +1,36 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="plotting-positions">
+<h1>plotting_positions<a class="headerlink" href="#plotting-positions" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Probability_plotting.plotting_positions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Probability_plotting.</span></span><span class="sig-name descname"><span class="pre">plotting_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Probability_plotting.plotting_positions" title="Link to this definition"></a></dt>
+<dd><p>Calculates the plotting positions for plotting on probability paper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data. Must have at least 1 element.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored failure data. Optional input. Default = None.</p></li>
+<li><p><strong>a</strong> (<em>float, int, optional</em>) – The heuristic constant for plotting positions of the form
+(k-a)/(n+1-2a) where k is the rank and n is the number of points.
+Optional input. Default is a = 0.3 which is the median rank method
+(same as the default in Minitab and Reliasoft). Must be in the range 0
+to 1. For more heuristics, see:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics">https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics</a></p></li>
+<li><p><strong>sort</strong> (<em>bool, optional</em>) – Whether the output should be sorted. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>(array(x),array(y))</strong> (<em>tuple</em>) – a tuple of two arrays. The arrays provide the x and y plotting
+positions. The x array will match the failures parameter while the y
+array will be the empirical estimate of the CDF at each of the failures.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function is primarily used by the probability plotting functions.</p>
+</dd></dl>
+</section>
+</div>
+</div>

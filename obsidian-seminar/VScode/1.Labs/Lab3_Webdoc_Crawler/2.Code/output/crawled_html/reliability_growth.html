@@ -1,0 +1,56 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="reliability-growth">
+<h1>reliability_growth<a class="headerlink" href="#reliability-growth" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Repairable_systems.reliability_growth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Repairable_systems.</span></span><span class="sig-name descname"><span class="pre">reliability_growth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_MTBF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Duane'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Repairable_systems.reliability_growth" title="Link to this definition"></a></dt>
+<dd><p>Fits a reliability growth model to failure data using either the Duane
+model or the Crow-AMSAA model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>times</strong> (<em>list, array</em>) – The failure times relative to an initial start time. These are actual
+failure times measured from the start of the test NOT failure
+interarrival times.</p></li>
+<li><p><strong>target_MTBF</strong> (<em>float, int, optional</em>) – The target MTBF for the reliability growth curve. Default is None.</p></li>
+<li><p><strong>log_scale</strong> (<em>bool, optional</em>) – Sets the x and y scales to log scales. Only used if show_plot is True.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – Default is True. If True the plot will be generated. Use plt.show() to
+show it.</p></li>
+<li><p><strong>model</strong> (<em>str, optional</em>) – The model to use. Must be ‘Duane’ or ‘Crow-AMSAA’. Default is ‘Duane’.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Default is True. If True the results will be printed to the console.</p></li>
+<li><p><strong>kwargs</strong> – Other keyword arguments passed to matplotlib.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Lambda</strong> (<em>float</em>) – The Lambda parameter from the Crow-AMSAA model. Only returned if
+model=’Crow-AMSAA’.</p></li>
+<li><p><strong>Beta</strong> (<em>float</em>) – The Beta parameter from the Crow-AMSAA model. Only returned if
+model=’Crow-AMSAA’.</p></li>
+<li><p><strong>growth_rate</strong> (<em>float</em>) – The growth rate of the Crow-AMSAA model. Growth rate = 1 - Beta.
+Only returned if model=’Crow-AMSAA’.</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – The A parameter from the Duane model. Only returned if model=’Duane’.</p></li>
+<li><p><strong>Alpha</strong> (<em>float</em>) – The Alpha parameter from the Duane model. Only returned if
+model=’Duane’.</p></li>
+<li><p><strong>DMTBF_C</strong> (<em>float</em>) – The Demonstrated cumulative MTBF. The is the cumulative MTBF at the
+final failure time.</p></li>
+<li><p><strong>DMTBF_I</strong> (<em>float</em>) – The Demonstrated instantaneous MTBF. The is the instantaneous MTBF at
+the final failure time.</p></li>
+<li><p><strong>DFI_C</strong> (<em>float</em>) – The demonstrated cumulative failure intensity. This is 1/DMTBF_C.</p></li>
+<li><p><strong>DFI_I</strong> (<em>float</em>) – The demonstrated instantaneous failure intensity. This is 1/DMTBF_I.</p></li>
+<li><p><strong>time_to_target</strong> (<em>float, str</em>) – The time to reach target_MTBF. If target_MTBF is None then
+time_to_target will be a str asking for the target_MTBF to be specified.
+This uses the model for cumulative MTBF.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For more information see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Reliability%20growth.html">documentation</a>.</p>
+</dd></dl>
+</section>
+</div>
+</div>

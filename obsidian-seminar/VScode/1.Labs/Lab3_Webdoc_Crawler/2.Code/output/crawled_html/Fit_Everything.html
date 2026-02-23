@@ -1,0 +1,99 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="fit-everything">
+<h1>Fit_Everything<a class="headerlink" href="#fit-everything" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.Fitters.Fit_Everything">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.Fitters.</span></span><span class="sig-name descname"><span class="pre">Fit_Everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_censored</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BIC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MLE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_histogram_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_PP_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_best_distribution_probability_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_scatterplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.Fitters.Fit_Everything" title="Link to this definition"></a></dt>
+<dd><p>This function will fit all available distributions to the data provided.
+The only distributions not fitted are Weibull_DSZI and Weibull_ZI. The
+Beta_2P distribution will only be fitted if the data are between 0 and 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>failures</strong> (<em>array, list</em>) – The failure data. Must have at least 2 elements for all the 2 parameter
+distributions to be fitted and 3 elements for all distributions to be
+fitted.</p></li>
+<li><p><strong>right_censored</strong> (<em>array, list, optional</em>) – The right censored data. Optional input. Default = None.</p></li>
+<li><p><strong>sort_by</strong> (<em>str</em>) – Goodness of fit test to sort results by. Must be ‘BIC’,’AICc’,’AD’, or
+‘Log-likelihood’. Default is BIC.</p></li>
+<li><p><strong>show_probability_plot</strong> (<em>bool, optional</em>) – Provides a probability plot of each of the fitted distributions. True or
+False. Default = True</p></li>
+<li><p><strong>show_histogram_plot</strong> (<em>bool, optional</em>) – True or False. Default = True. Will show a histogram (scaled to account
+for censored data) with the PDF and CDF of each fitted distribution.</p></li>
+<li><p><strong>show_PP_plot</strong> (<em>bool, optional</em>) – Provides a comparison of parametric vs non-parametric fit using
+Probability-Probability (PP) plot. True or False. Default = True.</p></li>
+<li><p><strong>show_best_distribution_probability_plot</strong> (<em>bool, optional</em>) – Provides a probability plot in a new figure of the best fitting
+distribution. True or False. Default = True.</p></li>
+<li><p><strong>exclude</strong> (<em>list, array, optional</em>) – List or array of strings specifying which distributions to exclude.
+Default is None. Options are Weibull_2P, Weibull_3P, Weibull_CR,
+Weibull_Mixture, Weibull_DS, Normal_2P, Gamma_2P, Loglogistic_2P,
+Gamma_3P, Lognormal_2P, Lognormal_3P, Loglogistic_3P, Gumbel_2P,
+Exponential_2P, Exponential_1P, Beta_2P.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Will show the results of the fitted parameters and the goodness of fit
+tests in a dataframe. True/False. Defaults to True.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – The method used to fit the distribution. Must be either ‘MLE’ (maximum
+likelihood estimation), ‘LS’ (least squares estimation), ‘RRX’ (Rank
+regression on X), or ‘RRY’ (Rank regression on Y). LS will perform both
+RRX and RRY and return the better one. Default is ‘MLE’.</p></li>
+<li><p><strong>optimizer</strong> (<em>str, optional</em>) – The optimization algorithm used to find the solution. Must be either
+‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, or ‘powell’. Specifying the optimizer
+will result in that optimizer being used. To use all of these specify
+‘best’ and the best result will be returned. The default behaviour is to
+try each optimizer in order (‘TNC’, ‘L-BFGS-B’, ‘nelder-mead’, and
+‘powell’) and stop once one of the optimizers finds a solution. If the
+optimizer fails, the initial guess will be returned.
+For more detail see the <a class="reference external" href="https://reliability.readthedocs.io/en/latest/Optimizers.html">documentation</a>.</p></li>
+<li><p><strong>downsample_scatterplot</strong> (<em>bool, int, optional</em>) – If True or None, and there are over 1000 points, then the scatterplot
+will be downsampled by a factor. The default downsample factor will seek
+to produce between 500 and 1000 points. If a number is specified, it
+will be used as the downsample factor. Default is True. This
+functionality makes plotting faster when there are very large numbers of
+points. It only affects the scatterplot not the calculations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>results</strong> (<em>dataframe</em>) – a pandas dataframe of results. Fitted parameters in this dataframe may
+be accessed by name. See below example in Notes.</p></li>
+<li><p><strong>best_distribution</strong> (<em>object</em>) – a reliability.Distributions object created based on the parameters of
+the best fitting distribution.</p></li>
+<li><p><strong>best_distribution_name</strong> (<em>str</em>) – the name of the best fitting distribution. E.g. ‘Weibull_3P’</p></li>
+<li><p><strong>parameters and goodness of fit results</strong> (<em>float</em>) – This is provided for each fitted distribution. For example, the
+Weibull_3P distribution values are Weibull_3P_alpha, Weibull_3P_beta,
+Weibull_3P_gamma, Weibull_3P_BIC, Weibull_3P_AICc, Weibull_3P_AD,
+Weibull_3P_loglik</p></li>
+<li><p><strong>excluded_distributions</strong> (<em>list</em>) – a list of strings of the excluded distributions.</p></li>
+<li><p><strong>probability_plot</strong> (<em>object</em>) – The figure handle from the probability plot (only provided if
+show_probability_plot is True).</p></li>
+<li><p><strong>best_distribution_probability_plot</strong> (<em>object</em>) – The figure handle from the best distribution probability plot (only
+provided if show_best_distribution_probability_plot is True).</p></li>
+<li><p><strong>histogram_plot</strong> (<em>object</em>) – The figure handle from the histogram plot (only provided if
+show_histogram_plot is True).</p></li>
+<li><p><strong>PP_plot</strong> (<em>object</em>) – The figure handle from the probability-probability plot (only provided
+if show_PP_plot is True).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>All parametric models have the number of parameters in the name. For
+example, Weibull_2P uses alpha and beta, whereas Weibull_3P uses alpha,
+beta, and gamma. This is applied even for Normal_2P for consistency in
+naming conventions. From the results, the distributions are sorted based on
+their goodness of fit test results, where the smaller the goodness of fit
+value, the better the fit of the distribution to the data.</p>
+<p>If the data provided contains only 2 failures, the three parameter
+distributions will automatically be excluded.</p>
+<p>Example Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">Fit_Everything</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Weibull Alpha ='</span><span class="p">,</span><span class="n">output</span><span class="o">.</span><span class="n">Weibull_2P_alpha</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+</section>
+</div>
+</div>

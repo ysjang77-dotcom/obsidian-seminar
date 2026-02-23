@@ -1,0 +1,58 @@
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<img alt="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png" src="https://raw.githubusercontent.com/MatthewReid854/reliability/master/docs/images/logo.png"/>
+<hr class="docutils"/>
+<section id="strain-life-diagram">
+<h1>strain_life_diagram<a class="headerlink" href="#strain-life-diagram" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="reliability.PoF.strain_life_diagram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">reliability.PoF.</span></span><span class="sig-name descname"><span class="pre">strain_life_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_stress_correction_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SWT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability.PoF.strain_life_diagram" title="Link to this definition"></a></dt>
+<dd><p>This function plots the strain-life diagram.</p>
+<p>If you do not have the parameters sigma_f, epsilon_f, b, c, but you do have
+stress, strain, and cycles data then you can use the function
+‘stress_strain_life_parameters_from_data’ to find these parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>E</strong> (<em>float, int</em>) – The modulus of elasticity. Ensure this is in the same units for which K
+and n were obtained (typically MPa)</p></li>
+<li><p><strong>sigma_f</strong> (<em>float, int</em>) – The fatigue strength coefficient.</p></li>
+<li><p><strong>epsilon_f</strong> (<em>float, int</em>) – The fatigue strain coefficient.</p></li>
+<li><p><strong>b</strong> (<em>float, int</em>) – The elastic strain exponent.</p></li>
+<li><p><strong>c</strong> (<em>float, int</em>) – The plastic strain exponent.</p></li>
+<li><p><strong>K</strong> (<em>float, int, optional</em>) – The cyclic strength coefficient. Optional input. Only required if you
+specify max_stress or max_strain.</p></li>
+<li><p><strong>n</strong> (<em>float, int, optional</em>) – The strain hardening exponent. Optional input. Only required if you
+specify max_stress or max_strain.</p></li>
+<li><p><strong>mean_stress_correction_method</strong> (<em>str, optional</em>) – Must be either ‘morrow’,’modified_morrow’, or ‘SWT’. Default is ‘SWT’.
+Only used if mean_stress is found to be non-zero.</p></li>
+<li><p><strong>max_stress</strong> (<em>float, int, optional</em>) – Specify the max_stress if you want cycles to failure. If specified, you
+will need to also specify K and n.</p></li>
+<li><p><strong>max_strain</strong> (<em>float, int, optional</em>) – Specify the max_strain if you want cycles to failure.</p></li>
+<li><p><strong>min_stress</strong> (<em>float, int, optional</em>) – If this is not -max_stress then specify it here. Optional input.</p></li>
+<li><p><strong>min_strain</strong> (<em>float, int, optional</em>) – If this is not -max_strain then specify it here. Optional input.</p></li>
+<li><p><strong>print_results</strong> (<em>bool, optional</em>) – Default is True. The cycles to failure will only be printed if
+max_stress OR max_strain is specified.</p></li>
+<li><p><strong>show_plot</strong> (<em>bool, optional</em>) – Default is True. The strain-life plot will be generated if show_plot =
+True. Use plt.show() to show it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cycles_to_failure</strong> (<em>float</em>) – The number of cycles until fatigue failure</p></li>
+<li><p><strong>max_stress</strong> (<em>float</em>) – The maximim stress</p></li>
+<li><p><strong>max_strain</strong> (<em>float</em>) – The maximum strain</p></li>
+<li><p><strong>min_stress</strong> (<em>float</em>) – The minimum stress</p></li>
+<li><p><strong>min_strain</strong> (<em>float, int, optional</em>) – The minimum strain</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When specifying min and max stress or strain, do not specify both stress and
+strain as the corresponding value will be automatically calculated. Only
+specify the min if it is not -max.</p>
+</dd></dl>
+</section>
+</div>
+</div>
