@@ -45,3 +45,5 @@ __pycache__/
 *.tmp
 *.bak
 nul
+MyVault/
+honeypot/
