@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회의록 자동 작성 Agent</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    header .subtitle { font-size: 0.8rem; opacity: 0.6; }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    /* 날짜 */
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .date-row label { font-size: 0.9rem; color: #444; white-space: nowrap; }
+    .date-row input[type="date"] {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.95rem;
+      color: #1a1a2e;
+      outline: none;
+    }
+    .date-row input[type="date"]:focus { border-color: #4f46e5; }
+
+    /* 녹음 컨트롤 */
+    .record-area { text-align: center; }
+
+    .record-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .record-btn.idle {
+      background: #4f46e5;
+      color: white;
+    }
+    .record-btn.idle:hover { background: #4338ca; transform: scale(1.02); }
+    .record-btn.recording {
+      background: #ef4444;
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(239,68,68,0); }
+    }
+
+    .record-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-msg {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: #888;
+      min-height: 1.2em;
+    }
+    .status-msg.active { color: #ef4444; }
+
+    /* 실시간 자막 */
+    .interim-box {
+      background: #f8f9ff;
+      border: 1px dashed #c7d2fe;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      min-height: 2.5rem;
+      font-size: 0.9rem;
+      color: #6366f1;
+      font-style: italic;
+      margin-top: 1rem;
+    }
+
+    /* 녹취 텍스트 */
+    .transcript-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .btn-sm {
+      padding: 0.3rem 0.75rem;
+      font-size: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      color: #555;
+      transition: background 0.15s;
+    }
+    .btn-sm:hover { background: #f3f4f6; }
+
+    textarea#transcript {
+      width: 100%;
+      min-height: 180px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      font-family: inherit;
+      color: #1a1a2e;
+    }
+    textarea#transcript:focus { border-color: #4f46e5; }
+
+    /* 생성 버튼 */
+    .generate-btn {
+      width: 100%;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background: #1a1a2e;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .generate-btn:hover:not(:disabled) { background: #2d2d4e; }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 로딩 */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 1.5rem;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    .loading.show { display: block; }
+    .spinner {
+      display: inline-block;
+      width: 24px; height: 24px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #4f46e5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 결과 */
+    #result-section { display: none; }
+    #result-section.show { display: block; }
+
+    .result-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .btn-action {
+      padding: 0.5rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-action:hover { opacity: 0.85; }
+    .btn-copy { background: #e0e7ff; color: #4f46e5; }
+    .btn-save-info { background: #d1fae5; color: #059669; font-size: 0.8rem; cursor: default; }
+
+    pre#result-content {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.2rem;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'D2Coding', monospace;
+    }
+
+    /* 에러 */
+    .error-msg {
+      display: none;
+      padding: 0.75rem 1rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      color: #dc2626;
+      font-size: 0.88rem;
+    }
+    .error-msg.show { display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="h1-wrap">
+      <h1>회의록 자동 작성 Agent</h1>
+    </div>
+    <div class="subtitle">신현중 박사님 월요일 아침 회의</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- 날짜 -->
+  <div class="card">
+    <h2>회의 날짜</h2>
+    <div class="date-row">
+      <label for="meeting-date">날짜 선택:</label>
+      <input type="date" id="meeting-date" />
+    </div>
+  </div>
+
+  <!-- 녹음 -->
+  <div class="card">
+    <h2>음성 녹음</h2>
+    <div class="record-area">
+      <button id="record-btn" class="record-btn idle" onclick="toggleRecording()">
+        <span class="record-dot"></span>
+        <span id="record-label">녹음 시작</span>
+      </button>
+      <div id="status-msg" class="status-msg">Chrome 또는 Edge 브라우저를 사용하세요.</div>
+    </div>
+    <div id="interim-box" class="interim-box" style="display:none;"></div>
+  </div>
+
+  <!-- 녹취 텍스트 -->
+  <div class="card">
+    <h2>녹취 내용</h2>
+    <div class="transcript-header">
+      <span style="font-size:0.82rem;color:#888;">녹음 후 자동 입력됩니다. 직접 수정 가능합니다.</span>
+      <button class="btn-sm" onclick="clearTranscript()">초기화</button>
+    </div>
+    <textarea id="transcript" placeholder="회의 내용을 녹음하거나 직접 입력하세요..."></textarea>
+  </div>
+
+  <!-- 생성 버튼 -->
+  <button class="generate-btn" id="generate-btn" onclick="generateNotes()">
+    회의록 자동 작성
+  </button>
+
+  <!-- 로딩 -->
+  <div class="loading" id="loading">
+    <span class="spinner"></span>
+    Claude가 회의록을 작성 중입니다...
+  </div>
+
+  <!-- 에러 -->
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- 결과 -->
+  <div class="card" id="result-section">
+    <h2>생성된 회의록</h2>
+    <div class="result-actions">
+      <button class="btn-action btn-copy" onclick="copyResult()">클립보드 복사</button>
+      <span class="btn-action btn-save-info" id="save-info"></span>
+    </div>
+    <pre id="result-content"></pre>
+  </div>
+
+</div>
+
+<script>
+  // 오늘 날짜를 기본값으로 설정
+  const dateInput = document.getElementById('meeting-date');
+  const today = new Date();
+  dateInput.value = today.toISOString().split('T')[0];
+
+  // Web Speech API 설정
+  let recognition = null;
+  let isRecording = false;
+  let finalTranscript = '';
+
+  function initRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      document.getElementById('status-msg').textContent =
+        '이 브라우저는 음성 인식을 지원하지 않습니다. Chrome 또는 Edge를 사용하세요.';
+      document.getElementById('record-btn').disabled = true;
+      return null;
+    }
+
+    const r = new SpeechRecognition();
+    r.lang = 'ko-KR';
+    r.continuous = true;
+    r.interimResults = true;
+
+    r.onstart = () => {
+      setStatus('녹음 중... 회의 내용을 말씀하세요.', true);
+    };
+
+    r.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += t + ' ';
+          document.getElementById('transcript').value = finalTranscript.trim();
+        } else {
+          interim += t;
+        }
+      }
+      const box = document.getElementById('interim-box');
+      if (interim) {
+        box.style.display = 'block';
+        box.textContent = interim;
+      } else {
+        box.style.display = 'none';
+      }
+    };
+
+    r.onerror = (event) => {
+      if (event.error === 'not-allowed') {
+        setStatus('마이크 접근이 거부되었습니다. 브라우저 설정에서 마이크를 허용해주세요.', false);
+        stopRecording();
+      } else if (event.error === 'no-speech') {
+        // 무음 감지 - 자동 재시작
+      } else {
+        setStatus(`오류: ${event.error}`, false);
+        stopRecording();
+      }
+    };
+
+    r.onend = () => {
+      // continuous 모드에서 자동 종료 시 재시작
+      if (isRecording) {
+        r.start();
+      }
+    };
+
+    return r;
+  }
+
+  function toggleRecording() {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  }
+
+  function startRecording() {
+    if (!recognition) {
+      recognition = initRecognition();
+      if (!recognition) return;
+    }
+    isRecording = true;
+    finalTranscript = document.getElementById('transcript').value;
+    if (finalTranscript && !finalTranscript.endsWith(' ')) {
+      finalTranscript += ' ';
+    }
+
+    const btn = document.getElementById('record-btn');
+    btn.className = 'record-btn recording';
+    document.getElementById('record-label').textContent = '녹음 중지';
+    document.getElementById('interim-box').style.display = 'block';
+    recognition.start();
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    if (recognition) {
+      recognition.stop();
+    }
+    const btn = document.getElementById('record-btn');
+    btn.className = 'record-btn idle';
+    document.getElementById('record-label').textContent = '녹음 시작';
+    document.getElementById('interim-box').style.display = 'none';
+    document.getElementById('interim-box').textContent = '';
+    setStatus('녹음이 완료되었습니다. 내용을 확인하고 회의록을 작성하세요.', false);
+  }
+
+  function setStatus(msg, active) {
+    const el = document.getElementById('status-msg');
+    el.textContent = msg;
+    el.className = 'status-msg' + (active ? ' active' : '');
+  }
+
+  function clearTranscript() {
+    document.getElementById('transcript').value = '';
+    finalTranscript = '';
+  }
+
+  async function generateNotes() {
+    const transcript = document.getElementById('transcript').value.trim();
+    if (!transcript) {
+      showError('녹취 내용을 먼저 입력하거나 녹음해주세요.');
+      return;
+    }
+
+    const rawDate = document.getElementById('meeting-date').value;
+    const meetingDate = rawDate.replace(/-/g, '');
+
+    setLoading(true);
+    hideError();
+    document.getElementById('result-section').classList.remove('show');
+
+    try {
+      const res = await fetch('/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript, date: meetingDate }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.error || '서버 오류가 발생했습니다.');
+        return;
+      }
+
+      document.getElementById('result-content').textContent = data.content;
+      document.getElementById('save-info').textContent =
+        `저장됨: ${data.filename}`;
+      document.getElementById('result-section').classList.add('show');
+      document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+
+    } catch (e) {
+      showError('서버에 연결할 수 없습니다. server.py가 실행 중인지 확인하세요.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function setLoading(on) {
+    document.getElementById('loading').className = 'loading' + (on ? ' show' : '');
+    document.getElementById('generate-btn').disabled = on;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.className = 'error-msg show';
+  }
+
+  function hideError() {
+    document.getElementById('error-msg').className = 'error-msg';
+  }
+
+  function copyResult() {
+    const content = document.getElementById('result-content').textContent;
+    navigator.clipboard.writeText(content).then(() => {
+      const btn = document.querySelector('.btn-copy');
+      btn.textContent = '복사됨!';
+      setTimeout(() => { btn.textContent = '클립보드 복사'; }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

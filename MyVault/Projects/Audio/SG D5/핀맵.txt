@@ -1,0 +1,14 @@
+A0 - LCD_RD
+A1 - LCD_Wr
+A2 - LCD_Rs
+A3 - LCD_cs
+IORef-LCD_reset
+
+22 - LCD-Do
+23 - LCD-D1
+24 - LCD-D2
+25 - LCD-D3
+26 - LCD-D4
+27 - LCD-D5
+28 - LCD-D6
+29 - LCD-D7
