@@ -6,7 +6,7 @@
 
 ### "이제 시작할거야" → 작업 시작 전 동기화 (pull)
 
-1. GitHub 폴더/파일 구조 확인 (`gh api repos/yjang-git/obsidian-seminar/contents`)
+1. GitHub 전체 레포 목록 확인 (`gh repo list yjang-git`)
 2. `git fetch origin` 으로 원격 변경 사항 확인
 3. `git status` 로 로컬 변경 사항 확인
 4. 로컬에 없는 GitHub 파일/폴더가 있으면 누락 여부 확인 후 `git pull origin main` 으로 반영
@@ -15,7 +15,7 @@
 
 ### "이제 종료할거야" → 작업 종료 전 동기화 (push)
 
-1. GitHub 폴더/파일 구조 확인 (`gh api repos/yjang-git/obsidian-seminar/contents`)
+1. GitHub 전체 레포 목록 확인 (`gh repo list yjang-git`)
 2. `git status` 로 변경된 파일/폴더 확인
 3. GitHub와 로컬의 폴더/파일명이 다르면 **GitHub 이름 기준**으로 로컬을 수정
 4. 변경된 파일/폴더를 스테이징 (`git add -A`)
