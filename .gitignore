@@ -44,3 +44,4 @@ __pycache__/
 # Optional: temp files
 *.tmp
 *.bak
+nul
