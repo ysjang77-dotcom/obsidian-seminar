@@ -1,0 +1,37 @@
+LTspice 26.0.1 for Windows
+Circuit: D:\AI-agent\Audio\Quad405\Quad405.net
+Start Time: Tue Jan 27 17:02:23 2026
+solver = Normal
+Maximum thread count: 20
+tnom = 27
+temp = 27
+method = trap
+Compress1stOrder = true
+Compress2ndOrder = true
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 0.217 seconds.
+
+Files loaded:
+D:\AI-agent\Audio\Quad405\Quad405.net
+C:\Users\jys\AppData\Local\LTspice\lib\cmp\standard.dio
+C:\Users\jys\AppData\Local\LTspice\lib\cmp\standard.bjt
+D:\AI-agent\Audio\Quad405\LM301A.lib
+
+Fourier components of V(out)
+N-Period=1
+DC component:0.0478156
+
+Harmonic	Frequency	 Fourier 	Normalized	 Phase  	Normalized
+ Number 	  [Hz]   	Component	 Component	[degree]	Phase [deg]
+    1   	 1.000e+03	 7.162e-08	 1.000e+00	 -170.61°	    0.00°
+    2   	 2.000e+03	 2.951e-10	 4.121e-03	   86.99°	  257.60°
+    3   	 3.000e+03	 2.436e-10	 3.401e-03	 -136.98°	   33.64°
+    4   	 4.000e+03	 9.093e-11	 1.270e-03	  -55.74°	  114.87°
+    5   	 5.000e+03	 1.674e-10	 2.338e-03	   88.02°	  258.63°
+    6   	 6.000e+03	 5.044e-10	 7.043e-03	 -125.54°	   45.07°
+    7   	 7.000e+03	 1.731e-10	 2.418e-03	   39.41°	  210.02°
+    8   	 8.000e+03	 3.200e-10	 4.468e-03	 -118.69°	   51.93°
+    9   	 9.000e+03	 2.592e-10	 3.620e-03	   57.65°	  228.26°
+Partial Harmonic Distortion: 1.114142%
+Total Harmonic Distortion:   1.583353%
+

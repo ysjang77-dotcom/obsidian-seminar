@@ -1,0 +1,6 @@
+LTspice 26.0.1 for Windows
+Circuit: D:\AI-agent\Audio\Quad405\test.net
+Start Time: Wed Jan 28 15:30:26 2026
+D:\AI-agent\Audio\Quad405\test.net(3): This sub-circuit name is not defined.
+X§U1 N003 N002 N001 N004 0 NE5534 ;§pnba In+)In-)V+)V-)OUT
+                           ^^^^^^

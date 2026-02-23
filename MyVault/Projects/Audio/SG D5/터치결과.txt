@@ -1,0 +1,188 @@
+W Z=0  X=988  Y=548
+RAW Z=0  X=1003  Y=551
+RAW Z=106  X=1003  Y=547
+*** TOUCH! RAW(0,570) Z=0
+T0: x=133 y=-43
+T1: x=107 y=-43
+T2: x=240 y=163
+T3: x=0 y=163
+---
+>>> MAPPED x=240 y=163
+    BTN_X_OK=YES
+    => Input 버튼
+1
+Unlocked
+
+- Input Format : 1
+opt
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=1  X=9  Y=569
+dual status L (0x48 Reg17) :0
+dual status R (0x49 Reg17) :0
+Not Dual mode - restoring
+RAW Z=0  X=22  Y=571
+RAW Z=0  X=22  Y=5
+
+W Z=0  X=992  Y=547
+*** TOUCH! RAW(0,575) Z=0
+T0: x=134 y=-43
+T1: x=106 y=-43
+T2: x=240 y=165
+T3: x=0 y=165
+---
+>>> MAPPED x=240 y=165
+    BTN_X_OK=YES
+    => Input 버튼
+2
+Unlocked
+
+- Input Format : 2
+Coax
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=0  X=18  Y=575
+RAW Z=3  X=26  Y=574
+RAW Z=0  X=24  Y=572
+RAW Z=0  X=20  Y=576
+
+ status L (0x48 Reg17) :0
+dual status R (0x49 Reg17) :0
+Not Dual mode - restoring
+RAW Z=0  X=18  Y=575
+RAW Z=0  X=27  Y=561
+*** TOUCH! RAW(1,574) Z=0
+T0: x=134 y=-43
+T1: x=106 y=-43
+T2: x=240 y=165
+T3: x=0 y=165
+---
+>>> MAPPED x=240 y=165
+    BTN_X_OK=YES
+    => Input 버튼
+3
+Unlocked
+
+- Input Format : 3
+AES/EBU
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=1  X=11  Y=574
+RAW Z=0  X=23  Y=575
+RAW Z=0  X=22  Y=574
+
+otch Delay : No notch delay
+RAW Z=0  X=21  Y=576
+RAW Z=0  X=17  Y=575
+RAW Z=0  X=22  Y=576
+RAW Z=0  X=20  Y=574
+RAW Z=0  X=26  Y=578
+RAW Z=0  X=992  Y=547
+RAW Z=0  X=1011  Y=549
+*** TOUCH! RAW(1,569) Z=0
+T0: x=133 y=-43
+T1: x=107 y=-43
+T2: x=240 y=163
+T3: x=0 y=163
+---
+>>> MAPPED x=240 y=163
+    BTN_X_OK=YES
+    => Input 버튼
+1
+Unlocked
+
+- Input Format : 1
+opt
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=1  X=12  Y=572
+
+
+: x=105 y=-43
+T2: x=240 y=165
+T3: x=0 y=165
+---
+>>> MAPPED x=240 y=165
+    BTN_X_OK=YES
+    => Input 버튼
+2
+Unlocked
+
+- Input Format : 2
+Coax
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit
+
+: x=0 y=165
+---
+>>> MAPPED x=240 y=165
+    BTN_X_OK=YES
+    => Input 버튼
+3
+Unlocked
+
+- Input Format : 3
+AES/EBU
+- Fir Filter : Sharp fir
+- IIR Bandwidth : Normal (for PCM)
+- DPLL :Best DPLL
+- Jitter Reduction:Bypass
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Multiply x128
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=0  X=13  Y=572
+RAW Z=1  X=16  Y=
+
+: x=133 y=-43
+T1: x=107 y=-43
+T2: x=240 y=162
+T3: x=0 y=162
+---
+>>> MAPPED x=240 y=162
+    BTN_X_OK=YES
+    => Input 버튼
+0
+Unlocked
+
+- Input Format : 0
+usb
+- Fir Filter : Sharp fir
+- IIR Bandwidth : 50k (for DSD)
+- DPLL :Best DPLL
+- Jitter Reduction:On
+- Oversampling FIR Bypass:OSF On
+- DPLL Mode:Normal
+- Quantizer : 6 bit True differential
+- Notch Delay : No notch delay
+RAW Z=0  X=998  Y=551
+RAW Z=0  X=1006  Y=547

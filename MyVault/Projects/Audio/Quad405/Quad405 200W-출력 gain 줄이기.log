@@ -1,0 +1,25 @@
+LTspice 26.0.1 for Windows
+Circuit: D:\AI-agent\Audio\Quad405\Quad405 200W-출력 gain 줄이기.net
+Start Time: Thu Jan 29 13:23:53 2026
+Options:method=gear reltol=0.01 abstol=1e-6 vntol=1e-3
+solver = Normal
+Maximum thread count: 20
+tnom = 27
+temp = 27
+method = Gear
+abstol = 1e-06
+reltol = 0.01
+volttol = 0.001
+Compress1stOrder = true
+Compress2ndOrder = true
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 0.248 seconds.
+
+Files loaded:
+D:\AI-agent\Audio\Quad405\Quad405 200W-출력 gain 줄이기.net
+C:\Users\jys\AppData\Local\LTspice\lib\cmp\standard.dio
+C:\Users\jys\AppData\Local\LTspice\lib\cmp\standard.bjt
+D:\AI-agent\Audio\Quad405\NE5534.lib
+D:\AI-agent\Audio\Quad405\OPA1641.lib
+
+pavg: AVG(( -V(out)*I(R50)) )=15.9292599245 FROM 0.001 TO 0.003

@@ -1,0 +1,13 @@
+C:\Users\jys\Documents\Arduino\libraries\Adafruit_TFTLCD_AS\Adafruit_TFTLCD_AS.cpp:37:47: error: no 'int Adafruit_TFTLCD_AS::Adafruit_TFTLCD(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t)' member function declared in class 'Adafruit_TFTLCD_AS'
+                                  uint8_t reset)
+                                               ^
+C:\Users\jys\Documents\Arduino\libraries\Adafruit_TFTLCD_AS\Adafruit_TFTLCD_AS.cpp:89:41: error: no 'int Adafruit_TFTLCD_AS::Adafruit_TFTLCD()' member function declared in class 'Adafruit_TFTLCD_AS'
+ Adafruit_TFTLCD_AS::Adafruit_TFTLCD(void) : Adafruit_GFX_AS(TFTWIDTH, TFTHEIGHT) {
+                                         ^
+C:\Users\jys\Documents\Arduino\libraries\Adafruit_TFTLCD_AS\Adafruit_TFTLCD_AS.cpp: In member function 'void Adafruit_TFTLCD_AS::setRotation(uint8_t)':
+C:\Users\jys\Documents\Arduino\libraries\Adafruit_TFTLCD_AS\Adafruit_TFTLCD_AS.cpp:833:3: error: 'Adafruit_GFX' has not been declared
+   Adafruit_GFX::setRotation(x);
+   ^~~~~~~~~~~~
+exit status 1
+
+Compilation error: exit status 1

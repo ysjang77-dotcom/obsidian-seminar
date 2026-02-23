@@ -1,0 +1,11 @@
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/plugins/
+.obsidian/hotkeys.json
+.trash/
+
+# Environment / secrets
+.env
+.env.*
+api.md
