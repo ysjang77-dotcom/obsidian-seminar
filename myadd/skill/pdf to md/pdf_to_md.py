@@ -491,6 +491,131 @@ def _reorder_figures_and_tables(md_text: str) -> str:
     return "\n".join(result_lines)
 
 
+def _merge_orphan_kv_into_table(md_text: str) -> str:
+    """Convert orphan key-value line sequences into markdown tables.
+
+    In two-column PDF layouts, a table continuation may appear as
+    alternating short lines separated by blank lines:
+
+        Parameter
+        Value
+        μpw-s
+        0.05
+        μpw-r
+        0.05
+
+    This function scans the document for such patterns and converts
+    them into markdown table rows, appending to a preceding table
+    if one exists with matching column count.
+    """
+    lines = (md_text or "").splitlines()
+
+    # First pass: collect non-blank short lines into groups.
+    # A group is a sequence of short lines (≤40 chars) with only blank
+    # lines between them, containing at least 4 lines (2 KV pairs).
+    # The first two lines should look like a header ("Parameter", "Value").
+    groups: list[tuple[int, int, list[str]]] = []  # (start_idx, end_idx, items)
+    i = 0
+    while i < len(lines):
+        s = lines[i].strip()
+        # Look for a potential header line like "Parameter"
+        if (s and len(s) <= 40
+                and not s.startswith("|") and not s.startswith("!")
+                and not s.startswith("#") and not s.startswith("---")
+                and not s.startswith("<") and not s[0].isdigit()
+                and not re.match(r"^\d+\.\d", s)):
+            # Collect consecutive short lines (allowing blank lines between)
+            start = i
+            items: list[str] = [s]
+            j = i + 1
+            blank_run = 0
+            while j < len(lines):
+                sj = lines[j].strip()
+                if not sj:
+                    blank_run += 1
+                    if blank_run > 2:
+                        break
+                    j += 1
+                    continue
+                blank_run = 0
+                if (len(sj) <= 40
+                        and not sj.startswith("|") and not sj.startswith("!")
+                        and not sj.startswith("#") and not sj.startswith("---")
+                        and not sj.startswith("<")):
+                    items.append(sj)
+                    j += 1
+                else:
+                    break
+
+            # Need even count, at least 4 items (header + 1 data pair)
+            if len(items) >= 4 and len(items) % 2 == 0:
+                # First line should be non-numeric (header key like "Parameter")
+                # Second line should be non-numeric (header value like "Value")
+                hdr_key = items[0]
+                hdr_val = items[1]
+                if (not hdr_key.replace(".", "").replace("-", "").isdigit()
+                        and not hdr_val.replace(".", "").replace("-", "").isdigit()):
+                    # Check data pairs: keys should be non-pure-numeric
+                    is_kv = True
+                    for ci in range(2, len(items), 2):
+                        key = items[ci]
+                        if key.replace(".", "").replace("-", "").replace(" ", "").isdigit():
+                            is_kv = False
+                            break
+                    if is_kv:
+                        groups.append((start, j, items))
+                        i = j
+                        continue
+        i += 1
+
+    if not groups:
+        return md_text
+
+    # Second pass: rebuild the document, replacing groups with tables
+    result: list[str] = []
+    group_idx = 0
+    i = 0
+    while i < len(lines):
+        if group_idx < len(groups) and i == groups[group_idx][0]:
+            start, end, items = groups[group_idx]
+
+            # Find the last table row before this group to append to
+            last_table_idx = None
+            for ri in range(len(result) - 1, -1, -1):
+                if result[ri].startswith("|") and "---" not in result[ri]:
+                    last_table_idx = ri
+                    break
+                elif result[ri].strip() and not result[ri].startswith("|"):
+                    break  # non-table content between
+
+            # Build KV rows (skip header pair)
+            kv_rows = []
+            for ci in range(2, len(items), 2):
+                key = items[ci]
+                val = items[ci + 1] if ci + 1 < len(items) else ""
+                kv_rows.append(f"| {key} | {val} |")
+
+            if last_table_idx is not None and result[last_table_idx].count("|") == 3:
+                # Append to existing 2-column table
+                insert_pos = last_table_idx + 1
+                for row in reversed(kv_rows):
+                    result.insert(insert_pos, row)
+            else:
+                # Create new standalone table
+                result.append(f"| {items[0]} | {items[1]} |")
+                result.append("|---|---|")
+                result.extend(kv_rows)
+                result.append("")
+
+            i = end
+            group_idx += 1
+        else:
+            result.append(lines[i])
+            i += 1
+
+    return "\n".join(result)
+
+
 def _center_figures_and_tables(md_text: str) -> str:
     """Center FIG captions and TABLE captions.
 
@@ -1226,7 +1351,7 @@ def _detect_tables_near_headings_fitz(page: Any) -> list[tuple[tuple[float, floa
         l
         for l in lines
         if re.match(r"^TABLE\s+\d+\b(?!\.)", l["text"], flags=re.IGNORECASE)
-        and (l["text"].split()[0] == "TABLE")
+        and (l["text"].split()[0].upper() == "TABLE")
     ]
     if not headings:
         return []
@@ -1258,13 +1383,25 @@ def _detect_tables_near_headings_fitz(page: Any) -> list[tuple[tuple[float, floa
         )
         heading_is_right = heading_x0 > page_mid_x
         if heading_spans_full:
-            # Full-width table heading: include words from both columns
-            region = [
+            # Full-width table heading: first try both columns, then check
+            # if the data is actually concentrated in one column only.
+            all_region = [
                 w
                 for w in words_dicts
                 if float(w["top"]) >= start_y
                 and float(w["top"]) < end_y
             ]
+            # Check if words are spread across both columns or just one.
+            left_words = [w for w in all_region if float(w.get("x1", 0.0)) <= page_mid_x + column_margin]
+            right_words = [w for w in all_region if float(w.get("x0", 0.0)) >= page_mid_x - column_margin]
+            # If both columns have significant content, it may be body text
+            # mixed with a table. Try right-column only (tables often appear
+            # on the right in two-column papers).
+            if left_words and right_words and len(left_words) > 5 and len(right_words) > 5:
+                # Try right-column-only table first
+                region = right_words
+            else:
+                region = all_region
         elif heading_is_right:
             region = [
                 w
@@ -1328,6 +1465,25 @@ def _detect_tables_near_headings_fitz(page: Any) -> list[tuple[tuple[float, floa
         if tbl is None:
             continue
         bbox, md = tbl
+
+        # Quality check: reject tables where body text was mixed in.
+        # In two-column PDFs, the heading detector may grab words from
+        # both columns, producing a wide table with many empty cells.
+        md_lines = [l for l in md.splitlines() if l.startswith("|") and "---" not in l]
+        if md_lines:
+            col_count = md_lines[0].count("|") - 1
+            total_cells = 0
+            empty_cells = 0
+            for ml in md_lines:
+                parts = ml.split("|")[1:-1]  # strip leading/trailing empty
+                for p in parts:
+                    total_cells += 1
+                    if not p.strip():
+                        empty_cells += 1
+            fill_ratio = (total_cells - empty_cells) / max(total_cells, 1)
+            # Real tables: mostly filled. Garbage from mixed columns: many empty cells.
+            if col_count > 5 and fill_ratio < 0.65:
+                continue
 
         # Attach table footnotes (A/B/...) that appear immediately below the
         # table, and expand the suppressed bbox to avoid duplicated text.
@@ -1419,7 +1575,7 @@ def _detect_tables_near_headings(
         joined = " ".join(_normalize_ws(t) for t in texts if t).strip()
         if not joined:
             continue
-        if re.match(r"^TABLE\s+\d+\b(?!\.)", joined, flags=re.IGNORECASE) and joined.split()[0] == "TABLE":
+        if re.match(r"^TABLE\s+\d+\b(?!\.)", joined, flags=re.IGNORECASE) and joined.split()[0].upper() == "TABLE":
             ln["joined"] = joined
             heading_lines.append(ln)
 
@@ -1802,11 +1958,14 @@ def _convert_with_pymupdf_layout(pdf_path: Path, out_md: Path, images_root: Path
         ) from exc
 
     pdf_stem = pdf_path.stem
-    images_dir = images_root / pdf_stem / "extracted"
+    # Replace spaces with underscores in image folder name to avoid
+    # broken image paths in markdown renderers (Obsidian, VS Code).
+    safe_stem = pdf_stem.replace(" ", "_")
+    images_dir = images_root / safe_stem / "extracted"
     if images_dir.exists():
         shutil.rmtree(images_dir)
     images_dir.mkdir(parents=True, exist_ok=True)
-    rel_images_prefix = f"images/{pdf_stem}/extracted"
+    rel_images_prefix = f"images/{safe_stem}/extracted"
 
     def save_extracted_image(doc: "fitz.Document", xref: int) -> tuple[str, str]:
         extracted = doc.extract_image(xref)
@@ -2133,6 +2292,7 @@ def _convert_with_pymupdf_layout(pdf_path: Path, out_md: Path, images_root: Path
     md_text = _dedupe_repeated_disclaimers(md_text)
     md_text = _format_where_blocks(md_text)
     md_text = _reorder_figures_and_tables(md_text)
+    md_text = _merge_orphan_kv_into_table(md_text)
     md_text = _apply_unit_superscripts(md_text)
     md_text = _center_figures_and_tables(md_text)
     out_md.write_text(md_text, encoding="utf-8")
@@ -2205,14 +2365,15 @@ def _find_mineru_cli() -> Path | None:
 def _rewrite_image_paths(md_text: str, pdf_stem: str) -> str:
     # MinerU outputs MD that references images under a sibling ./images directory.
     # When we move the MD next to the original PDF, we also relocate images to
-    # ./images/<pdf_stem>/, so update links accordingly.
+    # ./images/<safe_stem>/, so update links accordingly.
+    safe_stem = pdf_stem.replace(" ", "_")
     replacements = {
-        "(./images/": f"(images/{pdf_stem}/",
-        "(images/": f"(images/{pdf_stem}/",
-        "src=\"./images/": f"src=\"images/{pdf_stem}/",
-        "src='./images/": f"src='images/{pdf_stem}/",
-        "src=\"images/": f"src=\"images/{pdf_stem}/",
-        "src='images/": f"src='images/{pdf_stem}/",
+        "(./images/": f"(images/{safe_stem}/",
+        "(images/": f"(images/{safe_stem}/",
+        "src=\"./images/": f"src=\"images/{safe_stem}/",
+        "src='./images/": f"src='images/{safe_stem}/",
+        "src=\"images/": f"src=\"images/{safe_stem}/",
+        "src='images/": f"src='images/{safe_stem}/",
     }
     out = md_text
     for old, new in replacements.items():
